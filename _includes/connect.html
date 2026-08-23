@@ -1,0 +1,12 @@
+<div class="connect-block">
+  {% if include.title %}<h3 class="connect-title">{{ include.title }}</h3>{% endif %}
+  {% if include.text %}<p class="connect-text">{{ include.text }}</p>{% endif %}
+  <div class="connect-row">
+    {% include social.html %}
+    {% if include.show_contact %}
+    <a href="{{ '/contact/' | relative_url }}" class="connect-contact-link">
+      <span class="connect-contact-icon" aria-hidden="true">&#9993;</span> Contactar
+    </a>
+    {% endif %}
+  </div>
+</div>

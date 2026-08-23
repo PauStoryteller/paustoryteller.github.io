@@ -1,15 +1,16 @@
 main:
-  - name: "Updates"
-    url: "/updates/"
-    weight: 2
-  - name: "Contacto"
-    url: "/contact/"
-    weight: 3
-
-footer:
-  - name: "Inicio"
+  - name: "About Me"
     url: "/"
     weight: 1
+  - name: "Portfolio"
+    url: "/portfolio/"
+    weight: 2
+  - name: "Analysis"
+    url: "/analysis/"
+    weight: 3
+  - name: "Updates"
+    url: "/updates/"
+    weight: 4
   - name: "Contacto"
     url: "/contact/"
-    weight: 2
+    weight: 5

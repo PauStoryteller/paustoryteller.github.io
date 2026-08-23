@@ -1,0 +1,19 @@
+.gallery-subwork {
+  font-family: $font-family-subheading;
+  color: $primary;
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.update-card-static {
+  cursor: default;
+  &:hover {
+    box-shadow: none;
+    border-color: $white-offset;
+    transform: none;
+    .update-title {
+      color: $black;
+    }
+  }
+}

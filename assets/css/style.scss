@@ -22,12 +22,6 @@ $font-family-base: "Inter", Helvetica, Arial, sans-serif, -apple-system;
 $font-family-heading: "Orbitron", sans-serif, -apple-system;
 $font-family-subheading: "Rajdhani", sans-serif, -apple-system;
 
-// Footer
-$footer-background-color: $white;
-$footer-text-color: $black;
-$sub-footer-background-color: #100e14;
-$sub-footer-text-color: $steel;
-
 // Bootstrap 5.3.2
 
 // 1. Include Bootstrap functions first
@@ -87,9 +81,8 @@ $sub-footer-text-color: $steel;
 @import "components/type";
 @import "components/page";
 @import "components/header";
-@import "components/footer";
-@import "components/sub-footer";
 @import "components/logo";
+@import "components/connect";
 @import "components/main-menu";
 @import "components/main-menu-mobile";
 @import "components/hamburger";
@@ -107,6 +100,7 @@ $sub-footer-text-color: $steel;
 // Pages
 @import "pages/page-home";
 @import "pages/page-updates";
+@import "pages/page-gallery";
 
 body {
   font-size: 16px;

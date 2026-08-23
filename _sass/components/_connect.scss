@@ -1,0 +1,53 @@
+.connect-block {
+  margin-top: 20px;
+
+  .connect-title {
+    font-family: $font-family-heading;
+    color: $black;
+    font-size: 1.15rem;
+    margin-bottom: 8px;
+  }
+
+  .connect-text {
+    color: $steel;
+    margin-bottom: 14px;
+  }
+
+  .connect-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px 6px;
+  }
+
+  .social {
+    margin-left: -10px;
+  }
+
+  .connect-contact-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 16px;
+    margin-left: 4px;
+    border: 1px solid $primary;
+    border-radius: 20px;
+    color: $primary;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.15s ease;
+
+    &:hover {
+      background-color: $primary;
+      color: #ffffff;
+      text-decoration: none;
+      transform: translateY(-1px);
+    }
+  }
+
+  .connect-contact-icon {
+    font-size: 15px;
+    line-height: 1;
+  }
+}

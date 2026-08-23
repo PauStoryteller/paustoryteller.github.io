@@ -1,0 +1,14 @@
+# Análisis de obras ajenas que te gustan. Copia un bloque y edítalo para añadir uno nuevo.
+# - title:   título de tu análisis
+#   work:    nombre de la obra que analizas
+#   author:  autor/a o estudio original de la obra
+#   image:   ruta de la miniatura (súbela primero a la carpeta images)
+#   excerpt: resumen de 1-2 frases sobre qué analizas
+#   link:    (opcional) URL externa, o la url de un update con el análisis completo
+
+- title: "Título del análisis"
+  work: "Nombre de la obra analizada"
+  author: "Autor/a original"
+  image: "images/thom-holmes-Lrfw0U_o9I0-unsplash.jpg"
+  excerpt: "Qué te gusta de esta obra y qué se puede aprender de ella."
+  link: ""

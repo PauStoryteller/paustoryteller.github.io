@@ -1,10 +1,13 @@
 ---
-title: Pau Storyteller
+title: About Me
 layout: home
 description: Videojuegos, escritura, modelado 3D y análisis — trabajo y proceso creativo.
 intro_image: "images/tu-foto.jpg"
 intro_photo: true
 show_call_box: true
+show_connect: true
+connect_title: "Sígueme"
+connect_text: "También ando por redes — si te apetece ver más trabajo o simplemente saludar, aquí me encuentras."
 ---
 
 # Hola, soy Pau 👋

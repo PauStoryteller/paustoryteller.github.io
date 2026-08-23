@@ -1,31 +1,51 @@
 .logo {
-  display: none;
-  @include media-breakpoint-up(sm) {
-    display: block;
-  }
+  display: flex;
+  align-items: center;
+
   img {
     max-width: unset;
   }
-  a {
-    display: block;
-    width: 100%;
-    height: 100%;
+
+  .logo-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    &:hover {
+      text-decoration: none;
+      opacity: 0.9;
+    }
   }
-}
-.logo-mobile {
-  display: block;
-  width: 40px;
-  padding: 10px 0 10px 0;
-  @include media-breakpoint-up(sm) {
-    display: none;
+
+  .logo-icon {
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    @include media-breakpoint-up(sm) {
+      width: 36px;
+      height: 36px;
+    }
   }
-  img {
-    width: 100%;
-    height: auto;
+
+  .logo-wordmark {
+    font-family: $font-family-heading;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.3px;
+    color: $black;
+    white-space: nowrap;
+    @include media-breakpoint-up(sm) {
+      font-size: 18px;
+    }
+    @include media-breakpoint-up(md) {
+      font-size: 20px;
+    }
   }
-  a {
-    display: block;
-    width: 100%;
-    height: 100%;
+
+  .logo-wordmark-accent {
+    background-image: linear-gradient(to right, $primary, $secondary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
 }
