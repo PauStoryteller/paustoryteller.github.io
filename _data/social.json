@@ -1,0 +1,27 @@
+[
+  {
+    "name": "Email",
+    "link": "mailto:tu-email@example.com",
+    "image": "images/social/email.svg"
+  },
+  {
+    "name": "Discord",
+    "link": "https://discord.com/users/tu-usuario",
+    "image": "images/social/discord.svg"
+  },
+  {
+    "name": "ArtStation",
+    "link": "https://www.artstation.com/tu-usuario",
+    "image": "images/social/artstation.svg"
+  },
+  {
+    "name": "LinkedIn",
+    "link": "https://www.linkedin.com/in/tu-usuario",
+    "image": "images/social/linkedin.svg"
+  },
+  {
+    "name": "itch.io",
+    "link": "https://tu-usuario.itch.io",
+    "image": "images/social/itch.svg"
+  }
+]

@@ -1,0 +1,44 @@
+baseurl: ''
+url: 'https://paustoryteller.github.io'
+permalink: pretty
+title: 'Pau Storyteller'
+description: 'Portfolio y blog personal de Pau — proyectos, escritura y trabajo creativo.'
+
+logo:
+  mobile: "images/logo/logo-mobile.svg"
+  mobile_height: "32px"
+  mobile_width: "32px"
+  desktop: "images/logo/logo.svg"
+  desktop_height: "32px"
+  desktop_width: "120px"
+
+home:
+  limit_updates: 6
+
+collections:
+  updates:
+    output: true
+    sort_by: date
+
+defaults:
+  - scope:
+      path: ""
+      type: "updates"
+    values:
+      layout: "update-single"
+
+sass:
+  style: compressed # possible values: nested expanded compact compressed
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+  - LICENSE.md
+  - LICENSE
+  - README.md
+  - GUIA.md

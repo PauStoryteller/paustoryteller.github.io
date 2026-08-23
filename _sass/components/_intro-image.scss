@@ -1,0 +1,50 @@
+.intro-image {
+  width: 100%;
+  height: auto;
+  margin-top: -40px;
+}
+.intro-image-absolute {
+  max-width: none;
+
+  padding: 0;
+  margin-bottom: 30px;
+  @include media-breakpoint-up(sm) {
+  }
+  @include media-breakpoint-up(md) {
+    position: absolute;
+    bottom: -50px;
+    left: -50px;
+    width: 700px;
+  }
+  @include media-breakpoint-up(lg) {
+    bottom: -60px;
+    left: -60px;
+    width: 800px;
+  }
+  @include media-breakpoint-up(xl) {
+    bottom: -100px;
+    left: -70px;
+    width: 850px;
+  }
+}
+.intro-image-hide-mobile {
+  display: none;
+  @include media-breakpoint-up(md) {
+    display: block;
+  }
+}
+
+// Foto de perfil (en vez de la ilustración grande a sangre)
+.intro-photo {
+  width: 100%;
+  max-width: 340px;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid $primary;
+  margin: 0 auto;
+  display: block;
+  @include media-breakpoint-up(md) {
+    margin: 0 0 0 auto;
+  }
+}

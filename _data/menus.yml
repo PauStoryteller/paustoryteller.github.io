@@ -1,0 +1,15 @@
+main:
+  - name: "Updates"
+    url: "/updates/"
+    weight: 2
+  - name: "Contacto"
+    url: "/contact/"
+    weight: 3
+
+footer:
+  - name: "Inicio"
+    url: "/"
+    weight: 1
+  - name: "Contacto"
+    url: "/contact/"
+    weight: 2
