@@ -30,6 +30,18 @@
       border: none;
     }
   }
+  .call-box-connect {
+    flex: 1 0 100%;
+    padding: 4px 20px 20px 20px;
+    border-top: 1px solid darken($white-offset, 5%);
+    margin-top: 4px;
+    padding-top: 16px;
+  }
+  .call-connect-text {
+    color: $steel;
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
   .call-name {
     font-size: 1.1rem;
     font-weight: bold;

@@ -6,8 +6,7 @@ intro_image: "images/tu-foto.jpg"
 intro_photo: true
 show_call_box: true
 show_connect: true
-connect_title: "Sígueme"
-connect_text: "También ando por redes — si te apetece ver más trabajo o simplemente saludar, aquí me encuentras."
+connect_text: "Sígueme: también ando por redes, si te apetece ver más trabajo o simplemente saludar."
 ---
 
 # Hola, soy Pau 👋

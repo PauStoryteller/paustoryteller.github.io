@@ -1,18 +1,21 @@
-# Tus obras destacadas. Copia un bloque y edítalo para añadir una nueva.
-# - title:   nombre de la obra/proyecto
+# Tus obras. Copia un bloque y edítalo para añadir una nueva.
+# - title:    nombre de la obra/proyecto
 #   category: "Videojuego", "Escritura", "Modelado 3D"...
-#   image:   ruta de la miniatura (súbela primero a la carpeta images)
-#   excerpt: resumen de 1-2 frases
-#   link:    (opcional) URL externa, o la url de un update, ej. "/updates/2026-06-10-nombre-del-proyecto/"
+#   image:    ruta de la miniatura (súbela primero a la carpeta images)
+#   excerpt:  resumen de 1-2 frases
+#   link:     (opcional) URL externa donde se pueda ver el proyecto
+#   featured: pon "true" para que también aparezca destacado en la portada (About Me)
 
 - title: "Nombre del proyecto"
   category: "Videojuego"
   image: "images/austin-distel-nGc5RT2HmF0-unsplash.jpg"
   excerpt: "Resumen corto de en qué consiste este proyecto, para que se vea en la galería."
   link: ""
+  featured: true
 
 - title: "Otro proyecto"
   category: "Modelado 3D"
   image: "images/thom-holmes-Lrfw0U_o9I0-unsplash.jpg"
   excerpt: "Resumen corto de en qué consiste este proyecto, para que se vea en la galería."
   link: ""
+  featured: false

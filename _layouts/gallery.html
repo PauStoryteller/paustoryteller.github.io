@@ -17,30 +17,7 @@ bodyClass: "page-gallery"
     {% assign items = site.data[page.data_source] %}
     {% for entry in items %}
     <div class="col-12 col-md-6 col-lg-4 mb-3">
-      {% if entry.link and entry.link != "" %}
-      <a class="update-card" href="{{ entry.link | relative_url }}"{% if entry.link contains "http" %} target="_blank" rel="noopener"{% endif %}>
-      {% else %}
-      <div class="update-card update-card-static">
-      {% endif %}
-        {% if entry.image %}
-        <div class="update-card-image">
-          <img alt="{{ entry.title }}" src="{{ entry.image | relative_url }}" />
-        </div>
-        {% endif %}
-        <div class="update-card-content">
-          <div class="update-meta">
-            {% if entry.category %}<span class="update-category">{{ entry.category }}</span>{% endif %}
-            {% if entry.author %}<span class="update-date">{{ entry.author }}</span>{% endif %}
-          </div>
-          <h2 class="update-title">{{ entry.title }}</h2>
-          {% if entry.work %}<p class="gallery-subwork">Obra: {{ entry.work }}</p>{% endif %}
-          {% if entry.excerpt %}<p>{{ entry.excerpt }}</p>{% endif %}
-        </div>
-      {% if entry.link and entry.link != "" %}
-      </a>
-      {% else %}
-      </div>
-      {% endif %}
+      {% include work-card.html entry=entry %}
     </div>
     {% endfor %}
   </div>

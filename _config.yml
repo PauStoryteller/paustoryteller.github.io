@@ -5,19 +5,7 @@ title: 'Pau Storyteller'
 description: 'Portfolio y blog personal de Pau — proyectos, escritura y trabajo creativo.'
 
 home:
-  limit_updates: 6
-
-collections:
-  updates:
-    output: true
-    sort_by: date
-
-defaults:
-  - scope:
-      path: ""
-      type: "updates"
-    values:
-      layout: "update-single"
+  limit_featured: 3
 
 sass:
   style: compressed # possible values: nested expanded compact compressed

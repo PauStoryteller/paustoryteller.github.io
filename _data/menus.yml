@@ -8,9 +8,3 @@ main:
   - name: "Analysis"
     url: "/analysis/"
     weight: 3
-  - name: "Updates"
-    url: "/updates/"
-    weight: 4
-  - name: "Contacto"
-    url: "/contact/"
-    weight: 5

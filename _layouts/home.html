@@ -9,10 +9,7 @@ bodyClass: "page-home"
       <div class="col-12 col-md-7 col-lg-6 order-2 order-md-1">
         {{ content }}
         {% if page.show_call_box %}
-          {% include call.html show_button=true %}
-        {% endif %}
-        {% if page.show_connect %}
-          {% include connect.html title=page.connect_title text=page.connect_text show_contact=false %}
+          {% include call.html show_button=true show_connect=page.show_connect connect_text=page.connect_text %}
         {% endif %}
       </div>
       {% if page.intro_image %}
@@ -26,34 +23,30 @@ bodyClass: "page-home"
 
 <div class="strip">
   <div class="container pt-6 pb-6 pb-md-10">
-    <h2 class="section-heading">Últimos updates</h2>
     <div class="row justify-content-start">
-      {% assign limit = site.home.limit_updates | default: 6 %}
-      {% assign items = site.updates | sort: 'date' | reverse %}
-      {% for entry in items limit: limit %}
-      <div class="col-12 col-md-4 mb-3">
-        <a class="update-card" href="{{ entry.url | relative_url }}">
-          {% if entry.image %}
-          <div class="update-card-image">
-            <img alt="{{ entry.title }}" src="{{ entry.image | relative_url }}" />
-            {% if entry.video %}<span class="update-card-play">▶</span>{% endif %}
+      <div class="col-12 col-md-6 mb-5 mb-md-0">
+        <h2 class="section-heading">Portfolio destacado</h2>
+        {% assign featured_portfolio = site.data.portfolio | where: "featured", true %}
+        <div class="featured-stack">
+          {% for entry in featured_portfolio limit: site.home.limit_featured %}
+          <div class="featured-card-wrap">
+            {% include work-card.html entry=entry %}
           </div>
-          {% endif %}
-          <div class="update-card-content">
-            <div class="update-meta">
-              {% if entry.category %}<span class="update-category">{{ entry.category }}</span>{% endif %}
-              <span class="update-date">{{ entry.date | date: "%d %B %Y" }}</span>
-            </div>
-            <h3 class="update-title">{{ entry.title }}</h3>
-            <p>{{ entry.excerpt | strip_html | truncate: 100 }}</p>
-          </div>
-        </a>
+          {% endfor %}
+        </div>
+        <a class="button button-primary" href="{{ "portfolio" | relative_url }}">Ver portfolio completo</a>
       </div>
-      {% endfor %}
-    </div>
-    <div class="row justify-content-center">
-      <div class="col-auto">
-        <a class="button button-primary" href="{{ "updates" | relative_url }}">Ver todos los updates</a>
+      <div class="col-12 col-md-6">
+        <h2 class="section-heading">Analysis destacado</h2>
+        {% assign featured_analysis = site.data.analysis | where: "featured", true %}
+        <div class="featured-stack">
+          {% for entry in featured_analysis limit: site.home.limit_featured %}
+          <div class="featured-card-wrap">
+            {% include work-card.html entry=entry %}
+          </div>
+          {% endfor %}
+        </div>
+        <a class="button button-primary" href="{{ "analysis" | relative_url }}">Ver todos los análisis</a>
       </div>
     </div>
   </div>

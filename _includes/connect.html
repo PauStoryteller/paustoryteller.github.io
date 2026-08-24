@@ -4,7 +4,7 @@
   <div class="connect-row">
     {% include social.html %}
     {% if include.show_contact %}
-    <a href="{{ '/contact/' | relative_url }}" class="connect-contact-link">
+    <a href="mailto:{{ site.data.contact.email }}" class="connect-contact-link">
       <span class="connect-contact-icon" aria-hidden="true">&#9993;</span> Contactar
     </a>
     {% endif %}

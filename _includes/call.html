@@ -10,7 +10,13 @@
   </div>
     {% if include.show_button %}
       <div class="call-box-bottom">
-        <a href="{{ site.data.contact.contact_button_link | relative_url }}" class="button">Contactar</a>
+        <a href="mailto:{{ site.data.contact.email }}" class="button">Contactar</a>
+      </div>
+    {% endif %}
+    {% if include.show_connect %}
+      <div class="call-box-connect">
+        {% if include.connect_text %}<p class="call-connect-text">{{ include.connect_text }}</p>{% endif %}
+        {% include social.html %}
       </div>
     {% endif %}
 </div>

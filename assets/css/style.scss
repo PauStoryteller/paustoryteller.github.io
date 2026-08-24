@@ -95,11 +95,11 @@ $font-family-subheading: "Rajdhani", sans-serif, -apple-system;
 @import "components/strip";
 @import "components/feature";
 @import "components/social";
+@import "components/cards";
 // @import "components/fonts"; // Uncomment this line to self host font
 
 // Pages
 @import "pages/page-home";
-@import "pages/page-updates";
 @import "pages/page-gallery";
 
 body {

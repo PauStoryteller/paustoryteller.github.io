@@ -17,3 +17,48 @@
     }
   }
 }
+
+.featured-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.featured-card-wrap {
+  .update-card {
+    flex-direction: row;
+    align-items: stretch;
+
+    .update-card-image {
+      width: 120px;
+      aspect-ratio: unset;
+      flex-shrink: 0;
+      @include media-breakpoint-up(sm) {
+        width: 150px;
+      }
+    }
+
+    .update-card-content {
+      padding: 14px 16px;
+    }
+
+    .update-title {
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+
+    .update-meta {
+      margin-bottom: 4px;
+    }
+
+    p {
+      font-size: 14px;
+      margin-bottom: 0;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  }
+}
