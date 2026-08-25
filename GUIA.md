@@ -88,6 +88,19 @@ El icono del menú y el favicon (`images/logo/icon.png`, `images/favicon-*.png` 
 
 Se controlan desde `assets/css/style.scss`, casi al principio del archivo (variables `$primary` = rojo, `$secondary` = morado, `$body-bg` = fondo). No hace falta tocar el resto del CSS.
 
+## Dominio propio (paustoryteller.com)
+
+El sitio ya está configurado para usar `paustoryteller.com` en vez de la URL `.github.io`: hay un archivo `CNAME` en la raíz del repositorio con el dominio, y `_config.yml` tiene la `url` actualizada. Para que funcione de verdad, además de subir estos archivos tienes que:
+
+1. En GitHub: repositorio → **Settings → Pages** → en "Custom domain" escribe `paustoryteller.com` y guarda.
+2. En Hostinger: en la gestión DNS de `paustoryteller.com`, añade estos registros (sustituyendo cualquier registro A por defecto que ya exista para `@`):
+   - 4 registros **A**, nombre `@`, apuntando cada uno a: `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`
+   - 1 registro **CNAME**, nombre `www`, apuntando a `TU-USUARIO-DE-GITHUB.github.io`
+3. Espera entre 15 minutos y unas horas a que se propague el DNS.
+4. Vuelve a GitHub → Settings → Pages y activa **"Enforce HTTPS"** en cuanto aparezca disponible (el certificado SSL se genera solo).
+
+Importante: si tu repositorio en GitHub no se llama `TU-USUARIO.github.io` sino algo distinto (p. ej. `paustoryteller-web`), la web solo funcionará igualmente porque el archivo `CNAME` y la configuración de Settings → Pages ya hacen ese enlace — no hace falta renombrar nada.
+
 ## Importante
 
 No actives ningún "plugin" adicional en `_config.yml` sin comprobar antes que GitHub Pages lo soporta — la mayoría de plugins de terceros no funcionan en el modo de publicación gratuito. Todo lo de este sitio (colecciones, permalinks, dos idiomas) funciona sin ningún plugin extra.
