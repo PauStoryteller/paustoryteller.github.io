@@ -1,6 +1,18 @@
 {% assign lang = page.lang | default: "es" %}
-{% assign t = site.data.i18n[lang] %}
-{% assign switch_url = "/en/" %}
-{% if page.lang == "en" %}{% assign switch_url = "/" %}{% endif %}
-{% if page.translation_url and page.translation_url != "" %}{% assign switch_url = page.translation_url %}{% endif %}
-<a class="lang-switch" href="{{ switch_url | relative_url }}" aria-label="{{ t.lang_switch_aria }}">{{ t.lang_switch_label }}</a>
+{% assign es_url = "/" %}
+{% assign en_url = "/en/" %}
+{% if page.translation_url and page.translation_url != "" %}
+  {% if lang == "en" %}
+    {% assign es_url = page.translation_url %}
+  {% else %}
+    {% assign en_url = page.translation_url %}
+  {% endif %}
+{% endif %}
+<div class="lang-switch">
+  <a href="{{ es_url | relative_url }}" class="lang-option{% if lang == 'es' %} active{% endif %}" aria-label="Español" aria-current="{% if lang == 'es' %}true{% else %}false{% endif %}">
+    <span class="lang-flag" aria-hidden="true">🇪🇸</span><span class="lang-code">ES</span>
+  </a>
+  <a href="{{ en_url | relative_url }}" class="lang-option{% if lang == 'en' %} active{% endif %}" aria-label="English" aria-current="{% if lang == 'en' %}true{% else %}false{% endif %}">
+    <span class="lang-flag" aria-hidden="true">🇬🇧</span><span class="lang-code">EN</span>
+  </a>
+</div>

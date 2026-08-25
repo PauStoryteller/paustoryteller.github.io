@@ -39,16 +39,7 @@
     }
   }
   .main-menu-mobile-lang {
-    .lang-switch {
-      display: inline-flex;
-      font-size: 16px;
-      border-color: #ffffff;
-      color: #ffffff;
-      &:hover {
-        background-color: #ffffff;
-        color: $primary;
-      }
-    }
+    display: block;
   }
   ul {
     font-size: 30px;
