@@ -2,7 +2,8 @@
 layout: default
 bodyClass: "page-piece-single"
 ---
-{% assign t = site.data.i18n[page.lang | default: "es"] %}
+{% assign lang = page.lang | default: "es" %}
+{% assign t = site.data.i18n[lang] %}
 {% assign is_portfolio = false %}
 {% if page.collection contains "portfolio" %}{% assign is_portfolio = true %}{% endif %}
 {% assign back_url = "/portfolio/" %}

@@ -1,5 +1,6 @@
 {% assign entry = include.entry %}
-{% assign t = site.data.i18n[page.lang | default: "es"] %}
+{% assign lang = page.lang | default: "es" %}
+{% assign t = site.data.i18n[lang] %}
 {% assign is_external = false %}
 {% if entry.link and entry.link != "" %}
   {% assign href = entry.link %}

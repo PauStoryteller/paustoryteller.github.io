@@ -1,4 +1,5 @@
-{% assign t = site.data.i18n[page.lang | default: "es"] %}
+{% assign lang = page.lang | default: "es" %}
+{% assign t = site.data.i18n[lang] %}
 {% assign switch_url = "/en/" %}
 {% if page.lang == "en" %}{% assign switch_url = "/" %}{% endif %}
 {% if page.translation_url and page.translation_url != "" %}{% assign switch_url = page.translation_url %}{% endif %}
