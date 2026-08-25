@@ -101,15 +101,11 @@ El sitio ya está configurado para usar `paustoryteller.com` en vez de la URL `.
 
 Importante: si tu repositorio en GitHub no se llama `TU-USUARIO.github.io` sino algo distinto (p. ej. `paustoryteller-web`), la web solo funcionará igualmente porque el archivo `CNAME` y la configuración de Settings → Pages ya hacen ese enlace — no hace falta renombrar nada.
 
-## Formas de fondo, scroll y glitch
+## Fondo dinámico, scroll y hover
 
-El fondo ya no es una textura fija: son 4 formas difuminadas en rojo/morado que flotan solas y además reaccionan al cursor (efecto parallax). No aparecen en las páginas de pieza de Portfolio/Journal, para que la lectura quede limpia. También añadí una animación de aparición al hacer scroll en las secciones principales, y un pequeño efecto glitch (en rojo/morado) en el título "Hola, soy Pau" de la portada. Todo esto respeta la preferencia de "reducir movimiento" del sistema operativo del visitante (accesibilidad) — si la tienen activada, no se anima nada.
+El fondo son 4 cúmulos de puntos (estilo halftone, en rojo/morado) que flotan solas con un ligero giro, reaccionan al cursor moviéndose en paralaje, y además hay un halo suave que sigue al puntero de cerca (`.bg-spotlight`). No aparecen en las páginas de pieza de Portfolio/Journal, para que la lectura quede limpia. También hay una animación de aparición al hacer scroll en las secciones principales, con un poco de rebote para que se sienta más viva, y las tarjetas se inclinan levemente al pasar el cursor. Todo esto respeta la preferencia de "reducir movimiento" del sistema operativo del visitante (accesibilidad) — si la tienen activada, no se anima nada.
 
-Los archivos relevantes si algún día quieres tocarlos: `_includes/bg-shapes.html` + `_sass/components/_bg-shapes.scss` (formas), `assets/js/effects.js` (cursor y scroll), `_sass/components/_glitch.scss` (glitch del título).
-
-## Aviso de copyright
-
-Añadí una línea discreta de copyright al final de cada página (se controla desde `_data/seo.yml`, clave `copyright_text`). Legalmente tu obra ya está protegida por derechos de autor automáticamente desde el momento en que la creas (no hace falta registrarla), pero tener el aviso visible ayuda a dejarlo claro y desanima la copia casual. Si en algún momento te preocupa que usen tus imágenes sin permiso, otra opción habitual es añadir una marca de agua sutil a las imágenes de Portfolio — puedo ayudarte con eso si lo quieres más adelante.
+Los archivos relevantes si algún día quieres tocarlos: `_includes/bg-shapes.html` + `_sass/components/_bg-shapes.scss` (formas y halo), `assets/js/effects.js` (cursor y scroll), `images/bg/blob-*.svg` (los propios cúmulos de puntos — puedes regenerarlos o sustituirlos por otros).
 
 ## Importante
 

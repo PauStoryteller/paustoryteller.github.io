@@ -4,16 +4,36 @@
 
   // ---- Cursor-reactive background shapes (parallax) ----
   var wraps = document.querySelectorAll(".bg-shape-wrap");
-  if (wraps.length && !reduceMotion) {
+  var spotlight = document.getElementById("bg-spotlight");
+
+  if ((wraps.length || spotlight) && !reduceMotion) {
     var mx = 0, my = 0, cx = 0, cy = 0, ticking = false;
+    var spotShown = false;
 
     function onMove(e) {
       var w = window.innerWidth, h = window.innerHeight;
       mx = (e.clientX / w - 0.5) * 2; // -1 .. 1
       my = (e.clientY / h - 0.5) * 2;
+
+      if (spotlight) {
+        spotlight.style.setProperty("--spot-x", ((e.clientX / w) * 100).toFixed(1) + "%");
+        spotlight.style.setProperty("--spot-y", ((e.clientY / h) * 100).toFixed(1) + "%");
+        if (!spotShown) {
+          spotlight.classList.add("is-active");
+          spotShown = true;
+        }
+      }
+
       if (!ticking) {
         ticking = true;
         requestAnimationFrame(update);
+      }
+    }
+
+    function onLeave() {
+      if (spotlight) {
+        spotlight.classList.remove("is-active");
+        spotShown = false;
       }
     }
 
@@ -34,6 +54,7 @@
     }
 
     window.addEventListener("mousemove", onMove, { passive: true });
+    window.addEventListener("mouseleave", onLeave, { passive: true });
   }
 
   // ---- Scroll reveal ----
