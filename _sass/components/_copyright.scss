@@ -1,0 +1,13 @@
+.site-copyright {
+  text-align: center;
+  color: $steel;
+  font-size: 12px;
+  padding: 24px 20px 32px;
+  a.zerostatic {
+    color: $steel;
+    text-decoration: underline;
+    &:hover {
+      color: $primary;
+    }
+  }
+}

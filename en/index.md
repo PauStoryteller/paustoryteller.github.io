@@ -12,7 +12,7 @@ connect_text: "Follow me: I'm also on social media, if you'd like to see more wo
 translation_url: "/"
 ---
 
-# Hi, I'm Pau 👋
+# <span class="glitch-text" data-text="Hi, I'm Pau 👋">Hi, I'm Pau 👋</span>
 
 I make video games, write, model in 3D and analyze creative work. Here I share what I make and the process behind each piece.
 

@@ -5,7 +5,7 @@ bodyClass: "page-friends"
 
 <div class="container pt-6 pt-md-10">
   <div class="row justify-content-start">
-    <div class="col-12 col-md-8">
+    <div class="col-12 col-md-8 reveal">
       <h1 class="title">{{ page.title }}</h1>
       <div class="content">{{ content }}</div>
     </div>
@@ -13,9 +13,9 @@ bodyClass: "page-friends"
 </div>
 
 <div class="container pt-4 pb-6 pb-md-10">
-  <div class="row">
+  <div class="row reveal-stagger">
     {% for friend in site.data.friends %}
-    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4 reveal">
       {% include friend-card.html friend=friend %}
     </div>
     {% endfor %}

@@ -1,0 +1,100 @@
+.bg-shapes {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.bg-shape-wrap {
+  position: absolute;
+  will-change: transform;
+}
+
+.bg-shape {
+  position: absolute;
+  inset: 0;
+  display: block;
+  border-radius: 50%;
+}
+
+// Shape 1 — top-left, red
+.bg-shape-wrap-1 {
+  width: 520px;
+  height: 520px;
+  top: -140px;
+  left: -120px;
+  .bg-shape {
+    background: radial-gradient(circle at 35% 35%, rgba(229, 72, 77, 0.42), rgba(229, 72, 77, 0) 70%);
+    filter: blur(60px);
+    animation: bg-float-1 24s ease-in-out infinite alternate;
+  }
+}
+
+// Shape 2 — right side, purple, larger + slower
+.bg-shape-wrap-2 {
+  width: 620px;
+  height: 620px;
+  top: 8%;
+  right: -220px;
+  .bg-shape {
+    background: radial-gradient(circle at 60% 40%, rgba(157, 127, 234, 0.4), rgba(157, 127, 234, 0) 70%);
+    filter: blur(70px);
+    animation: bg-float-2 30s ease-in-out infinite alternate;
+  }
+}
+
+// Shape 3 — bottom-left, purple/red mix, small
+.bg-shape-wrap-3 {
+  width: 380px;
+  height: 380px;
+  bottom: -100px;
+  left: 8%;
+  .bg-shape {
+    background: radial-gradient(circle at 45% 55%, rgba(157, 127, 234, 0.35), rgba(157, 127, 234, 0) 70%);
+    filter: blur(55px);
+    animation: bg-float-3 20s ease-in-out infinite alternate;
+  }
+}
+
+// Shape 4 — bottom-right, red, medium
+.bg-shape-wrap-4 {
+  width: 460px;
+  height: 460px;
+  bottom: -160px;
+  right: 6%;
+  .bg-shape {
+    background: radial-gradient(circle at 50% 50%, rgba(229, 72, 77, 0.32), rgba(229, 72, 77, 0) 70%);
+    filter: blur(65px);
+    animation: bg-float-4 26s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes bg-float-1 {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(30px, 40px) scale(1.08); }
+}
+@keyframes bg-float-2 {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(-40px, 30px) scale(1.05); }
+}
+@keyframes bg-float-3 {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(25px, -30px) scale(1.1); }
+}
+@keyframes bg-float-4 {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(-25px, -25px) scale(1.06); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-shape {
+    animation: none !important;
+  }
+}
+
+// Keep content above the decorative shapes
+.wrapper {
+  position: relative;
+  z-index: 1;
+}

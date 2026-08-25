@@ -98,6 +98,10 @@ $font-family-subheading: "Rajdhani", sans-serif, -apple-system;
 @import "components/cards";
 @import "components/friend-card";
 @import "components/lang-switch";
+@import "components/glitch";
+@import "components/bg-shapes";
+@import "components/reveal";
+@import "components/copyright";
 // @import "components/fonts"; // Uncomment this line to self host font
 
 // Pages
@@ -109,17 +113,10 @@ body {
   line-height: 1.2;
   font-family: $font-family-base;
   background-color: $body-bg;
-  background-image: url("{{ '/images/texture-dots.svg' | relative_url }}");
-  background-repeat: repeat;
-  background-size: 640px 640px;
-  background-attachment: fixed;
   color: $black;
+  overflow-x: hidden;
   @include media-breakpoint-up(md) {
     font-size: 16px;
     line-height: 1.3;
-  }
-
-  &.page-piece-single {
-    background-image: none;
   }
 }

@@ -5,7 +5,7 @@ bodyClass: "page-gallery"
 
 <div class="container pt-6 pt-md-10">
   <div class="row justify-content-start">
-    <div class="col-12 col-md-8">
+    <div class="col-12 col-md-8 reveal">
       <h1 class="title">{{ page.title }}</h1>
       <div class="content">{{ content }}</div>
     </div>
@@ -13,14 +13,14 @@ bodyClass: "page-gallery"
 </div>
 
 <div class="container pt-4 pb-6 pb-md-10">
-  <div class="row">
+  <div class="row reveal-stagger">
     {% assign items = "" | split: "" %}
     {% assign raw_items = site[page.data_source] %}
     {% if raw_items %}
       {% assign items = raw_items | sort: "date" | reverse %}
     {% endif %}
     {% for entry in items %}
-    <div class="col-12 col-md-6 col-lg-4 mb-3">
+    <div class="col-12 col-md-6 col-lg-4 mb-3 reveal">
       {% include work-card.html entry=entry %}
     </div>
     {% endfor %}
@@ -31,7 +31,7 @@ bodyClass: "page-gallery"
 <div class="strip strip-grey">
   <div class="container pt-6 pb-6 pt-md-8 pb-md-8">
     <div class="row justify-content-start">
-      <div class="col-12 col-md-8">
+      <div class="col-12 col-md-8 reveal">
         {% include connect.html title=page.connect_title text=page.connect_text show_contact=true %}
       </div>
     </div>

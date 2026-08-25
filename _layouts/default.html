@@ -37,11 +37,16 @@
 
 <body class='page {{layout.bodyClass}}'>
   {% include main-menu-mobile.html %}
+  {% unless layout.bodyClass == "page-piece-single" %}
+    {% include bg-shapes.html %}
+  {% endunless %}
   <div id="wrapper" class="wrapper">
     {% include header.html headerClass='header-extra' %}
     {{content}}
+    {% include copyright.html %}
   </div>
   <script type="text/javascript" src="{{ '/assets/js/scripts.js' | relative_url }}"></script>
+  <script type="text/javascript" src="{{ '/assets/js/effects.js' | relative_url }}"></script>
   {% include google-analytics.html %}
 </body>
 </html>

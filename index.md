@@ -10,7 +10,7 @@ connect_text: "Sígueme: también ando por redes, si te apetece ver más trabajo
 translation_url: "/en/"
 ---
 
-# Hola, soy Pau 👋
+# <span class="glitch-text" data-text="Hola, soy Pau 👋">Hola, soy Pau 👋</span>
 
 Hago videojuegos, escribo, modelo en 3D y analizo obras creativas. Aquí comparto mi trabajo y el proceso detrás de cada pieza.
 
