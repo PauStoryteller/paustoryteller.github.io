@@ -5,13 +5,13 @@ bodyClass: "page-home"
 {% assign lang = page.lang | default: "es" %}
 {% assign t = site.data.i18n[lang] %}
 {% if lang == "en" %}
-  {% assign portfolio_docs = site.collections.portfolio_en.docs %}
-  {% assign journal_docs = site.collections.journal_en.docs %}
+  {% assign portfolio_docs = site.portfolio_en %}
+  {% assign journal_docs = site.journal_en %}
   {% assign portfolio_url = "/en/portfolio" %}
   {% assign journal_url = "/en/journal" %}
 {% else %}
-  {% assign portfolio_docs = site.collections.portfolio.docs %}
-  {% assign journal_docs = site.collections.journal.docs %}
+  {% assign portfolio_docs = site.portfolio %}
+  {% assign journal_docs = site.journal %}
   {% assign portfolio_url = "/portfolio" %}
   {% assign journal_url = "/journal" %}
 {% endif %}
@@ -43,7 +43,10 @@ bodyClass: "page-home"
     <div class="row justify-content-start">
       <div class="col-12 col-md-6 mb-5 mb-md-0">
         <h2 class="section-heading">{{ t.featured_portfolio_heading }}</h2>
-        {% assign featured_portfolio = portfolio_docs | where: "featured", true | sort: "date" | reverse %}
+        {% assign featured_portfolio = "" | split: "" %}
+        {% if portfolio_docs %}
+          {% assign featured_portfolio = portfolio_docs | where: "featured", true | sort: "date" | reverse %}
+        {% endif %}
         <div class="featured-stack">
           {% for entry in featured_portfolio limit: site.home.limit_featured %}
           <div class="featured-card-wrap">
@@ -55,7 +58,10 @@ bodyClass: "page-home"
       </div>
       <div class="col-12 col-md-6">
         <h2 class="section-heading">{{ t.featured_journal_heading }}</h2>
-        {% assign featured_journal = journal_docs | where: "featured", true | sort: "date" | reverse %}
+        {% assign featured_journal = "" | split: "" %}
+        {% if journal_docs %}
+          {% assign featured_journal = journal_docs | where: "featured", true | sort: "date" | reverse %}
+        {% endif %}
         <div class="featured-stack">
           {% for entry in featured_journal limit: site.home.limit_featured %}
           <div class="featured-card-wrap">
