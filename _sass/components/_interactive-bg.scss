@@ -1,0 +1,21 @@
+// Capa canvas del fondo interactivo. Va fija a pantalla completa, detrás de
+// todo el contenido (mismo z-index que la textura de puntos del body), y con
+// mix-blend-mode: screen para que los puntos "brillen" sobre el fondo oscuro
+// en vez de tapar la textura estática que ya existe debajo.
+#interactive-bg-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+// Si el usuario prefiere movimiento reducido, el script ni siquiera se
+// ejecuta, pero por si acaso ocultamos el canvas igualmente.
+@media (prefers-reduced-motion: reduce) {
+  #interactive-bg-canvas {
+    display: none;
+  }
+}
