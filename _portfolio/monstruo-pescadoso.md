@@ -1,9 +1,9 @@
 ---
 title: "Monstruo Pescadoso"
 category: "Modelado 3D"
-date: Abril 2025
+date: 12/04/2025
 image: "images/posts/fish/fishfrontpers.jpg"
-summary: "Una de mis primeras esculturas en ZBrush."
+summary: "Un pez de aspecto monstruoso. Fue una de mis primeras esculturas en ZBrush."
 featured: true
 translation_url: "/en/portfolio/fishy-monster/"
 # link: ""   # opcional: si lo rellenas (por ejemplo con una URL de itch.io), la tarjeta enlazará ahí en vez de a esta página
