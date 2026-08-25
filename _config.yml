@@ -4,12 +4,6 @@ permalink: pretty
 title: 'Pau Storyteller'
 description: 'Portfolio y blog personal de Pau — proyectos, escritura y trabajo creativo.'
 
-# jekyll-sitemap está en la lista de plugins que GitHub Pages soporta de forma
-# nativa (sin necesitar GitHub Actions). Genera automáticamente /sitemap.xml,
-# que ayuda a Google a encontrar e indexar todas las páginas del sitio.
-plugins:
-  - jekyll-sitemap
-
 home:
   limit_featured: 3
 

@@ -36,14 +36,12 @@
 </head>
 
 <body class='page {{layout.bodyClass}}'>
-  <canvas id="interactive-bg-canvas" aria-hidden="true"></canvas>
   {% include main-menu-mobile.html %}
   <div id="wrapper" class="wrapper">
     {% include header.html headerClass='header-extra' %}
     {{content}}
   </div>
   <script type="text/javascript" src="{{ '/assets/js/scripts.js' | relative_url }}"></script>
-  <script type="text/javascript" src="{{ '/assets/js/interactive-bg.js' | relative_url }}"></script>
   {% include google-analytics.html %}
 </body>
 </html>

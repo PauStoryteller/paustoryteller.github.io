@@ -98,7 +98,6 @@ $font-family-subheading: "Rajdhani", sans-serif, -apple-system;
 @import "components/cards";
 @import "components/friend-card";
 @import "components/lang-switch";
-@import "components/interactive-bg";
 // @import "components/fonts"; // Uncomment this line to self host font
 
 // Pages
@@ -110,48 +109,17 @@ body {
   line-height: 1.2;
   font-family: $font-family-base;
   background-color: $body-bg;
+  background-image: url("{{ '/images/texture-dots.svg' | relative_url }}");
+  background-repeat: repeat;
+  background-size: 640px 640px;
+  background-attachment: fixed;
   color: $black;
-  position: relative;
   @include media-breakpoint-up(md) {
     font-size: 16px;
     line-height: 1.3;
   }
 
-  // Capa de puntos aparte del propio fondo del body: al animarla con
-  // "transform" en vez de "background-position", el navegador puede llevarla
-  // a la GPU y el movimiento sale fluido en lugar de a trompicones.
-  &::before {
-    content: "";
-    position: fixed;
-    inset: -640px;
-    background-image: url("{{ '/images/texture-dots.svg' | relative_url }}");
-    background-repeat: repeat;
-    background-size: 640px 640px;
-    animation: dots-drift 140s linear infinite;
-    will-change: transform;
-    pointer-events: none;
-    z-index: -1;
-  }
-
-  // Los artículos (portfolio/journal) se leen sobre fondo liso, sin textura.
-  &.page-piece-single::before {
-    display: none;
-  }
-}
-
-// Deriva sutil del fondo de puntos: recorre un tile completo (640px) en
-// diagonal, así el bucle es perfecto y no se nota el reinicio.
-@keyframes dots-drift {
-  from {
-    transform: translate3d(0, 0, 0);
-  }
-  to {
-    transform: translate3d(-640px, -640px, 0);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  body::before {
-    animation: none;
+  &.page-piece-single {
+    background-image: none;
   }
 }

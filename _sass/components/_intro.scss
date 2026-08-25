@@ -6,46 +6,38 @@
   padding-bottom: 60px;
   overflow: hidden;
   @include media-breakpoint-up(md) {
-    padding-top: 90px;
-    padding-bottom: 90px;
+    padding-top: 140px;
+    padding-bottom: 140px;
   }
-
-  // Fila interna con menos separación entre el texto y la foto, para que
-  // ambos bloques queden más pegados y formen un conjunto más compacto.
-  > .container > .row {
-    @include media-breakpoint-up(md) {
-      --bs-gutter-x: 1rem;
-    }
-  }
-
   h1 {
     color: $black;
     font-size: 42px;
     font-weight: bold;
     line-height: 1.2;
-    max-width: 100%;
     @include media-breakpoint-up(md) {
-      font-size: 44px;
+      width: 80%;
+      font-size: 48px;
     }
     @include media-breakpoint-up(lg) {
-      font-size: 48px;
+      font-size: 50px;
     }
   }
   h2 {
-    max-width: 100%;
-    font-size: 1.15rem;
-    line-height: 1.45;
-    margin-bottom: 22px;
+    width: 80%;
+    font-size: 1.2rem;
+    line-height: 1.4;
+    margin-bottom: 30px;
     color: $black;
     font-family: $font-family-base;
   }
   p {
-    max-width: 100%;
-    font-size: 1.05rem;
+    font-size: 1.2rem;
     font-weight: light;
     line-height: 1.5;
-    margin-bottom: 16px;
     color: $steel;
+    @include media-breakpoint-up(md) {
+      width: 80%;
+    }
   }
 }
 
