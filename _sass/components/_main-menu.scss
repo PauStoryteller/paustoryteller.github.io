@@ -11,22 +11,51 @@
       list-style: none;
       font-size: 1rem;
       > a {
+        position: relative;
         padding: 10px 12px 10px 12px;
         display: inline-block;
         font-weight: normal;
         text-decoration: none;
         color: $primary;
+        transition: color 0.15s ease;
+        &::after {
+          content: "";
+          position: absolute;
+          left: 12px;
+          right: 12px;
+          bottom: 6px;
+          height: 2px;
+          background-color: $primary;
+          transform: scaleX(0);
+          transform-origin: left;
+          transition: transform 0.2s ease;
+        }
         &:hover {
-          text-decoration: underline;
+          text-decoration: none;
+          &::after {
+            transform: scaleX(1);
+          }
         }
       }
       &.active {
         > a {
           font-weight: bold;
           text-decoration: none;
+          &::after {
+            transform: scaleX(1);
+          }
           &:hover {
             text-decoration: none;
             transition: all 225ms ease-in 0s;
+          }
+        }
+      }
+      &.main-menu-lang {
+        margin-left: 4px;
+        > a {
+          padding: 0;
+          &::after {
+            display: none;
           }
         }
       }

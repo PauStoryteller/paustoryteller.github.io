@@ -1,0 +1,5 @@
+{% assign t = site.data.i18n[page.lang | default: "es"] %}
+{% assign switch_url = "/en/" %}
+{% if page.lang == "en" %}{% assign switch_url = "/" %}{% endif %}
+{% if page.translation_url and page.translation_url != "" %}{% assign switch_url = page.translation_url %}{% endif %}
+<a class="lang-switch" href="{{ switch_url | relative_url }}" aria-label="{{ t.lang_switch_aria }}">{{ t.lang_switch_label }}</a>

@@ -7,6 +7,7 @@ intro_photo: true
 show_call_box: true
 show_connect: true
 connect_text: "Sígueme: también ando por redes, si te apetece ver más trabajo o simplemente saludar."
+translation_url: "/en/"
 ---
 
 # Hola, soy Pau 👋

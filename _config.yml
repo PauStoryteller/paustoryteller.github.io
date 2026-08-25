@@ -7,6 +7,52 @@ description: 'Portfolio y blog personal de Pau — proyectos, escritura y trabaj
 home:
   limit_featured: 3
 
+collections:
+  portfolio:
+    output: true
+    permalink: /portfolio/:path/
+  journal:
+    output: true
+    permalink: /journal/:path/
+  portfolio_en:
+    output: true
+    permalink: /en/portfolio/:path/
+  journal_en:
+    output: true
+    permalink: /en/journal/:path/
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      lang: "es"
+  - scope:
+      path: "en"
+    values:
+      lang: "en"
+  - scope:
+      path: ""
+      type: "portfolio"
+    values:
+      layout: "piece-single"
+  - scope:
+      path: ""
+      type: "journal"
+    values:
+      layout: "piece-single"
+  - scope:
+      path: ""
+      type: "portfolio_en"
+    values:
+      layout: "piece-single"
+      lang: "en"
+  - scope:
+      path: ""
+      type: "journal_en"
+    values:
+      layout: "piece-single"
+      lang: "en"
+
 sass:
   style: compressed # possible values: nested expanded compact compressed
 

@@ -1,0 +1,12 @@
+# Tus amigos con talento. Copia un bloque y edítalo para añadir uno nuevo.
+# - name:            su nombre (igual en los dos idiomas)
+#   description:      breve descripción en español
+#   description_en:   la misma descripción en inglés (opcional; si no la rellenas, se usa la de español también en la web en inglés)
+#   image:             ruta de su foto/avatar (súbela primero a la carpeta images)
+#   link:               URL a su web, portfolio o red social (igual en los dos idiomas)
+
+- name: "Nombre de tu amigo/a"
+  description: "Breve descripción de a qué se dedica y qué le hace especial."
+  description_en: "Short description of what they do and what makes them special."
+  image: "images/austin-distel-nGc5RT2HmF0-unsplash.jpg"
+  link: "https://example.com"

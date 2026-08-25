@@ -1,0 +1,30 @@
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 28px;
+  padding: 0 10px;
+  border: 1px solid $primary;
+  border-radius: 20px;
+  color: $primary;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background-color: $primary;
+    color: #ffffff;
+    text-decoration: none;
+    transform: translateY(-1px);
+  }
+}
+
+.main-menu-mobile-lang {
+  margin-top: 10px;
+  .lang-switch {
+    margin-left: 0;
+  }
+}

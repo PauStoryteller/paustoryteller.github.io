@@ -14,7 +14,7 @@ bodyClass: "page-gallery"
 
 <div class="container pt-4 pb-6 pb-md-10">
   <div class="row">
-    {% assign items = site.data[page.data_source] %}
+    {% assign items = site.collections[page.data_source].docs | sort: "date" | reverse %}
     {% for entry in items %}
     <div class="col-12 col-md-6 col-lg-4 mb-3">
       {% include work-card.html entry=entry %}

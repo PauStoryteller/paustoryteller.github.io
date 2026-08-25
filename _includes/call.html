@@ -1,7 +1,8 @@
+{% assign t = site.data.i18n[page.lang | default: "es"] %}
 <div class="call">
   <div class="call-box-top">
     {% if site.data.contact.email %}
-    <div class="call-email"><strong>Email: </strong>
+    <div class="call-email"><strong>{{ t.email_label }} </strong>
       <a href="mailto:{{ site.data.contact.email }}">
         {{ site.data.contact.email }}
       </a>
@@ -10,7 +11,7 @@
   </div>
     {% if include.show_button %}
       <div class="call-box-bottom">
-        <a href="mailto:{{ site.data.contact.email }}" class="button">Contactar</a>
+        <a href="mailto:{{ site.data.contact.email }}" class="button">{{ t.contact_button }}</a>
       </div>
     {% endif %}
     {% if include.show_connect %}

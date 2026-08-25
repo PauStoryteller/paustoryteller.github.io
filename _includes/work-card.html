@@ -1,9 +1,13 @@
 {% assign entry = include.entry %}
+{% assign t = site.data.i18n[page.lang | default: "es"] %}
+{% assign is_external = false %}
 {% if entry.link and entry.link != "" %}
-<a class="update-card" href="{{ entry.link | relative_url }}"{% if entry.link contains "http" %} target="_blank" rel="noopener"{% endif %}>
+  {% assign href = entry.link %}
+  {% if entry.link contains "http" %}{% assign is_external = true %}{% endif %}
 {% else %}
-<div class="update-card update-card-static">
+  {% assign href = entry.url | relative_url %}
 {% endif %}
+<a class="update-card" href="{{ href }}"{% if is_external %} target="_blank" rel="noopener"{% endif %}>
   {% if entry.image %}
   <div class="update-card-image">
     <img alt="{{ entry.title }}" src="{{ entry.image | relative_url }}" />
@@ -15,11 +19,7 @@
       {% if entry.author %}<span class="update-date">{{ entry.author }}</span>{% endif %}
     </div>
     <h2 class="update-title">{{ entry.title }}</h2>
-    {% if entry.work %}<p class="gallery-subwork">Obra: {{ entry.work }}</p>{% endif %}
-    {% if entry.excerpt %}<p>{{ entry.excerpt }}</p>{% endif %}
+    {% if entry.work %}<p class="gallery-subwork">{{ t.work_label }} {{ entry.work }}</p>{% endif %}
+    {% if entry.summary %}<p>{{ entry.summary }}</p>{% endif %}
   </div>
-{% if entry.link and entry.link != "" %}
 </a>
-{% else %}
-</div>
-{% endif %}

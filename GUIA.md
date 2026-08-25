@@ -1,46 +1,88 @@
 # Guía rápida de tu web
 
-Web basada en el tema Serif de Zerostatic (MIT license), adaptada a tema oscuro rojo/morado, con dos secciones: "Portfolio" y "Analysis".
+Web basada en el tema Serif de Zerostatic (MIT license), adaptada a tema oscuro rojo/morado, con tres secciones ("Portfolio", "Journal" y "My Talented Friends") y **dos idiomas: español (por defecto) e inglés**.
 
-## Secciones de la web
+## Cómo funciona el idioma
 
-- **About Me** (`index.md`) — la portada. Foto, texto de presentación, tu email/redes, y un adelanto de tus piezas destacadas (portfolio + analysis).
-- **Portfolio** (`portfolio.md` + `_data/portfolio.yml`) — tus obras.
-- **Analysis** (`analysis.md` + `_data/analysis.yml`) — análisis de obras ajenas que te gustan.
+- El español vive en la raíz del sitio: `/`, `/portfolio/`, `/journal/`, `/friends/`.
+- El inglés vive bajo `/en/`: `/en/`, `/en/portfolio/`, `/en/journal/`, `/en/friends/`.
+- Arriba a la derecha del menú hay un botón **ES/EN** que cambia de idioma en cualquier momento. Si la página en la que estás tiene una traducción concreta enlazada (ver `translation_url` más abajo), te lleva directamente a ella; si no, te lleva a la portada del otro idioma.
+- Todo el texto de la interfaz (botones, "Email:", cabeceras de "Portfolio destacado", etc.) se traduce automáticamente según en qué idioma estés — se controla desde `_data/i18n.yml`, no hace falta tocarlo salvo que quieras cambiar alguna frase fija.
 
-No hay páginas separadas de "Updates" ni de "Contacto": el email y las redes viven en la propia caja de la portada, en Portfolio y en Analysis. El botón "Contactar" abre tu cliente de correo directamente.
+## Escribir contenido en los dos idiomas
 
-## Cómo añadir una obra a Portfolio o a Analysis
+Cada pieza de Portfolio y cada entrada de Journal es un archivo en español y, si quieres traducirla, **otro archivo aparte en inglés**. Son dos escrituras independientes, no una traducción automática.
 
-1. Abre `_data/portfolio.yml` (o `_data/analysis.yml`).
-2. Copia uno de los bloques que empiezan por `- title:` y pégalo debajo, con sus mismos guiones/sangría.
-3. Cambia `title`, `category` (o `work`/`author` en analysis), `image` (súbela primero a la carpeta `images`) y `excerpt`.
-4. `link` es opcional: si lo dejas vacío (`""`), la tarjeta no será clicable; si pones una URL (propia o externa), la tarjeta enlazará ahí.
-5. Pon `featured: true` si además quieres que esa pieza aparezca en la portada (About Me), en la columna correspondiente. Se muestran como máximo 3 piezas destacadas por columna (lo puedes cambiar en `_config.yml`, clave `home.limit_featured`).
-6. Sube los cambios con GitHub Desktop y en 1-2 minutos está publicado.
+- Español → carpetas `_portfolio/` y `_journal/`
+- Inglés → carpetas `_portfolio_en/` y `_journal_en/`
+
+Para enlazar una pieza con su traducción, añade en la cabecera de cada una el campo `translation_url` apuntando a la URL de la otra:
+
+```yaml
+# en _portfolio/mi-proyecto.md
+translation_url: "/en/portfolio/my-project/"
+```
+```yaml
+# en _portfolio_en/my-project.md
+translation_url: "/portfolio/mi-proyecto/"
+```
+
+Esto hace que el botón ES/EN, cuando alguien esté leyendo esa pieza en concreto, lleve exactamente a su traducción (y no solo a la portada del otro idioma). Es opcional: si una pieza no tiene traducción, simplemente no le pongas `translation_url` y el botón de idioma llevará a la portada general del otro idioma.
+
+## Cómo añadir una pieza a Portfolio
+
+1. Ve a `_portfolio` (español) o `_portfolio_en` (inglés).
+2. Copia el archivo de ejemplo (`ejemplo-nombre-del-proyecto.md` o `example-project-name.md`) y ponle un nombre nuevo (minúsculas, sin espacios ni tildes, p. ej. `mi-juego-de-plataformas.md`).
+3. Edita las líneas de arriba (entre `---`): `title`, `category`, `date`, `image` (súbela primero a `images`), `summary`, `featured` (`true` si quieres que también aparezca destacada en la portada) y, si la traduces, `translation_url`.
+4. Escribe el contenido completo debajo, en Markdown.
+5. Sube los cambios con GitHub Desktop.
+
+## Cómo añadir una entrada a Journal
+
+Igual que en Portfolio, pero en `_journal` / `_journal_en`. Si el artículo analiza una obra ajena, rellena también `work` y `author`; si es una entrada de diario sobre tu propia experiencia, déjalos comentados o bórralos.
+
+En ambos casos (Portfolio y Journal), el campo `link` es opcional: solo rellénalo si quieres que la tarjeta lleve a una URL externa (por ejemplo itch.io) en vez de a la página que se genera automáticamente.
+
+## Cómo añadir un amigo/a a "My Talented Friends"
+
+1. Abre `_data/friends.yml`.
+2. Copia el bloque que empieza por `- name:` y pégalo debajo.
+3. Rellena `name`, `image` y `link` (compartidos en los dos idiomas), `description` (en español) y `description_en` (en inglés; si lo dejas vacío, se usa la de español también en la web en inglés).
+4. Sube los cambios con GitHub Desktop.
+
+No hace falta duplicar el archivo de amigos por idioma: es el mismo `_data/friends.yml` para las dos versiones de la web.
+
+## Piezas destacadas en la portada (About Me)
+
+Cualquier pieza de Portfolio o Journal con `featured: true` en su cabecera aparece automáticamente en la portada de su idioma correspondiente. Se muestran como máximo 3 por columna (lo puedes cambiar en `_config.yml`, clave `home.limit_featured`).
 
 ## Tus redes sociales y contacto
 
-- `_data/social.json` → tus enlaces reales (Email, Discord, ArtStation, LinkedIn, itch.io...). Estos iconos aparecen en **About Me**, **Portfolio** y **Analysis**.
-- `_data/contact.yml` → tu email real. Se usa tanto en el botón "Contactar" como en la caja de la portada.
-- El texto que acompaña a los iconos en la portada se edita en `connect_text`, dentro del `index.md`.
+- `_data/social.json` → tus enlaces reales (Email, Discord, ArtStation, LinkedIn, itch.io...). Estos iconos aparecen en ambos idiomas, en About Me, Portfolio y Journal.
+- `_data/contact.yml` → tu email real. Se usa tanto en el botón de contacto como en la caja de la portada.
+- El texto que acompaña a los iconos en la portada se edita en `connect_text`, dentro de `index.md` (español) o `en/index.md` (inglés).
 
 ## Tu foto de perfil (About Me)
 
-Sube tu foto a la carpeta `images` con el nombre exacto `tu-foto.jpg` (sustituyendo la que hay de ejemplo). La foto se recorta automáticamente en formato cuadrado (1:1), así que céntrate en que la cara/sujeto quede centrado en la imagen original.
+Sube tu foto a la carpeta `images` con el nombre exacto `tu-foto.jpg` (sustituyendo la que hay de ejemplo). Se usa igual en las dos versiones del idioma. La foto se recorta automáticamente en formato cuadrado (1:1), así que céntrate en que la cara/sujeto quede centrado en la imagen original.
 
 ## Páginas y datos que puedes editar
 
-- `index.md` → texto de la portada ("Hola, soy Pau")
-- `portfolio.md` / `_data/portfolio.yml` → tus obras
-- `analysis.md` / `_data/analysis.yml` → tus análisis
+- `index.md` / `en/index.md` → texto de la portada
+- `portfolio.md` / `en/portfolio.md` → texto de cabecera de la sección Portfolio
+- `journal.md` / `en/journal.md` → texto de cabecera de la sección Journal
+- `friends.md` / `en/friends.md` → texto de cabecera de "My Talented Friends"
+- `_portfolio/` / `_portfolio_en/` → tus obras (una página por archivo)
+- `_journal/` / `_journal_en/` → tus artículos (una página por archivo)
+- `_data/friends.yml` → tus amigos destacados (compartido, con descripción en los dos idiomas)
 - `_data/contact.yml` → tu email real
-- `_data/social.json` → tus enlaces reales (Email, Discord, ArtStation, LinkedIn, itch.io)
-- `_data/menus.yml` → si quieres cambiar los nombres o el orden del menú
+- `_data/social.json` → tus enlaces reales
+- `_data/menus.yml` → nombres/orden del menú (hay una lista `main` en español y `main_en` en inglés)
+- `_data/i18n.yml` → los textos fijos de la interfaz en cada idioma (botones, etiquetas...)
 
 ## Logo y favicon
 
-El icono del menú y el favicon (`images/logo/icon.png` y los `images/favicon-*.png`) están generados a partir del logo que diste, con los colores ajustados a los del sitio (rojo → morado) y sin blanco. Si quieres cambiarlos, sustituye esos archivos por otros del mismo nombre y tamaño.
+El icono del menú y el favicon (`images/logo/icon.png`, `images/favicon-*.png` y `favicon.ico`) están generados a partir del logo que diste: rojo sólido de marca, sin blanco ni negro (las líneas del dibujo son transparentes, se ve el color de fondo a través de ellas). Si no ves el icono nuevo en la pestaña del navegador, es caché: prueba a cerrar y abrir la pestaña, o Ctrl/Cmd + Shift + R para forzar la recarga.
 
 ## Colores y tipografía
 
@@ -48,4 +90,4 @@ Se controlan desde `assets/css/style.scss`, casi al principio del archivo (varia
 
 ## Importante
 
-No actives ningún "plugin" adicional en `_config.yml` sin comprobar antes que GitHub Pages lo soporta — la mayoría de plugins de terceros no funcionan en el modo de publicación gratuito.
+No actives ningún "plugin" adicional en `_config.yml` sin comprobar antes que GitHub Pages lo soporta — la mayoría de plugins de terceros no funcionan en el modo de publicación gratuito. Todo lo de este sitio (colecciones, permalinks, dos idiomas) funciona sin ningún plugin extra.

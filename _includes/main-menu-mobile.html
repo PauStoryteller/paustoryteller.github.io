@@ -1,10 +1,15 @@
 <div id="main-menu-mobile" class="main-menu-mobile">
-  {% assign mainmenu = site.data.menus.main | sort: 'weight'  %}
+  {% assign menu_key = "main" %}
+  {% if page.lang == "en" %}{% assign menu_key = "main_en" %}{% endif %}
+  {% assign mainmenu = site.data.menus[menu_key] | sort: 'weight' %}
   <ul>
     {% for item in mainmenu %}
     <li class="{% if item.url == page.url %}active{% endif %}">
       <a href="{{ item.url | relative_url }}">{{ item.name }}</a>
     </li>
     {% endfor %}
+    <li class="main-menu-mobile-lang">
+      {% include lang-switch.html %}
+    </li>
   </ul>
 </div>

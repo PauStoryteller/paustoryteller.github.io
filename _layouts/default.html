@@ -1,14 +1,16 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="{{ page.lang | default: 'es' }}">
 
 <head>
   <meta charset="utf-8">
   <title>{% if page.title %}{{page.title}}{% else %}{{ site.title | escape }}{% endif %}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="icon" type="image/png" sizes="32x32" href="{{ '/images/favicon-32x32.png' | relative_url }}">
-  <link rel="icon" type="image/png" sizes="16x16" href="{{ '/images/favicon-16x16.png' | relative_url }}">
-  <link rel="icon" type="image/png" sizes="192x192" href="{{ '/images/favicon-192.png' | relative_url }}">
-  <link rel="apple-touch-icon" sizes="180x180" href="{{ '/images/apple-touch-icon.png' | relative_url }}">
+  <link rel="icon" href="{{ '/favicon.ico' | relative_url }}?v=4">
+  <link rel="shortcut icon" href="{{ '/favicon.ico' | relative_url }}?v=4">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ '/images/favicon-32x32.png' | relative_url }}?v=4">
+  <link rel="icon" type="image/png" sizes="16x16" href="{{ '/images/favicon-16x16.png' | relative_url }}?v=4">
+  <link rel="icon" type="image/png" sizes="192x192" href="{{ '/images/favicon-192.png' | relative_url }}?v=4">
+  <link rel="apple-touch-icon" sizes="180x180" href="{{ '/images/apple-touch-icon.png' | relative_url }}?v=4">
   <!-- Google Fonts CDN -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,6 +20,10 @@
   <link href="{{ '/assets/css/style.css' | relative_url }}" rel="stylesheet">
   
   {% if page.description %}<meta name="description" content="{{ page.description }}" />{% endif %}
+  {% if page.translation_url %}
+  {% assign alt_lang = "en" %}{% if page.lang == "en" %}{% assign alt_lang = "es" %}{% endif %}
+  <link rel="alternate" hreflang="{{ alt_lang }}" href="{{ page.translation_url | absolute_url }}">
+  {% endif %}
   {% if page.meta_title %}<meta property="og:title" content="{{ page.meta_title }}"/>{% else %}<meta property="og:title" content="{{ page.title }}"/>{% endif %}
   <meta property="og:type" content="website"/>
   <meta property="og:url" content="{{ url }}"/>

@@ -5,6 +5,23 @@ main:
   - name: "Portfolio"
     url: "/portfolio/"
     weight: 2
-  - name: "Analysis"
-    url: "/analysis/"
+  - name: "Journal"
+    url: "/journal/"
     weight: 3
+  - name: "Friends"
+    url: "/friends/"
+    weight: 4
+
+main_en:
+  - name: "About Me"
+    url: "/en/"
+    weight: 1
+  - name: "Portfolio"
+    url: "/en/portfolio/"
+    weight: 2
+  - name: "Journal"
+    url: "/en/journal/"
+    weight: 3
+  - name: "Friends"
+    url: "/en/friends/"
+    weight: 4

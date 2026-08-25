@@ -1,0 +1,47 @@
+---
+layout: default
+bodyClass: "page-piece-single"
+---
+{% assign t = site.data.i18n[page.lang | default: "es"] %}
+{% assign is_portfolio = false %}
+{% if page.collection contains "portfolio" %}{% assign is_portfolio = true %}{% endif %}
+{% assign back_url = "/portfolio/" %}
+{% assign back_label = t.back_to_portfolio %}
+{% unless is_portfolio %}
+  {% assign back_label = t.back_to_journal %}
+  {% assign back_url = "/journal/" %}
+{% endunless %}
+{% if page.lang == "en" %}{% assign back_url = "/en" | append: back_url %}{% endif %}
+
+<div class="container pt-6 pt-md-10 pb-6 pb-md-10">
+  <div class="row justify-content-start">
+    <div class="col-12 col-md-8">
+      <a class="back-link" href="{{ back_url | relative_url }}">{{ back_label }}</a>
+
+      <div class="update-meta piece-meta">
+        {% if page.category %}<span class="update-category">{{ page.category }}</span>{% endif %}
+        {% if page.author %}<span class="update-date">{{ page.author }}</span>{% endif %}
+        {% if page.date %}<span class="update-date">{{ page.date | date: "%-d %b %Y" }}</span>{% endif %}
+      </div>
+
+      <h1 class="title">{{ page.title }}</h1>
+      {% if page.work %}<p class="gallery-subwork">{{ t.work_label }} {{ page.work }}</p>{% endif %}
+
+      {% if page.image %}
+      <img class="piece-cover" alt="{{ page.title }}" src="{{ page.image | relative_url }}" />
+      {% endif %}
+
+      <div class="content piece-content">{{ content }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="strip strip-grey">
+  <div class="container pt-6 pb-6 pt-md-8 pb-md-8">
+    <div class="row justify-content-start">
+      <div class="col-12 col-md-8">
+        {% include connect.html title=t.connect_default_title text=t.connect_default_text show_contact=true %}
+      </div>
+    </div>
+  </div>
+</div>

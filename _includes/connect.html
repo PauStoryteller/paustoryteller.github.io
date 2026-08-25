@@ -1,3 +1,4 @@
+{% assign t = site.data.i18n[page.lang | default: "es"] %}
 <div class="connect-block">
   {% if include.title %}<h3 class="connect-title">{{ include.title }}</h3>{% endif %}
   {% if include.text %}<p class="connect-text">{{ include.text }}</p>{% endif %}
@@ -5,7 +6,7 @@
     {% include social.html %}
     {% if include.show_contact %}
     <a href="mailto:{{ site.data.contact.email }}" class="connect-contact-link">
-      <span class="connect-contact-icon" aria-hidden="true">&#9993;</span> Contactar
+      <span class="connect-contact-icon" aria-hidden="true">&#9993;</span> {{ t.contact_button }}
     </a>
     {% endif %}
   </div>
