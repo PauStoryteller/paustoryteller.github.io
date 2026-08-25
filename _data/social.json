@@ -1,27 +1,27 @@
 [
   {
     "name": "Email",
-    "link": "mailto:tu-email@example.com",
+    "link": "mailto:paustoryteller@gmail.com",
     "image": "images/social/email.svg"
   },
   {
     "name": "Discord",
-    "link": "https://discord.com/users/tu-usuario",
+    "link": "https://discordapp.com/users/699570797181796383",
     "image": "images/social/discord.svg"
   },
   {
     "name": "ArtStation",
-    "link": "https://www.artstation.com/tu-usuario",
+    "link": "https://www.artstation.com/paustoryteller",
     "image": "images/social/artstation.svg"
   },
   {
     "name": "LinkedIn",
-    "link": "https://www.linkedin.com/in/tu-usuario",
+    "link": "https://https://www.linkedin.com/in/paula-nieto-guti%C3%A9rrez/",
     "image": "images/social/linkedin.svg"
   },
   {
     "name": "itch.io",
-    "link": "https://tu-usuario.itch.io",
+    "link": "https://paustoryteller.itch.io/",
     "image": "images/social/itch.svg"
   }
 ]

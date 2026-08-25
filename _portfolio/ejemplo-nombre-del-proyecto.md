@@ -1,26 +1,32 @@
 ---
-title: "Nombre del proyecto"
-category: "Videojuego"
-date: 2026-06-10
-image: "images/austin-distel-nGc5RT2HmF0-unsplash.jpg"
-summary: "Resumen corto de en qué consiste este proyecto, para que se vea en la galería y en la portada."
+title: "Monstruo Pescadoso"
+category: "Modelado 3D"
+date: Abril 2025
+image: "images/posts/fish/fishfrontpers.jpg"
+summary: "Una de mis primeras esculturas en ZBrush."
 featured: true
-translation_url: "/en/portfolio/example-project-name/"
+translation_url: "/en/portfolio/fishy-monster/"
 # link: ""   # opcional: si lo rellenas (por ejemplo con una URL de itch.io), la tarjeta enlazará ahí en vez de a esta página
 ---
-
-Esto es una **página de ejemplo**. Bórrala o edítala para tu primera pieza de verdad.
-
-Escribe aquí el contenido completo de tu proyecto: en qué consistía, qué herramientas usaste, qué problemas resolviste y qué aprendiste. Puedes usar todo el formato de Markdown habitual:
-
 ## Sobre el proyecto
 
-Cuenta el contexto: ¿era un proyecto personal, de estudios, un game jam...?
+Este es uno de los primeros modelos que hice en Zbrush como parte de un proyecto de escultura digital para la Escuela Superior Internacional de Diseño. Me arrepiento de no tener el proyecto, me hubiera gustado hacerle una retopología para dejarlo listo para integrar en motor, pero hay piezas en el portfolio más interesantes para eso. En su día me ayudó bastante a familiarizarme con las herramientas básicas y a desarrollar un pipeline de escultura en ZBrush.
 
-## Proceso
+![Turnaround Fish](images/posts/fish/fishturnaround.jpg)
+![Frontal Perspective Fish](images/posts/fish/fishfrontpers.jpg)
+![Back Perspective Fish](images/posts/fish/fishbackpers.jpg)
+![Side Fish](images/posts/fish/fishside.jpg)
+![Back Fish](images/posts/fish/fishback.jpg)
+![Front Fish](images/posts/fish/fishfront.jpg)
 
-Explica cómo lo hiciste, qué decisiones tomaste y por qué.
+## Aquí algunas de las cosas que aprendí:
 
-## Resultado
+- Estudio de referencias
 
-Qué conseguiste, qué te gustaría mejorar, enlaces a jugarlo o verlo si aplica.
+- Escultura 3D con ZBrush
+
+- Texturizado pintado a mano
+
+## Sobre el proceso
+
+En la sección "Journal" suelo escribir más detalladamente sobre mis procesos creativos y el trasfondo detrás de cada pieza. En este caso, recomiendo la siguiente entrada:
