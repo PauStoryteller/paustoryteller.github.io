@@ -2,16 +2,103 @@
   "use strict";
   var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  // ---- Background shapes: nudge away from the cursor when it gets close ----
+  // ---- Background shapes: nudge away from the cursor + highlight nearby dots ----
   var wraps = document.querySelectorAll(".bg-shape-wrap");
   if (wraps.length && !reduceMotion) {
-    var RADIUS = 240;   // px, how close the cursor needs to be to affect a shape
-    var MAX_PUSH = 30;  // px, how far a shape can be nudged away
+    var PUSH_RADIUS = 240;   // px, how close the cursor needs to be to nudge a whole shape
+    var MAX_PUSH = 26;       // px, how far a shape can be nudged away
+    var DOT_RADIUS = 65;     // px (in the shape's own coordinate space) for the dot glow
+
     var mouseX = -9999, mouseY = -9999;
     var ticking = false;
-    var shapes = Array.prototype.map.call(wraps, function (el) {
-      return { el: el, ox: 0, oy: 0 };
+
+    var shapes = Array.prototype.map.call(wraps, function (wrap) {
+      var svg = wrap.querySelector(".bg-shape");
+      var dots = svg ? Array.prototype.map.call(svg.querySelectorAll(".ht-dot"), function (c) {
+        return {
+          el: c,
+          cx: parseFloat(c.getAttribute("cx")),
+          cy: parseFloat(c.getAttribute("cy")),
+          baseR: parseFloat(c.getAttribute("r")),
+          baseO: parseFloat(c.getAttribute("fill-opacity") || "1")
+        };
+      }) : [];
+      return { wrap: wrap, svg: svg, dots: dots, activeDots: [], ox: 0, oy: 0 };
     });
+
+    function resetDots(shape) {
+      for (var i = 0; i < shape.activeDots.length; i++) {
+        var d = shape.activeDots[i];
+        d.el.setAttribute("r", d.baseR);
+        d.el.setAttribute("fill-opacity", d.baseO);
+      }
+      shape.activeDots = [];
+    }
+
+    function updateShape(shape) {
+      var rect = shape.wrap.getBoundingClientRect();
+      var cx = rect.left + rect.width / 2;
+      var cy = rect.top + rect.height / 2;
+      var dx = cx - mouseX;
+      var dy = cy - mouseY;
+      var dist = Math.sqrt(dx * dx + dy * dy) || 1;
+
+      // whole-shape gentle push
+      var tx = 0, ty = 0;
+      if (dist < PUSH_RADIUS) {
+        var strength = 1 - dist / PUSH_RADIUS;
+        tx = (dx / dist) * MAX_PUSH * strength;
+        ty = (dy / dist) * MAX_PUSH * strength;
+      }
+      shape.ox += (tx - shape.ox) * 0.15;
+      shape.oy += (ty - shape.oy) * 0.15;
+      shape.wrap.style.setProperty("--push-x", shape.ox.toFixed(1) + "px");
+      shape.wrap.style.setProperty("--push-y", shape.oy.toFixed(1) + "px");
+
+      // per-dot highlight, only if the cursor is anywhere near this shape's box
+      if (shape.svg && shape.dots.length &&
+          mouseX > rect.left - DOT_RADIUS && mouseX < rect.right + DOT_RADIUS &&
+          mouseY > rect.top - DOT_RADIUS && mouseY < rect.bottom + DOT_RADIUS) {
+        var ctm = shape.svg.getScreenCTM();
+        if (ctm) {
+          var pt = shape.svg.createSVGPoint();
+          pt.x = mouseX; pt.y = mouseY;
+          var local = pt.matrixTransform(ctm.inverse());
+          var newActive = [];
+          for (var j = 0; j < shape.dots.length; j++) {
+            var d = shape.dots[j];
+            var ddx = d.cx - local.x, ddy = d.cy - local.y;
+            var ddist = Math.sqrt(ddx * ddx + ddy * ddy);
+            if (ddist < DOT_RADIUS) {
+              var t = 1 - ddist / DOT_RADIUS;
+              d.el.setAttribute("r", (d.baseR + t * d.baseR * 1.6).toFixed(2));
+              d.el.setAttribute("fill-opacity", Math.min(1, d.baseO + t * 0.55).toFixed(2));
+              newActive.push(d);
+            } else {
+              d.el.setAttribute("r", d.baseR);
+              d.el.setAttribute("fill-opacity", d.baseO);
+            }
+          }
+          shape.activeDots = newActive;
+        }
+      } else if (shape.activeDots.length) {
+        resetDots(shape);
+      }
+
+      return Math.abs(tx - shape.ox) > 0.05 || Math.abs(ty - shape.oy) > 0.05;
+    }
+
+    function update() {
+      var settled = true;
+      for (var i = 0; i < shapes.length; i++) {
+        if (updateShape(shapes[i])) settled = false;
+      }
+      if (!settled) {
+        requestAnimationFrame(update);
+      } else {
+        ticking = false;
+      }
+    }
 
     function onMove(e) {
       mouseX = e.clientX;
@@ -28,35 +115,6 @@
       if (!ticking) {
         ticking = true;
         requestAnimationFrame(update);
-      }
-    }
-
-    function update() {
-      var settled = true;
-      for (var i = 0; i < shapes.length; i++) {
-        var s = shapes[i];
-        var rect = s.el.getBoundingClientRect();
-        var cx = rect.left + rect.width / 2;
-        var cy = rect.top + rect.height / 2;
-        var dx = cx - mouseX;
-        var dy = cy - mouseY;
-        var dist = Math.sqrt(dx * dx + dy * dy) || 1;
-        var tx = 0, ty = 0;
-        if (dist < RADIUS) {
-          var strength = 1 - dist / RADIUS;
-          tx = (dx / dist) * MAX_PUSH * strength;
-          ty = (dy / dist) * MAX_PUSH * strength;
-        }
-        s.ox += (tx - s.ox) * 0.15;
-        s.oy += (ty - s.oy) * 0.15;
-        s.el.style.setProperty("--push-x", s.ox.toFixed(1) + "px");
-        s.el.style.setProperty("--push-y", s.oy.toFixed(1) + "px");
-        if (Math.abs(tx - s.ox) > 0.05 || Math.abs(ty - s.oy) > 0.05) settled = false;
-      }
-      if (!settled) {
-        requestAnimationFrame(update);
-      } else {
-        ticking = false;
       }
     }
 

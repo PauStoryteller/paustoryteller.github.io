@@ -63,22 +63,18 @@
 
 @keyframes hero-in-from-left {
   0% {
-    opacity: 0;
-    transform: translateX(-36px);
+    transform: translateX(-40px);
   }
   100% {
-    opacity: 1;
     transform: translateX(0);
   }
 }
 
 @keyframes hero-in-from-right {
   0% {
-    opacity: 0;
-    transform: translateX(36px) rotate(1.5deg);
+    transform: translateX(40px) rotate(1.5deg);
   }
   100% {
-    opacity: 1;
     transform: translateX(0) rotate(0deg);
   }
 }

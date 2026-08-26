@@ -9,17 +9,23 @@
 .bg-shape-wrap {
   position: absolute;
   will-change: transform;
-  // JS sets --push-x / --push-y on hover-proximity; defaults to 0 when idle
+  // JS sets --push-x / --push-y on cursor-proximity; defaults to 0 when idle
   transform: translate(var(--push-x, 0px), var(--push-y, 0px));
   transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .bg-shape {
   display: block;
-  opacity: 0.8;
+  width: 100%;
+  height: auto;
+  opacity: 0.85;
+
+  .ht-dot {
+    transition: r 0.18s ease-out, fill-opacity 0.18s ease-out;
+  }
 }
 
-// Shape 1 — top-left shard, red
+// 1 — top-left large shard, red
 .bg-shape-wrap-1 {
   top: -40px;
   left: -60px;
@@ -27,15 +33,15 @@
   .bg-shape { animation: bg-spin-1 26s ease-in-out infinite; }
 }
 
-// Shape 2 — right side chevron, purple
+// 2 — right-middle chevron, purple
 .bg-shape-wrap-2 {
-  top: 14%;
+  top: 12%;
   right: -70px;
-  width: 260px;
+  width: 250px;
   .bg-shape { animation: bg-spin-2 22s ease-in-out infinite; }
 }
 
-// Shape 3 — bottom-left parallelogram, purple
+// 3 — bottom-left parallelogram, purple
 .bg-shape-wrap-3 {
   bottom: -60px;
   left: -40px;
@@ -43,12 +49,28 @@
   .bg-shape { animation: bg-spin-3 30s ease-in-out infinite; }
 }
 
-// Shape 4 — bottom-right small shard, red
+// 4 — bottom-right small shard, red
 .bg-shape-wrap-4 {
   bottom: 6%;
   right: 4%;
-  width: 190px;
+  width: 180px;
   .bg-shape { animation: bg-spin-4 20s ease-in-out infinite; }
+}
+
+// 5 — top-right thin sliver, purple (new)
+.bg-shape-wrap-5 {
+  top: -20px;
+  right: 14%;
+  width: 110px;
+  .bg-shape { animation: bg-spin-5 24s ease-in-out infinite; }
+}
+
+// 6 — left-middle small diamond, red (new)
+.bg-shape-wrap-6 {
+  top: 46%;
+  left: 2%;
+  width: 130px;
+  .bg-shape { animation: bg-spin-6 18s ease-in-out infinite; }
 }
 
 @keyframes bg-spin-1 {
@@ -72,6 +94,16 @@
 @keyframes bg-spin-4 {
   0%   { transform: translate(0, 0) rotate(0deg) scale(1); }
   50%  { transform: translate(-12px, 14px) rotate(-10deg) scale(1.06); }
+  100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+}
+@keyframes bg-spin-5 {
+  0%   { transform: translate(0, 0) rotate(0deg) scale(1); }
+  50%  { transform: translate(8px, 12px) rotate(12deg) scale(1.08); }
+  100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+}
+@keyframes bg-spin-6 {
+  0%   { transform: translate(0, 0) rotate(0deg) scale(1); }
+  50%  { transform: translate(-10px, -10px) rotate(-14deg) scale(1.1); }
   100% { transform: translate(0, 0) rotate(0deg) scale(1); }
 }
 
