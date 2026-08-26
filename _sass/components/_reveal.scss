@@ -1,22 +1,12 @@
 .reveal {
   opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  transform: translateY(30px) scale(0.96);
+  transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1), transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .reveal.is-visible {
   opacity: 1;
-  transform: translateY(0);
-}
-
-// Card-style items get a livelier pop: slight scale + tilt settling into place
-.reveal-stagger > .reveal {
-  transform: translateY(26px) scale(0.92) rotate(-1.2deg);
-  transition: opacity 0.55s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.reveal-stagger > .reveal.is-visible {
-  transform: translateY(0) scale(1) rotate(0deg);
+  transform: translateY(0) scale(1);
 }
 
 // Staggered delays for items inside a grid/stack of reveal children
@@ -28,8 +18,7 @@
 .reveal-stagger > .reveal:nth-child(6) { transition-delay: 0.4s; }
 
 @media (prefers-reduced-motion: reduce) {
-  .reveal,
-  .reveal-stagger > .reveal {
+  .reveal {
     opacity: 1;
     transform: none;
     transition: none;

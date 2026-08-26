@@ -2,28 +2,20 @@
   "use strict";
   var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  // ---- Cursor-reactive background shapes (parallax) ----
+  // ---- Background shapes: nudge away from the cursor when it gets close ----
   var wraps = document.querySelectorAll(".bg-shape-wrap");
-  var spotlight = document.getElementById("bg-spotlight");
-
-  if ((wraps.length || spotlight) && !reduceMotion) {
-    var mx = 0, my = 0, cx = 0, cy = 0, ticking = false;
-    var spotShown = false;
+  if (wraps.length && !reduceMotion) {
+    var RADIUS = 240;   // px, how close the cursor needs to be to affect a shape
+    var MAX_PUSH = 30;  // px, how far a shape can be nudged away
+    var mouseX = -9999, mouseY = -9999;
+    var ticking = false;
+    var shapes = Array.prototype.map.call(wraps, function (el) {
+      return { el: el, ox: 0, oy: 0 };
+    });
 
     function onMove(e) {
-      var w = window.innerWidth, h = window.innerHeight;
-      mx = (e.clientX / w - 0.5) * 2; // -1 .. 1
-      my = (e.clientY / h - 0.5) * 2;
-
-      if (spotlight) {
-        spotlight.style.setProperty("--spot-x", ((e.clientX / w) * 100).toFixed(1) + "%");
-        spotlight.style.setProperty("--spot-y", ((e.clientY / h) * 100).toFixed(1) + "%");
-        if (!spotShown) {
-          spotlight.classList.add("is-active");
-          spotShown = true;
-        }
-      }
-
+      mouseX = e.clientX;
+      mouseY = e.clientY;
       if (!ticking) {
         ticking = true;
         requestAnimationFrame(update);
@@ -31,22 +23,37 @@
     }
 
     function onLeave() {
-      if (spotlight) {
-        spotlight.classList.remove("is-active");
-        spotShown = false;
+      mouseX = -9999;
+      mouseY = -9999;
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
       }
     }
 
     function update() {
-      cx += (mx - cx) * 0.06;
-      cy += (my - cy) * 0.06;
-      for (var i = 0; i < wraps.length; i++) {
-        var depth = parseFloat(wraps[i].getAttribute("data-depth")) || 25;
-        var tx = (cx * depth).toFixed(1);
-        var ty = (cy * depth).toFixed(1);
-        wraps[i].style.transform = "translate(" + tx + "px," + ty + "px)";
+      var settled = true;
+      for (var i = 0; i < shapes.length; i++) {
+        var s = shapes[i];
+        var rect = s.el.getBoundingClientRect();
+        var cx = rect.left + rect.width / 2;
+        var cy = rect.top + rect.height / 2;
+        var dx = cx - mouseX;
+        var dy = cy - mouseY;
+        var dist = Math.sqrt(dx * dx + dy * dy) || 1;
+        var tx = 0, ty = 0;
+        if (dist < RADIUS) {
+          var strength = 1 - dist / RADIUS;
+          tx = (dx / dist) * MAX_PUSH * strength;
+          ty = (dy / dist) * MAX_PUSH * strength;
+        }
+        s.ox += (tx - s.ox) * 0.15;
+        s.oy += (ty - s.oy) * 0.15;
+        s.el.style.setProperty("--push-x", s.ox.toFixed(1) + "px");
+        s.el.style.setProperty("--push-y", s.oy.toFixed(1) + "px");
+        if (Math.abs(tx - s.ox) > 0.05 || Math.abs(ty - s.oy) > 0.05) settled = false;
       }
-      if (Math.abs(mx - cx) > 0.001 || Math.abs(my - cy) > 0.001) {
+      if (!settled) {
         requestAnimationFrame(update);
       } else {
         ticking = false;
@@ -61,8 +68,7 @@
   var revealEls = document.querySelectorAll(".reveal");
   if (revealEls.length) {
     if (reduceMotion || !("IntersectionObserver" in window)) {
-      revealEls.forEach ? revealEls.forEach(function (el) { el.classList.add("is-visible"); })
-        : Array.prototype.forEach.call(revealEls, function (el) { el.classList.add("is-visible"); });
+      Array.prototype.forEach.call(revealEls, function (el) { el.classList.add("is-visible"); });
     } else {
       var io = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {

@@ -18,17 +18,15 @@ bodyClass: "page-home"
 
 <div class="intro">
   <div class="container">
-    <div class="intro-card reveal">
-      <div class="row justify-content-start align-items-center">
-        <div class="col-12 col-md-7 col-lg-6 order-2 order-md-1">
-          {{ content }}
-        </div>
-        {% if page.intro_image %}
-        <div class="col-12 col-md-5 col-lg-6 order-1 order-md-2 position-relative">
-          <img alt="{{ page.title }}" class="{% if page.intro_photo %}intro-photo{% else %}intro-image{% if page.intro_image_absolute %} intro-image-absolute{% endif %}{% if page.intro_image_hide_on_mobile %} intro-image-hide-mobile{% endif %}{% endif %}" src="{{ page.intro_image | relative_url }}" />
-        </div>
-        {% endif %}
+    <div class="row justify-content-start align-items-center">
+      <div class="col-12 col-md-7 col-lg-6 order-2 order-md-1 hero-in-left">
+        {{ content }}
       </div>
+      {% if page.intro_image %}
+      <div class="col-12 col-md-5 col-lg-6 order-1 order-md-2 position-relative hero-in-right">
+        <img alt="{{ page.title }}" class="{% if page.intro_photo %}intro-photo{% else %}intro-image{% if page.intro_image_absolute %} intro-image-absolute{% endif %}{% if page.intro_image_hide_on_mobile %} intro-image-hide-mobile{% endif %}{% endif %}" src="{{ page.intro_image | relative_url }}" />
+      </div>
+      {% endif %}
     </div>
     {% if page.show_call_box %}
     <div class="row mt-4 mt-md-5">
