@@ -103,9 +103,9 @@ Importante: si tu repositorio en GitHub no se llama `TU-USUARIO.github.io` sino 
 
 ## Fondo dinámico, scroll y hover
 
-El fondo son 4 cúmulos de puntos (estilo halftone, en rojo/morado) que flotan solas con un ligero giro, reaccionan al cursor moviéndose en paralaje, y además hay un halo suave que sigue al puntero de cerca (`.bg-spotlight`). No aparecen en las páginas de pieza de Portfolio/Journal, para que la lectura quede limpia. También hay una animación de aparición al hacer scroll en las secciones principales, con un poco de rebote para que se sienta más viva, y las tarjetas se inclinan levemente al pasar el cursor. Todo esto respeta la preferencia de "reducir movimiento" del sistema operativo del visitante (accesibilidad) — si la tienen activada, no se anima nada.
+El fondo es un campo continuo de puntos estilo halftone (rojo/morado) dibujado en un `<canvas>`, que cubre toda la pantalla con un patrón de bandas diagonales y un par de "manchas de tinta" más densas en las esquinas — inspirado directamente en las referencias que compartiste. Es interactivo de dos formas: el cursor actúa como una linterna que ilumina los puntos a su alrededor al pasar por encima, y al hacer click (o tocar en móvil) se genera una onda que se expande desde ese punto y se desvanece. No aparece en las páginas de pieza de Portfolio/Journal, para que la lectura quede limpia. También hay una animación de aparición al hacer scroll en las secciones principales (con un poco de rebote), y las tarjetas se inclinan levemente al pasar el cursor. Todo esto respeta la preferencia de "reducir movimiento" del sistema operativo del visitante (accesibilidad) — si la tienen activada, el fondo se queda estático y no hay animaciones.
 
-Los archivos relevantes si algún día quieres tocarlos: `_includes/bg-shapes.html` + `_sass/components/_bg-shapes.scss` (formas y halo), `assets/js/effects.js` (cursor y scroll), `images/bg/blob-*.svg` (los propios cúmulos de puntos — puedes regenerarlos o sustituirlos por otros).
+Los archivos relevantes si algún día quieres tocarlos: `_includes/bg-canvas.html` (el elemento canvas), `assets/js/bg-canvas.js` (todo el dibujado e interactividad — el patrón, el brillo del cursor y las ondas de click), `_sass/components/_bg-shapes.scss` (solo el posicionamiento), `assets/js/effects.js` (animación de aparición al hacer scroll).
 
 ## Importante
 
