@@ -107,6 +107,13 @@ El fondo es una constelación de puntos (rojo/morado) dibujada en un `<canvas>`,
 
 Los archivos relevantes si algún día quieres tocarlos: `_includes/bg-canvas.html` (el elemento canvas), `assets/js/bg-canvas.js` (todo el dibujado e interactividad — los puntos, las conexiones, el nodo del cursor y los pulsos de click), `_sass/components/_bg-shapes.scss` (solo el posicionamiento), `assets/js/effects.js` (animación de aparición al hacer scroll).
 
+## Bordes angulares y mapa de nodos
+
+Siguiendo el mismo espíritu de constelación, dos elementos más de la página tienen forma no rectangular:
+
+- **Bordes angulares**: donde cambia de sección (entre el hero y "Destacados" en la portada, y antes de los bloques de contacto en Portfolio/Journal/piezas) el borde es una línea quebrada en varios ángulos en vez de recto. Se controla con la clase `jagged-top` en `_sass/components/_jagged-edge.scss`.
+- **Mapa de nodos**: en las cuadrículas de Portfolio, Journal y "My Talented Friends", las tarjetas se desplazan en zigzag (unas más arriba, otras más abajo) y una línea fina rojo→morado las conecta en secuencia por detrás, como un camino que las atraviesa. Se recalcula automáticamente al cambiar el tamaño de ventana. Archivos: `_sass/components/_node-map.scss` (el zigzag y el estilo de la línea) y `assets/js/node-map.js` (el cálculo de las posiciones reales y el dibujado de la línea).
+
 ## Importante
 
 No actives ningún "plugin" adicional en `_config.yml` sin comprobar antes que GitHub Pages lo soporta — la mayoría de plugins de terceros no funcionan en el modo de publicación gratuito. Todo lo de este sitio (colecciones, permalinks, dos idiomas) funciona sin ningún plugin extra.

@@ -8,7 +8,7 @@
 {% else %}
   {% assign href = entry.url | relative_url %}
 {% endif %}
-<a class="update-card node-frame" href="{{ href }}"{% if is_external %} target="_blank" rel="noopener"{% endif %}>
+<a class="update-card" href="{{ href }}"{% if is_external %} target="_blank" rel="noopener"{% endif %}>
   {% if entry.image %}
   <div class="update-card-image">
     <img alt="{{ entry.title }}" src="{{ entry.image | relative_url }}" />

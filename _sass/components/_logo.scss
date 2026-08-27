@@ -50,32 +50,4 @@
     background-clip: text;
     color: transparent;
   }
-
-  .logo-node {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background-color: $secondary;
-    box-shadow: 0 0 0 3px rgba(157, 127, 234, 0.2);
-    flex-shrink: 0;
-    margin-left: 2px;
-    animation: logo-node-pulse 2.6s ease-in-out infinite;
-  }
-}
-
-@keyframes logo-node-pulse {
-  0%, 100% {
-    opacity: 0.55;
-    transform: scale(0.85);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.15);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .logo-node {
-    animation: none;
-  }
 }

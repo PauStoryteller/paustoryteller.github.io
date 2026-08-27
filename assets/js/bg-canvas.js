@@ -10,7 +10,7 @@
   var SECONDARY = [157, 127, 234]; // $secondary purple
 
   var LINK_DIST = 150;       // max distance to draw a connection between two points
-  var HOVER_LINK_DIST = 210; // max distance for the cursor to "join" nearby points
+  var HOVER_LINK_DIST = 180; // max distance for the cursor to "join" nearby points
   var MIN_POINT_DIST = 40;   // minimum spacing between points when generating them
   var PULSE_SPEED = 0.35;    // px per ms
   var PULSE_WIDTH = 70;
@@ -139,9 +139,9 @@
         var dxm = pc.x - mouseX, dym = pc.y - mouseY;
         var distm = Math.sqrt(dxm * dxm + dym * dym);
         if (distm < HOVER_LINK_DIST) {
-          var a2 = (1 - distm / HOVER_LINK_DIST) * 0.8;
+          var a2 = (1 - distm / HOVER_LINK_DIST) * 0.62;
           ctx.strokeStyle = rgba(pc.color, a2);
-          ctx.lineWidth = 1.2 + (1 - distm / HOVER_LINK_DIST) * 1.2;
+          ctx.lineWidth = 1.1 + (1 - distm / HOVER_LINK_DIST) * 0.8;
           ctx.beginPath();
           ctx.moveTo(mouseX, mouseY);
           ctx.lineTo(pc.x, pc.y);
@@ -159,9 +159,9 @@
         if (dh < HOVER_LINK_DIST) hoverBoost = (1 - dh / HOVER_LINK_DIST);
       }
       var pulseBoost = pulses.length ? pulseBoostAt(pk.x, pk.y, now) : 0;
-      var boost = Math.max(hoverBoost, pulseBoost);
-      var radius = pk.r + boost * 4.2;
-      var alpha = 0.55 + boost * 0.55;
+      var boost = Math.max(hoverBoost * 0.85, pulseBoost);
+      var radius = pk.r + boost * 3.4;
+      var alpha = 0.55 + boost * 0.5;
       ctx.beginPath();
       ctx.fillStyle = rgba(pk.color, alpha);
       ctx.arc(pk.x, pk.y, radius, 0, 6.2832);

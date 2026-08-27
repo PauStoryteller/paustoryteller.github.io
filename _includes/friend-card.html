@@ -4,7 +4,7 @@
 {% if page.lang == "en" and friend.description_en and friend.description_en != "" %}
   {% assign description = friend.description_en %}
 {% endif %}
-<a class="friend-card node-frame" href="{{ friend.link }}"{% if is_external %} target="_blank" rel="noopener"{% endif %}>
+<a class="friend-card" href="{{ friend.link }}"{% if is_external %} target="_blank" rel="noopener"{% endif %}>
   {% if friend.image %}
   <div class="friend-card-image">
     <img alt="{{ friend.name }}" src="{{ friend.image | relative_url }}" />

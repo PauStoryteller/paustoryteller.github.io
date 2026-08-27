@@ -13,14 +13,23 @@ bodyClass: "page-gallery"
 </div>
 
 <div class="container pt-4 pb-6 pb-md-10">
-  <div class="row reveal-stagger">
+  <div class="row reveal-stagger node-map">
+    <svg class="node-map-svg" aria-hidden="true">
+      <defs>
+        <linearGradient id="node-map-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#e5484d" />
+          <stop offset="100%" stop-color="#9d7fea" />
+        </linearGradient>
+      </defs>
+      <path class="node-map-line" d="" />
+    </svg>
     {% assign items = "" | split: "" %}
     {% assign raw_items = site[page.data_source] %}
     {% if raw_items %}
       {% assign items = raw_items | sort: "date" | reverse %}
     {% endif %}
     {% for entry in items %}
-    <div class="col-12 col-md-6 col-lg-4 mb-3 reveal">
+    <div class="col-12 col-md-6 col-lg-4 mb-3 reveal node-map-item">
       {% include work-card.html entry=entry %}
     </div>
     {% endfor %}
@@ -28,13 +37,10 @@ bodyClass: "page-gallery"
 </div>
 
 {% if page.show_connect %}
-<div class="strip strip-grey">
-  <div class="container pt-6 pb-6 pt-md-8 pb-md-8">
+<div class="strip strip-grey jagged-top">
+  <div class="container pb-6 pb-md-8">
     <div class="row justify-content-start">
       <div class="col-12 col-md-8 reveal">
-        <div class="constellation-divider">
-          <div class="constellation-divider-dots"><span></span><span></span><span></span></div>
-        </div>
         {% include connect.html title=page.connect_title text=page.connect_text show_contact=true %}
       </div>
     </div>
