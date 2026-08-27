@@ -1,0 +1,92 @@
+// Corner "node" accents — ties boxed content into the constellation theme:
+// each box reads as a node in the network, with two small connector
+// points glowing at opposite corners.
+.node-frame {
+  position: relative;
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    z-index: 2;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    pointer-events: none;
+  }
+
+  &::before {
+    top: 6px;
+    left: 6px;
+    background-color: $primary;
+    box-shadow: 0 0 0 3px rgba(229, 72, 77, 0.18);
+  }
+
+  &::after {
+    bottom: 6px;
+    right: 6px;
+    background-color: $secondary;
+    box-shadow: 0 0 0 3px rgba(157, 127, 234, 0.18);
+  }
+
+  &:hover::before,
+  &:hover::after {
+    transform: scale(1.7);
+  }
+
+  &:hover::before {
+    box-shadow: 0 0 0 5px rgba(229, 72, 77, 0.28);
+  }
+
+  &:hover::after {
+    box-shadow: 0 0 0 5px rgba(157, 127, 234, 0.28);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .node-frame::before,
+  .node-frame::after {
+    transition: none;
+  }
+}
+
+// A thin connecting line with small node dots — used as a section divider,
+// e.g. above the "connect" blocks at the bottom of a page.
+.constellation-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 28px;
+  color: $primary;
+
+  &::before,
+  &::after {
+    content: "";
+    flex: 1 1 auto;
+    height: 1px;
+    background: linear-gradient(to right, transparent, darken($white-offset, 8%), transparent);
+  }
+
+  .constellation-divider-dots {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 0 0 auto;
+  }
+
+  .constellation-divider-dots span {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background-color: $primary;
+    &:nth-child(2) {
+      background-color: mix($primary, $secondary, 50%);
+      width: 5px;
+      height: 5px;
+    }
+    &:nth-child(3) {
+      background-color: $secondary;
+    }
+  }
+}

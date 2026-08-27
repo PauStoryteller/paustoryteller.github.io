@@ -10,8 +10,8 @@
   var SECONDARY = [157, 127, 234]; // $secondary purple
 
   var LINK_DIST = 150;       // max distance to draw a connection between two points
-  var HOVER_LINK_DIST = 170; // max distance for the cursor to "join" nearby points
-  var MIN_POINT_DIST = 46;   // minimum spacing between points when generating them
+  var HOVER_LINK_DIST = 210; // max distance for the cursor to "join" nearby points
+  var MIN_POINT_DIST = 40;   // minimum spacing between points when generating them
   var PULSE_SPEED = 0.35;    // px per ms
   var PULSE_WIDTH = 70;
   var PULSE_LIFE = 1400;     // ms
@@ -40,7 +40,7 @@
   function buildPoints() {
     points = [];
     var area = W * H;
-    var count = Math.round(Math.min(170, Math.max(45, area / 15500)));
+    var count = Math.round(Math.min(230, Math.max(60, area / 11500)));
     var attempts = 0;
     var maxAttempts = count * 50;
     while (points.length < count && attempts < maxAttempts) {
@@ -139,9 +139,9 @@
         var dxm = pc.x - mouseX, dym = pc.y - mouseY;
         var distm = Math.sqrt(dxm * dxm + dym * dym);
         if (distm < HOVER_LINK_DIST) {
-          var a2 = (1 - distm / HOVER_LINK_DIST) * 0.55;
+          var a2 = (1 - distm / HOVER_LINK_DIST) * 0.8;
           ctx.strokeStyle = rgba(pc.color, a2);
-          ctx.lineWidth = 1.2;
+          ctx.lineWidth = 1.2 + (1 - distm / HOVER_LINK_DIST) * 1.2;
           ctx.beginPath();
           ctx.moveTo(mouseX, mouseY);
           ctx.lineTo(pc.x, pc.y);
@@ -159,9 +159,9 @@
         if (dh < HOVER_LINK_DIST) hoverBoost = (1 - dh / HOVER_LINK_DIST);
       }
       var pulseBoost = pulses.length ? pulseBoostAt(pk.x, pk.y, now) : 0;
-      var boost = Math.max(hoverBoost * 0.8, pulseBoost);
-      var radius = pk.r + boost * 3.2;
-      var alpha = 0.55 + boost * 0.45;
+      var boost = Math.max(hoverBoost, pulseBoost);
+      var radius = pk.r + boost * 4.2;
+      var alpha = 0.55 + boost * 0.55;
       ctx.beginPath();
       ctx.fillStyle = rgba(pk.color, alpha);
       ctx.arc(pk.x, pk.y, radius, 0, 6.2832);
