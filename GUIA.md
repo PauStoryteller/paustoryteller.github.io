@@ -2,7 +2,7 @@
 
 Web basada en el tema Serif de Zerostatic (MIT license), adaptada a tema oscuro rojo/morado, con tres secciones ("Portfolio", "Journal" y "My Talented Friends") y **dos idiomas: español (por defecto) e inglés**.
 
-## Cómo funciona el idioma
+## Cómo funciona el idioma 
 
 - El español vive en la raíz del sitio: `/`, `/portfolio/`, `/journal/`, `/friends/`.
 - El inglés vive bajo `/en/`: `/en/`, `/en/portfolio/`, `/en/journal/`, `/en/friends/`.
