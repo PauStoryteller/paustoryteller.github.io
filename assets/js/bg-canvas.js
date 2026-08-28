@@ -15,38 +15,22 @@
   // ---- Tunables ----
   var BG_AREA_PER_STAR = 15000;   // px^2 of page per background star (sparser = less uniform)
   var MAX_BG_STARS = 190;
-  var CLUSTER_AREA_PER_INSTANCE = 170000; // one constellation shape roughly every this many px^2
-  var MAX_CLUSTERS = 10;
-  var CLUSTER_MIN_GAP = 140;      // px, keep constellation shapes from overlapping each other
 
-  var CLICK_RADIUS = 210;         // how far a click's influence reaches
-  var CLICK_WAVE_SPEED = 0.65;    // px/ms - purely a timing stagger, never drawn as a shape
-  var CLICK_LIFE = 1300;          // ms, just bookkeeping for cleanup
-  var MAX_PULSES = 4;
-
-  var SHOOTING_STAR_MIN_GAP = 6000;
-  var SHOOTING_STAR_MAX_GAP = 13000;
+  // Click: no permanent shapes, no highlighting of anything pre-drawn.
+  // Every tap builds a small, temporary constellation out of whichever real
+  // stars happen to be nearby, then lets it dissolve.
+  var CLICK_RADIUS = 170;         // how far a click looks for nearby stars
+  var CLICK_MAX_STARS = 5;        // how many stars can join one temporary shape
+  var CLICK_LIFE = 2600;          // ms - slow, soft fade in and out
+  var CLICK_FADE_IN = 0.22;       // fraction of life spent easing in
+  var CLICK_FADE_OUT = 0.55;      // fraction of life where the fade-out begins
+  var MAX_PULSES = 3;
 
   var W = 0, H = 0, DPR = 1;
-  var bgStars = [];        // scattered, unlinked background stars
-  var clusters = [];       // designed constellation shapes: { stars:[...], links:[[i,j],...] }
-  var allStars = [];       // bgStars + every cluster star, flattened (for click lookups)
-  var pulses = [];         // click feedback: temporary partial connections
-  var shootingStars = [];
+  var bgStars = [];        // every background star (the only kind of star there is now)
+  var pulses = [];         // temporary click-made connections
   var rafId = null;
   var resizeTimer = null;
-  var nextShootingStarAt = 0;
-
-  // A handful of hand-drawn constellation shapes, in a 0-100 local coordinate box.
-  // Kept irregular on purpose - real constellations are lopsided, not neat grids.
-  var TEMPLATES = [
-    { points: [[8, 78], [46, 12], [92, 66]], links: [[0, 1], [1, 2]] },                       // simple peak
-    { points: [[0, 55], [24, 8], [48, 52], [74, 4], [100, 46]], links: [[0, 1], [1, 2], [2, 3], [3, 4]] }, // Cassiopeia-ish W
-    { points: [[4, 92], [34, 66], [58, 74], [86, 24], [100, 6]], links: [[0, 1], [1, 2], [2, 3], [3, 4]] }, // hook/dipper
-    { points: [[6, 18], [40, 82], [70, 10], [100, 56]], links: [[0, 1], [1, 2], [2, 3]] },     // zigzag
-    { points: [[50, 0], [86, 40], [58, 100], [10, 46]], links: [[0, 1], [1, 2], [2, 3], [3, 0]] }, // kite
-    { points: [[0, 30], [38, 0], [70, 34], [100, 12]], links: [[0, 1], [1, 2], [2, 3]] }        // shallow arc
-  ];
 
   function rgba(c, a) {
     return "rgba(" + c[0] + "," + c[1] + "," + c[2] + "," + Math.max(0, a).toFixed(3) + ")";
@@ -61,8 +45,7 @@
     );
   }
 
-  function makeStar(x, y, weight) {
-    // weight: 0 = ordinary background star, 1 = a constellation star (slightly more prominent)
+  function makeStar(x, y) {
     // Mostly muted gray, with purple and red as the accent notes - kept
     // deliberately low-key so no single star jumps out of the sky.
     var colorRoll = Math.random();
@@ -71,21 +54,16 @@
     else if (colorRoll < 0.52) color = SECONDARY;
 
     var sizeRoll = Math.random();
-    var r = sizeRoll > 0.9 ? 2.6 + Math.random() * 1.5 : 1.2 + Math.random() * 1.5; // bigger, softer stars, rare "hero" stars
-    if (weight) r += 0.3;
+    var r = sizeRoll > 0.9 ? 2.6 + Math.random() * 1.5 : 1.2 + Math.random() * 1.5; // rare, slightly larger stars
 
     return {
       x: x, y: y, r: r,
-      baseAlpha: (weight ? 0.42 : 0.22) + Math.random() * 0.3,
+      // Alpha barely breathes around this base value - present, but never "blinking".
+      baseAlpha: 0.3 + Math.random() * 0.28,
       color: color,
       phase: Math.random() * Math.PI * 2,
-      speed: 0.0005 + Math.random() * 0.0013,
-      boost: 0,
-      hero: sizeRoll > 0.9,
-      // set for cluster stars only, so a click nearby can find and
-      // brighten the constellation links that star belongs to
-      clusterIndex: -1,
-      starIndex: -1
+      speed: 0.00012 + Math.random() * 0.00018, // slow, gentle breathing
+      boost: 0
     };
   }
 
@@ -123,65 +101,14 @@
         y = Math.random() * H;
       }
       if (x < 0 || x > W || y < 0 || y > H) continue;
-      bgStars.push(makeStar(x, y, 0));
+      bgStars.push(makeStar(x, y));
     }
-  }
-
-  // ---- Designed constellation shapes, scattered with random placement ----
-  function buildClusters() {
-    clusters = [];
-    var count = Math.min(MAX_CLUSTERS, Math.max(2, Math.round((W * H) / CLUSTER_AREA_PER_INSTANCE)));
-    var centers = [];
-
-    for (var i = 0; i < count; i++) {
-      var placed = false;
-      for (var attempt = 0; attempt < 12 && !placed; attempt++) {
-        var cx = W * (0.08 + Math.random() * 0.84);
-        var cy = H * (0.06 + Math.random() * 0.88);
-        var farEnough = centers.every(function (c) {
-          return Math.hypot(c.x - cx, c.y - cy) > CLUSTER_MIN_GAP * 1.6;
-        });
-        if (!farEnough) continue;
-
-        var tpl = TEMPLATES[Math.floor(Math.random() * TEMPLATES.length)];
-        var scale = 70 + Math.random() * 90;
-        var rotation = Math.random() * Math.PI * 2;
-        var cos = Math.cos(rotation), sin = Math.sin(rotation);
-
-        var clusterIdx = clusters.length;
-        var stars = tpl.points.map(function (p, si) {
-          var lx = (p[0] / 100 - 0.5) * scale;
-          var ly = (p[1] / 100 - 0.5) * scale;
-          var rx = lx * cos - ly * sin;
-          var ry = lx * sin + ly * cos;
-          var star = makeStar(cx + rx, cy + ry, 1);
-          star.clusterIndex = clusterIdx;
-          star.starIndex = si;
-          return star;
-        });
-
-        clusters.push({
-          stars: stars,
-          links: tpl.links,
-          linkBoost: tpl.links.map(function () { return 0; }),
-          phase: Math.random() * Math.PI * 2,
-          color: Math.random() < 0.5 ? SECONDARY : PRIMARY
-        });
-        centers.push({ x: cx, y: cy });
-        placed = true;
-      }
-    }
-  }
-
-  function flattenStars() {
-    allStars = bgStars.slice();
-    for (var i = 0; i < clusters.length; i++) allStars = allStars.concat(clusters[i].stars);
   }
 
   function nearestStars(x, y, maxDist, count) {
     var found = [];
-    for (var i = 0; i < allStars.length; i++) {
-      var s = allStars[i];
+    for (var i = 0; i < bgStars.length; i++) {
+      var s = bgStars[i];
       var d = Math.hypot(s.x - x, s.y - y);
       if (d <= maxDist) found.push({ star: s, d: d });
     }
@@ -203,149 +130,93 @@
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
 
     buildBackgroundStars();
-    buildClusters();
-    flattenStars();
   }
 
   // ---- Drawing ----
   function drawStar(s, now) {
-    var twinkle = 0.6 + 0.4 * Math.sin(now * s.speed + s.phase);
-    var alpha = Math.min(1, s.baseAlpha * twinkle + s.boost);
-    s.boost *= 0.9;
+    // A very slow, shallow breathing motion - present but never attention-grabbing.
+    var breathe = 0.92 + 0.08 * Math.sin(now * s.speed + s.phase);
+    var alpha = Math.min(1, s.baseAlpha * breathe + s.boost);
+    s.boost *= 0.94;
     if (alpha < 0.03) return;
 
-    var r = s.r + s.boost * 1.6;
+    var r = s.r + s.boost * 1.1;
     ctx.beginPath();
     ctx.fillStyle = rgba(s.color, alpha);
     ctx.arc(s.x, s.y, r, 0, 6.2832);
     ctx.fill();
-
-    if (s.hero && alpha > 0.5) {
-      ctx.beginPath();
-      ctx.fillStyle = rgba(s.color, alpha * 0.1);
-      ctx.arc(s.x, s.y, r * 4.2, 0, 6.2832);
-      ctx.fill();
-    }
   }
 
-  function drawClusterLinks(now) {
-    for (var i = 0; i < clusters.length; i++) {
-      var c = clusters[i];
-      var shimmer = 0.5 + 0.5 * Math.sin(now * 0.00025 + c.phase);
-      var baseAlpha = 0.14 + 0.1 * shimmer;
-      for (var j = 0; j < c.links.length; j++) {
-        var a = c.stars[c.links[j][0]], b = c.stars[c.links[j][1]];
-        var boost = c.linkBoost[j];
-        var alpha = baseAlpha + boost * 0.5;
-        ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
-        ctx.strokeStyle = rgba(c.color, alpha);
-        ctx.lineWidth = 1.2 + boost * 0.6;
-        ctx.stroke();
-        c.linkBoost[j] *= 0.9;
-      }
-    }
+  function easeInOut(t) {
+    return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
   }
 
-  // Click feedback: nothing is drawn for the click itself - no ring, no dot.
-  // Only real, already-existing connections respond: nearby constellation
-  // stars light up and their links brighten, each with a tiny delay based on
-  // distance from the tap, so the reaction visibly travels through the shape
-  // without ever rendering a wave as its own piece of geometry.
+  // Click feedback: build one small, temporary constellation from whichever
+  // real stars are nearby - connected as a wandering path (nearest-neighbor
+  // chain) so it reads as a natural shape instead of a tangle - then let the
+  // whole thing breathe in and dissolve. Nothing permanent is created or
+  // highlighted; it only ever exists for the life of the pulse.
   function spawnPulse(x, y) {
-    var near = nearestStars(x, y, CLICK_RADIUS);
-    var candidates = near.map(function (entry) {
-      return {
-        star: entry.star,
-        d: entry.d,
-        delay: entry.d / CLICK_WAVE_SPEED,
-        triggered: false
-      };
-    });
-    pulses.push({ start: performance.now(), candidates: candidates });
+    var near = nearestStars(x, y, CLICK_RADIUS, CLICK_MAX_STARS);
+    if (!near.length) return;
+
+    var pool = near.map(function (n) { return n.star; });
+    var path = [pool.shift()];
+    while (pool.length) {
+      var last = path[path.length - 1];
+      var bestIdx = 0, bestD = Infinity;
+      for (var i = 0; i < pool.length; i++) {
+        var d = Math.hypot(pool[i].x - last.x, pool[i].y - last.y);
+        if (d < bestD) { bestD = d; bestIdx = i; }
+      }
+      path.push(pool.splice(bestIdx, 1)[0]);
+    }
+
+    var color = Math.random() < 0.5 ? SECONDARY : PRIMARY;
+    pulses.push({ start: performance.now(), path: path, color: color });
     if (pulses.length > MAX_PULSES) pulses.shift();
   }
 
-  function updatePulses(now) {
+  function drawPulses(now) {
     pulses = pulses.filter(function (p) { return now - p.start < CLICK_LIFE; });
     for (var i = 0; i < pulses.length; i++) {
       var p = pulses[i];
-      var elapsed = now - p.start;
-      for (var k = 0; k < p.candidates.length; k++) {
-        var c = p.candidates[k];
-        if (c.triggered || elapsed < c.delay) continue;
-        c.triggered = true;
+      var t = (now - p.start) / CLICK_LIFE;
 
-        var falloff = 1 - c.d / CLICK_RADIUS; // farther stars respond a touch dimmer
-        var star = c.star;
-
-        if (star.clusterIndex !== -1) {
-          // a real connection: the star and every link it belongs to brighten
-          star.boost = Math.max(star.boost, 0.4 * falloff);
-          var cluster = clusters[star.clusterIndex];
-          for (var li = 0; li < cluster.links.length; li++) {
-            if (cluster.links[li][0] === star.starIndex || cluster.links[li][1] === star.starIndex) {
-              cluster.linkBoost[li] = Math.min(1, cluster.linkBoost[li] + 0.85 * falloff);
-            }
-          }
-        } else {
-          // an unconnected background star: just a faint acknowledgement, no lines invented
-          star.boost = Math.max(star.boost, 0.18 * falloff);
-        }
+      var strength;
+      if (t < CLICK_FADE_IN) {
+        strength = easeInOut(t / CLICK_FADE_IN);
+      } else if (t < CLICK_FADE_OUT) {
+        strength = 1;
+      } else {
+        strength = 1 - easeInOut((t - CLICK_FADE_OUT) / (1 - CLICK_FADE_OUT));
       }
-    }
-  }
+      strength = Math.max(0, Math.min(1, strength));
+      if (strength <= 0.01) continue;
 
-  function maybeSpawnShootingStar(now) {
-    if (reduceMotion) return;
-    if (now < nextShootingStarAt) return;
-    nextShootingStarAt = now + SHOOTING_STAR_MIN_GAP + Math.random() * (SHOOTING_STAR_MAX_GAP - SHOOTING_STAR_MIN_GAP);
-
-    var startX = Math.random() * W * 0.6 + W * 0.2;
-    var startY = Math.random() * Math.min(H, window.innerHeight) * 0.5;
-    var angle = (Math.PI / 4) + (Math.random() - 0.5) * 0.3;
-    var dist = 140 + Math.random() * 120;
-    shootingStars.push({
-      x1: startX, y1: startY,
-      x2: startX + Math.cos(angle) * dist,
-      y2: startY + Math.sin(angle) * dist,
-      start: now,
-      life: 700 + Math.random() * 300
-    });
-  }
-
-  function drawShootingStars(now) {
-    shootingStars = shootingStars.filter(function (s) { return now - s.start < s.life; });
-    for (var i = 0; i < shootingStars.length; i++) {
-      var s = shootingStars[i];
-      var t = (now - s.start) / s.life;
-      var headX = s.x1 + (s.x2 - s.x1) * t;
-      var headY = s.y1 + (s.y2 - s.y1) * t;
-      var tailX = s.x1 + (s.x2 - s.x1) * Math.max(0, t - 0.35);
-      var tailY = s.y1 + (s.y2 - s.y1) * Math.max(0, t - 0.35);
-      var alpha = Math.sin(Math.min(1, t) * Math.PI);
-
-      var grad = ctx.createLinearGradient(tailX, tailY, headX, headY);
-      grad.addColorStop(0, rgba(STEEL, 0));
-      grad.addColorStop(1, rgba(STEEL, alpha * 0.75));
+      ctx.strokeStyle = rgba(p.color, strength * 0.22);
+      ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.moveTo(tailX, tailY);
-      ctx.lineTo(headX, headY);
-      ctx.strokeStyle = grad;
-      ctx.lineWidth = 1.4;
+      for (var j = 0; j < p.path.length - 1; j++) {
+        var a = p.path[j], b = p.path[j + 1];
+        // a gentle bow instead of a straight line, softer and less mechanical
+        var mx = (a.x + b.x) / 2 - (b.y - a.y) * 0.06;
+        var my = (a.y + b.y) / 2 + (b.x - a.x) * 0.06;
+        ctx.moveTo(a.x, a.y);
+        ctx.quadraticCurveTo(mx, my, b.x, b.y);
+      }
       ctx.stroke();
+
+      for (var k = 0; k < p.path.length; k++) {
+        p.path[k].boost = Math.max(p.path[k].boost, strength * 0.3);
+      }
     }
   }
 
   function draw(now) {
     ctx.clearRect(0, 0, W, H);
-
-    updatePulses(now);
-    drawClusterLinks(now);
-    for (var i = 0; i < allStars.length; i++) drawStar(allStars[i], now);
-    drawShootingStars(now);
-    maybeSpawnShootingStar(now);
+    drawPulses(now);
+    for (var i = 0; i < bgStars.length; i++) drawStar(bgStars[i], now);
 
     if (!reduceMotion) {
       rafId = requestAnimationFrame(draw);
