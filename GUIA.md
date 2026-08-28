@@ -103,6 +103,7 @@ Importante: si tu repositorio en GitHub no se llama `TU-USUARIO.github.io` sino 
 
 ## Fondo dinámico, scroll y hover
 
+<<<<<<< HEAD
 El fondo es una constelación de puntos (rojo/morado) dibujada en un `<canvas>`, que flotan solos con un ligero movimiento propio y se conectan entre sí con líneas cuando están cerca. No reacciona al pasar el cursor por encima — solo al hacer click (o tocar en móvil), momento en el que se genera un pulso que viaja hacia fuera desde ese punto, iluminando los nodos y las conexiones a su paso, como una señal recorriendo la red. No aparece en las páginas de pieza de Portfolio/Journal, para que la lectura quede limpia. También hay una animación de aparición al hacer scroll en las secciones principales (con un poco de rebote). Todo esto respeta la preferencia de "reducir movimiento" del sistema operativo del visitante (accesibilidad) — si la tienen activada, el fondo se queda estático (sin flotar) y los clicks no generan pulso.
 
 Los archivos relevantes si algún día quieres tocarlos: `_includes/bg-canvas.html` (el elemento canvas), `assets/js/bg-canvas.js` (todo el dibujado e interactividad — los puntos, las conexiones, el nodo del cursor y los pulsos de click), `_sass/components/_bg-shapes.scss` (solo el posicionamiento), `assets/js/effects.js` (animación de aparición al hacer scroll).
@@ -113,6 +114,11 @@ Siguiendo el mismo espíritu de constelación, dos elementos más de la página 
 
 - **Bordes angulares**: donde cambia de sección (entre el hero y "Destacados" en la portada, y antes de los bloques de contacto en Portfolio/Journal/piezas) el borde es una línea quebrada en varios ángulos en vez de recto. Se controla con la clase `jagged-top` en `_sass/components/_jagged-edge.scss`.
 - **Mapa de estrellas**: en Portfolio, Journal y "My Talented Friends", cada pieza aparece como un círculo ("estrella") en vez de una tarjeta rectangular, con una línea fina rojo→morado conectándolas en secuencia por detrás. El **tamaño de cada estrella lo decides tú**: añade `importance` en la cabecera de cada pieza (o en `_data/friends.yml` para tus amigos), con un valor del 1 (estrella pequeña) al 5 (estrella grande) — si no lo pones, usa 3 por defecto. Pasar el cursor por encima de una estrella la ilumina a ella y a sus conexiones, y revela un resumen corto debajo del título. Se recalcula solo al cambiar el tamaño de ventana. Archivos: `_sass/components/_star-node.scss` (el círculo y su hover), `_sass/components/_node-map.scss` (el estilo de las líneas), `_includes/star-node.html` (la plantilla de cada estrella) y `assets/js/node-map.js` (el cálculo de las posiciones reales y el resaltado al pasar el cursor).
+=======
+El fondo son 4 cúmulos de puntos (estilo halftone, en rojo/morado) que flotan solas con un ligero giro, reaccionan al cursor moviéndose en paralaje, y además hay un halo suave que sigue al puntero de cerca (`.bg-spotlight`). No aparecen en las páginas de pieza de Portfolio/Journal, para que la lectura quede limpia. También hay una animación de aparición al hacer scroll en las secciones principales, con un poco de rebote para que se sienta más viva, y las tarjetas se inclinan levemente al pasar el cursor. Todo esto respeta la preferencia de "reducir movimiento" del sistema operativo del visitante (accesibilidad) — si la tienen activada, no se anima nada.
+
+Los archivos relevantes si algún día quieres tocarlos: `_includes/bg-shapes.html` + `_sass/components/_bg-shapes.scss` (formas y halo), `assets/js/effects.js` (cursor y scroll), `images/bg/blob-*.svg` (los propios cúmulos de puntos — puedes regenerarlos o sustituirlos por otros).
+>>>>>>> parent of 14077b1 (New BG)
 
 ## Importante
 

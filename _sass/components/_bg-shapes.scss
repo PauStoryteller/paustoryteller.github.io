@@ -1,12 +1,122 @@
-.bg-canvas {
+.bg-shapes {
   position: fixed;
   inset: 0;
+  overflow: hidden;
   z-index: 0;
-  display: block;
   pointer-events: none;
 }
 
-// Keep content above the decorative canvas
+.bg-shape-wrap {
+  position: absolute;
+  will-change: transform;
+  // JS sets --push-x / --push-y on cursor-proximity; defaults to 0 when idle
+  transform: translate(var(--push-x, 0px), var(--push-y, 0px));
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.bg-shape {
+  display: block;
+  width: 100%;
+  height: auto;
+  opacity: 0.85;
+
+  .ht-dot {
+    transition: r 0.18s ease-out, fill-opacity 0.18s ease-out;
+  }
+}
+
+// 1 — top-left large shard, red
+.bg-shape-wrap-1 {
+  top: -40px;
+  left: -60px;
+  width: 300px;
+  .bg-shape { animation: bg-spin-1 26s ease-in-out infinite; }
+}
+
+// 2 — right-middle chevron, purple
+.bg-shape-wrap-2 {
+  top: 12%;
+  right: -70px;
+  width: 250px;
+  .bg-shape { animation: bg-spin-2 22s ease-in-out infinite; }
+}
+
+// 3 — bottom-left parallelogram, purple
+.bg-shape-wrap-3 {
+  bottom: -60px;
+  left: -40px;
+  width: 320px;
+  .bg-shape { animation: bg-spin-3 30s ease-in-out infinite; }
+}
+
+// 4 — bottom-right small shard, red
+.bg-shape-wrap-4 {
+  bottom: 6%;
+  right: 4%;
+  width: 180px;
+  .bg-shape { animation: bg-spin-4 20s ease-in-out infinite; }
+}
+
+// 5 — top-right thin sliver, purple (new)
+.bg-shape-wrap-5 {
+  top: -20px;
+  right: 14%;
+  width: 110px;
+  .bg-shape { animation: bg-spin-5 24s ease-in-out infinite; }
+}
+
+// 6 — left-middle small diamond, red (new)
+.bg-shape-wrap-6 {
+  top: 46%;
+  left: 2%;
+  width: 130px;
+  .bg-shape { animation: bg-spin-6 18s ease-in-out infinite; }
+}
+
+@keyframes bg-spin-1 {
+  0%   { transform: translate(0, 0) rotate(0deg) scale(1); }
+  30%  { transform: translate(16px, 10px) rotate(7deg) scale(1.04); }
+  65%  { transform: translate(-8px, 18px) rotate(-5deg) scale(0.97); }
+  100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+}
+@keyframes bg-spin-2 {
+  0%   { transform: translate(0, 0) rotate(0deg) scale(1); }
+  40%  { transform: translate(-18px, -14px) rotate(-9deg) scale(1.05); }
+  75%  { transform: translate(10px, 8px) rotate(6deg) scale(0.96); }
+  100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+}
+@keyframes bg-spin-3 {
+  0%   { transform: translate(0, 0) rotate(0deg) scale(1); }
+  35%  { transform: translate(14px, -16px) rotate(6deg) scale(1.03); }
+  70%  { transform: translate(-14px, -4px) rotate(-8deg) scale(0.98); }
+  100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+}
+@keyframes bg-spin-4 {
+  0%   { transform: translate(0, 0) rotate(0deg) scale(1); }
+  50%  { transform: translate(-12px, 14px) rotate(-10deg) scale(1.06); }
+  100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+}
+@keyframes bg-spin-5 {
+  0%   { transform: translate(0, 0) rotate(0deg) scale(1); }
+  50%  { transform: translate(8px, 12px) rotate(12deg) scale(1.08); }
+  100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+}
+@keyframes bg-spin-6 {
+  0%   { transform: translate(0, 0) rotate(0deg) scale(1); }
+  50%  { transform: translate(-10px, -10px) rotate(-14deg) scale(1.1); }
+  100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-shape {
+    animation: none !important;
+  }
+  .bg-shape-wrap {
+    transition: none !important;
+  }
+}
+
+// Keep content above the decorative shapes
 .wrapper {
   position: relative;
   z-index: 1;
