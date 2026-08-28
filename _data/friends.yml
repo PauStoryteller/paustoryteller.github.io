@@ -4,9 +4,32 @@
 #   description_en:   la misma descripción en inglés (opcional; si no la rellenas, se usa la de español también en la web en inglés)
 #   image:             ruta de su foto/avatar (súbela primero a la carpeta images)
 #   link:               URL a su web, portfolio o red social (igual en los dos idiomas)
+#   importance:         del 1 (estrella pequeña) al 5 (estrella grande) — decides tú qué tan destacado aparece
 
 - name: "Nombre de tu amigo/a"
   description: "Breve descripción de a qué se dedica y qué le hace especial."
   description_en: "Short description of what they do and what makes them special."
   image: "images/austin-distel-nGc5RT2HmF0-unsplash.jpg"
   link: "https://example.com"
+  importance: 4
+
+- name: "Otro amigo/a con talento"
+  description: "Breve descripción de a qué se dedica y qué le hace especial."
+  description_en: "Short description of what they do and what makes them special."
+  image: "images/thom-holmes-Lrfw0U_o9I0-unsplash.jpg"
+  link: "https://example.com"
+  importance: 2
+
+- name: "Un tercer ejemplo"
+  description: "Breve descripción de a qué se dedica y qué le hace especial."
+  description_en: "Short description of what they do and what makes them special."
+  image: "images/austin-distel-nGc5RT2HmF0-unsplash.jpg"
+  link: "https://example.com"
+  importance: 5
+
+- name: "Cuarto ejemplo"
+  description: "Breve descripción de a qué se dedica y qué le hace especial."
+  description_en: "Short description of what they do and what makes them special."
+  image: "images/thom-holmes-Lrfw0U_o9I0-unsplash.jpg"
+  link: "https://example.com"
+  importance: 3

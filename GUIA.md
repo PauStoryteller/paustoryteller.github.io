@@ -33,7 +33,7 @@ Esto hace que el botón ES/EN, cuando alguien esté leyendo esa pieza en concret
 
 1. Ve a `_portfolio` (español) o `_portfolio_en` (inglés).
 2. Copia el archivo de ejemplo (`ejemplo-nombre-del-proyecto.md` o `example-project-name.md`) y ponle un nombre nuevo (minúsculas, sin espacios ni tildes, p. ej. `mi-juego-de-plataformas.md`).
-3. Edita las líneas de arriba (entre `---`): `title`, `category`, `date`, `image` (súbela primero a `images`), `summary`, `featured` (`true` si quieres que también aparezca destacada en la portada) y, si la traduces, `translation_url`.
+3. Edita las líneas de arriba (entre `---`): `title`, `category`, `date`, `image` (súbela primero a `images`), `summary`, `featured` (`true` si quieres que también aparezca destacada en la portada), `importance` (del 1 al 5, el tamaño de su estrella en el mapa) y, si la traduces, `translation_url`.
 4. Escribe el contenido completo debajo, en Markdown.
 5. Sube los cambios con GitHub Desktop.
 
@@ -47,7 +47,7 @@ En ambos casos (Portfolio y Journal), el campo `link` es opcional: solo relléna
 
 1. Abre `_data/friends.yml`.
 2. Copia el bloque que empieza por `- name:` y pégalo debajo.
-3. Rellena `name`, `image` y `link` (compartidos en los dos idiomas), `description` (en español) y `description_en` (en inglés; si lo dejas vacío, se usa la de español también en la web en inglés).
+3. Rellena `name`, `image` y `link` (compartidos en los dos idiomas), `description` (en español), `description_en` (en inglés; si lo dejas vacío, se usa la de español también en la web en inglés) e `importance` (del 1 al 5, el tamaño de su estrella).
 4. Sube los cambios con GitHub Desktop.
 
 No hace falta duplicar el archivo de amigos por idioma: es el mismo `_data/friends.yml` para las dos versiones de la web.
@@ -107,12 +107,12 @@ El fondo es una constelación de puntos (rojo/morado) dibujada en un `<canvas>`,
 
 Los archivos relevantes si algún día quieres tocarlos: `_includes/bg-canvas.html` (el elemento canvas), `assets/js/bg-canvas.js` (todo el dibujado e interactividad — los puntos, las conexiones, el nodo del cursor y los pulsos de click), `_sass/components/_bg-shapes.scss` (solo el posicionamiento), `assets/js/effects.js` (animación de aparición al hacer scroll).
 
-## Bordes angulares y mapa de nodos
+## Bordes angulares y mapa de estrellas
 
 Siguiendo el mismo espíritu de constelación, dos elementos más de la página tienen forma no rectangular:
 
 - **Bordes angulares**: donde cambia de sección (entre el hero y "Destacados" en la portada, y antes de los bloques de contacto en Portfolio/Journal/piezas) el borde es una línea quebrada en varios ángulos en vez de recto. Se controla con la clase `jagged-top` en `_sass/components/_jagged-edge.scss`.
-- **Mapa de nodos**: en las cuadrículas de Portfolio, Journal y "My Talented Friends", las tarjetas se desplazan en zigzag (unas más arriba, otras más abajo) y una línea fina rojo→morado las conecta en secuencia por detrás, como un camino que las atraviesa. Se recalcula automáticamente al cambiar el tamaño de ventana. Archivos: `_sass/components/_node-map.scss` (el zigzag y el estilo de la línea) y `assets/js/node-map.js` (el cálculo de las posiciones reales y el dibujado de la línea).
+- **Mapa de estrellas**: en Portfolio, Journal y "My Talented Friends", cada pieza aparece como un círculo ("estrella") en vez de una tarjeta rectangular, con una línea fina rojo→morado conectándolas en secuencia por detrás. El **tamaño de cada estrella lo decides tú**: añade `importance` en la cabecera de cada pieza (o en `_data/friends.yml` para tus amigos), con un valor del 1 (estrella pequeña) al 5 (estrella grande) — si no lo pones, usa 3 por defecto. Pasar el cursor por encima de una estrella la ilumina a ella y a sus conexiones, y revela un resumen corto debajo del título. Se recalcula solo al cambiar el tamaño de ventana. Archivos: `_sass/components/_star-node.scss` (el círculo y su hover), `_sass/components/_node-map.scss` (el estilo de las líneas), `_includes/star-node.html` (la plantilla de cada estrella) y `assets/js/node-map.js` (el cálculo de las posiciones reales y el resaltado al pasar el cursor).
 
 ## Importante
 

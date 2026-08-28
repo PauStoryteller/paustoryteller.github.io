@@ -1,18 +1,17 @@
 ---
 title: "Título del artículo"
-date: 2026-07-22
+date: 2026-06-30
 image: "images/thom-holmes-Lrfw0U_o9I0-unsplash.jpg"
 summary: "Resumen corto de 1-2 frases sobre qué cuenta este artículo."
 featured: true
-translation_url: "/en/journal/example-article-title/"
+importance: 4   # del 1 (estrella pequeña) al 5 (estrella grande) — decides tú qué tan importante es esta pieza
+translation_url: ""
 # work: "Nombre de la obra analizada"     # opcional: rellénalo solo si este artículo analiza una obra ajena
 # author: "Autor/a original"               # opcional: autor/a de esa obra
 # link: ""                                 # opcional: URL externa si prefieres enlazar fuera en vez de a esta página
 ---
 
-Esto es una **página de ejemplo**. Bórrala o edítala para tu primer artículo de verdad.
-
-Aquí puedes escribir tanto entradas de diario sobre tu experiencia (qué has aprendido, cómo llevas un proyecto, reflexiones...) como análisis de obras ajenas que te gusten — rellena `work` y `author` arriba solo si es este segundo caso.
+Esto es una **página de ejemplo duplicada** para probar el mapa de estrellas con varios tamaños. Bórrala o edítala para tu artículo de verdad.
 
 ## Qué ha pasado
 

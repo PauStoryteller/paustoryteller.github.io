@@ -1,0 +1,13 @@
+{% comment %}
+  Reusable "star" node for Portfolio / Journal / Friends star-fields.
+  Params: title, image, href, importance (1-5), is_external, meta (optional short text shown on hover)
+{% endcomment %}
+{% assign imp = include.importance | default: 3 %}
+{% assign diameter = imp | minus: 1 | times: 24 | plus: 88 %}
+<a class="star-node node-map-item reveal" href="{{ include.href }}" style="--size: {{ diameter }}px"{% if include.is_external %} target="_blank" rel="noopener"{% endif %}>
+  <span class="star-node-circle">
+    {% if include.image %}<img src="{{ include.image | relative_url }}" alt="{{ include.title }}" loading="lazy" />{% endif %}
+  </span>
+  <span class="star-node-label">{{ include.title }}</span>
+  {% if include.meta %}<span class="star-node-meta">{{ include.meta }}</span>{% endif %}
+</a>
