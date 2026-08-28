@@ -2,7 +2,7 @@
 
 Web basada en el tema Serif de Zerostatic (MIT license), adaptada a tema oscuro rojo/morado, con tres secciones ("Portfolio", "Journal" y "My Talented Friends") y **dos idiomas: español (por defecto) e inglés**.
 
-## Cómo funciona el idioma 
+## Cómo funciona el idioma
 
 - El español vive en la raíz del sitio: `/`, `/portfolio/`, `/journal/`, `/friends/`.
 - El inglés vive bajo `/en/`: `/en/`, `/en/portfolio/`, `/en/journal/`, `/en/friends/`.
@@ -33,7 +33,7 @@ Esto hace que el botón ES/EN, cuando alguien esté leyendo esa pieza en concret
 
 1. Ve a `_portfolio` (español) o `_portfolio_en` (inglés).
 2. Copia el archivo de ejemplo (`ejemplo-nombre-del-proyecto.md` o `example-project-name.md`) y ponle un nombre nuevo (minúsculas, sin espacios ni tildes, p. ej. `mi-juego-de-plataformas.md`).
-3. Edita las líneas de arriba (entre `---`): `title`, `category`, `date`, `image` (súbela primero a `images`), `summary`, `featured` (`true` si quieres que también aparezca destacada en la portada), `importance` (del 1 al 5, el tamaño de su estrella en el mapa) y, si la traduces, `translation_url`.
+3. Edita las líneas de arriba (entre `---`): `title`, `category`, `date`, `image` (súbela primero a `images`), `summary`, `featured` (`true` si quieres que también aparezca destacada en la portada) y, si la traduces, `translation_url`.
 4. Escribe el contenido completo debajo, en Markdown.
 5. Sube los cambios con GitHub Desktop.
 
@@ -47,7 +47,7 @@ En ambos casos (Portfolio y Journal), el campo `link` es opcional: solo relléna
 
 1. Abre `_data/friends.yml`.
 2. Copia el bloque que empieza por `- name:` y pégalo debajo.
-3. Rellena `name`, `image` y `link` (compartidos en los dos idiomas), `description` (en español), `description_en` (en inglés; si lo dejas vacío, se usa la de español también en la web en inglés) e `importance` (del 1 al 5, el tamaño de su estrella).
+3. Rellena `name`, `image` y `link` (compartidos en los dos idiomas), `description` (en español) y `description_en` (en inglés; si lo dejas vacío, se usa la de español también en la web en inglés).
 4. Sube los cambios con GitHub Desktop.
 
 No hace falta duplicar el archivo de amigos por idioma: es el mismo `_data/friends.yml` para las dos versiones de la web.
@@ -103,22 +103,9 @@ Importante: si tu repositorio en GitHub no se llama `TU-USUARIO.github.io` sino 
 
 ## Fondo dinámico, scroll y hover
 
-<<<<<<< HEAD
-El fondo es una constelación de puntos (rojo/morado) dibujada en un `<canvas>`, que flotan solos con un ligero movimiento propio y se conectan entre sí con líneas cuando están cerca. No reacciona al pasar el cursor por encima — solo al hacer click (o tocar en móvil), momento en el que se genera un pulso que viaja hacia fuera desde ese punto, iluminando los nodos y las conexiones a su paso, como una señal recorriendo la red. No aparece en las páginas de pieza de Portfolio/Journal, para que la lectura quede limpia. También hay una animación de aparición al hacer scroll en las secciones principales (con un poco de rebote). Todo esto respeta la preferencia de "reducir movimiento" del sistema operativo del visitante (accesibilidad) — si la tienen activada, el fondo se queda estático (sin flotar) y los clicks no generan pulso.
+El fondo es un campo continuo de puntos estilo halftone (rojo/morado) dibujado en un `<canvas>`, que cubre toda la pantalla con un patrón de bandas diagonales y un par de "manchas de tinta" más densas en las esquinas — inspirado directamente en las referencias que compartiste. Es interactivo de dos formas: el cursor actúa como una linterna que ilumina los puntos a su alrededor al pasar por encima, y al hacer click (o tocar en móvil) se genera una onda que se expande desde ese punto y se desvanece. No aparece en las páginas de pieza de Portfolio/Journal, para que la lectura quede limpia. También hay una animación de aparición al hacer scroll en las secciones principales (con un poco de rebote), y las tarjetas se inclinan levemente al pasar el cursor. Todo esto respeta la preferencia de "reducir movimiento" del sistema operativo del visitante (accesibilidad) — si la tienen activada, el fondo se queda estático y no hay animaciones.
 
-Los archivos relevantes si algún día quieres tocarlos: `_includes/bg-canvas.html` (el elemento canvas), `assets/js/bg-canvas.js` (todo el dibujado e interactividad — los puntos, las conexiones, el nodo del cursor y los pulsos de click), `_sass/components/_bg-shapes.scss` (solo el posicionamiento), `assets/js/effects.js` (animación de aparición al hacer scroll).
-
-## Bordes angulares y mapa de estrellas
-
-Siguiendo el mismo espíritu de constelación, dos elementos más de la página tienen forma no rectangular:
-
-- **Bordes angulares**: donde cambia de sección (entre el hero y "Destacados" en la portada, y antes de los bloques de contacto en Portfolio/Journal/piezas) el borde es una línea quebrada en varios ángulos en vez de recto. Se controla con la clase `jagged-top` en `_sass/components/_jagged-edge.scss`.
-- **Mapa de estrellas**: en Portfolio, Journal y "My Talented Friends", cada pieza aparece como un círculo ("estrella") en vez de una tarjeta rectangular, con una línea fina rojo→morado conectándolas en secuencia por detrás. El **tamaño de cada estrella lo decides tú**: añade `importance` en la cabecera de cada pieza (o en `_data/friends.yml` para tus amigos), con un valor del 1 (estrella pequeña) al 5 (estrella grande) — si no lo pones, usa 3 por defecto. Pasar el cursor por encima de una estrella la ilumina a ella y a sus conexiones, y revela un resumen corto debajo del título. Se recalcula solo al cambiar el tamaño de ventana. Archivos: `_sass/components/_star-node.scss` (el círculo y su hover), `_sass/components/_node-map.scss` (el estilo de las líneas), `_includes/star-node.html` (la plantilla de cada estrella) y `assets/js/node-map.js` (el cálculo de las posiciones reales y el resaltado al pasar el cursor).
-=======
-El fondo son 4 cúmulos de puntos (estilo halftone, en rojo/morado) que flotan solas con un ligero giro, reaccionan al cursor moviéndose en paralaje, y además hay un halo suave que sigue al puntero de cerca (`.bg-spotlight`). No aparecen en las páginas de pieza de Portfolio/Journal, para que la lectura quede limpia. También hay una animación de aparición al hacer scroll en las secciones principales, con un poco de rebote para que se sienta más viva, y las tarjetas se inclinan levemente al pasar el cursor. Todo esto respeta la preferencia de "reducir movimiento" del sistema operativo del visitante (accesibilidad) — si la tienen activada, no se anima nada.
-
-Los archivos relevantes si algún día quieres tocarlos: `_includes/bg-shapes.html` + `_sass/components/_bg-shapes.scss` (formas y halo), `assets/js/effects.js` (cursor y scroll), `images/bg/blob-*.svg` (los propios cúmulos de puntos — puedes regenerarlos o sustituirlos por otros).
->>>>>>> parent of 14077b1 (New BG)
+Los archivos relevantes si algún día quieres tocarlos: `_includes/bg-canvas.html` (el elemento canvas), `assets/js/bg-canvas.js` (todo el dibujado e interactividad — el patrón, el brillo del cursor y las ondas de click), `_sass/components/_bg-shapes.scss` (solo el posicionamiento), `assets/js/effects.js` (animación de aparición al hacer scroll).
 
 ## Importante
 

@@ -5,7 +5,6 @@ date: 2026-06-10
 image: "images/austin-distel-nGc5RT2HmF0-unsplash.jpg"
 summary: "Resumen corto de en qué consiste este proyecto, para que se vea en la galería y en la portada."
 featured: true
-importance: 4   # del 1 (estrella pequeña) al 5 (estrella grande) — decides tú qué tan importante es esta pieza
 translation_url: "/en/portfolio/example-project-name/"
 # link: ""   # opcional: si lo rellenas (por ejemplo con una URL de itch.io), la tarjeta enlazará ahí en vez de a esta página
 ---

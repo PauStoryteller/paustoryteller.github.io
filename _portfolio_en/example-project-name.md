@@ -5,7 +5,6 @@ date: 2026-06-10
 image: "images/austin-distel-nGc5RT2HmF0-unsplash.jpg"
 summary: "Short summary of what this project is about, shown on the gallery and homepage."
 featured: true
-importance: 4   # 1 (small star) to 5 (big star) — how important is this piece?
 translation_url: "/portfolio/ejemplo-nombre-del-proyecto/"
 # link: ""   # optional: if filled in (e.g. an itch.io URL), the card links there instead of to this page
 ---

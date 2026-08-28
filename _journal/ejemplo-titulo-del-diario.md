@@ -4,7 +4,6 @@ date: 2026-07-22
 image: "images/thom-holmes-Lrfw0U_o9I0-unsplash.jpg"
 summary: "Resumen corto de 1-2 frases sobre qué cuenta este artículo."
 featured: true
-importance: 3   # del 1 (estrella pequeña) al 5 (estrella grande) — decides tú qué tan importante es esta pieza
 translation_url: "/en/journal/example-article-title/"
 # work: "Nombre de la obra analizada"     # opcional: rellénalo solo si este artículo analiza una obra ajena
 # author: "Autor/a original"               # opcional: autor/a de esa obra

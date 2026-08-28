@@ -1,0 +1,17 @@
+{% assign friend = include.friend %}
+{% assign is_external = friend.link contains "http" %}
+{% assign description = friend.description %}
+{% if page.lang == "en" and friend.description_en and friend.description_en != "" %}
+  {% assign description = friend.description_en %}
+{% endif %}
+<a class="friend-card" href="{{ friend.link }}"{% if is_external %} target="_blank" rel="noopener"{% endif %}>
+  {% if friend.image %}
+  <div class="friend-card-image">
+    <img alt="{{ friend.name }}" src="{{ friend.image | relative_url }}" />
+  </div>
+  {% endif %}
+  <div class="friend-card-content">
+    <h2 class="friend-card-name">{{ friend.name }}</h2>
+    {% if description %}<p>{{ description }}</p>{% endif %}
+  </div>
+</a>

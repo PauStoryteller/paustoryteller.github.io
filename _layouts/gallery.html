@@ -13,31 +13,23 @@ bodyClass: "page-gallery"
 </div>
 
 <div class="container pt-4 pb-6 pb-md-10">
-  <div class="star-field reveal-stagger node-map">
-    <svg class="node-map-svg" aria-hidden="true">
-      <g class="node-map-lines"></g>
-    </svg>
+  <div class="row reveal-stagger">
     {% assign items = "" | split: "" %}
     {% assign raw_items = site[page.data_source] %}
     {% if raw_items %}
       {% assign items = raw_items | sort: "date" | reverse %}
     {% endif %}
     {% for entry in items %}
-      {% assign is_external = false %}
-      {% if entry.link and entry.link != "" %}
-        {% assign href = entry.link %}
-        {% if entry.link contains "http" %}{% assign is_external = true %}{% endif %}
-      {% else %}
-        {% assign href = entry.url | relative_url %}
-      {% endif %}
-      {% include star-node.html title=entry.title image=entry.image href=href importance=entry.importance is_external=is_external meta=entry.summary %}
+    <div class="col-12 col-md-6 col-lg-4 mb-3 reveal">
+      {% include work-card.html entry=entry %}
+    </div>
     {% endfor %}
   </div>
 </div>
 
 {% if page.show_connect %}
-<div class="strip strip-grey jagged-top">
-  <div class="container pb-6 pb-md-8">
+<div class="strip strip-grey">
+  <div class="container pt-6 pb-6 pt-md-8 pb-md-8">
     <div class="row justify-content-start">
       <div class="col-12 col-md-8 reveal">
         {% include connect.html title=page.connect_title text=page.connect_text show_contact=true %}

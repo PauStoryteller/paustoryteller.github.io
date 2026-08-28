@@ -13,17 +13,11 @@ bodyClass: "page-friends"
 </div>
 
 <div class="container pt-4 pb-6 pb-md-10">
-  <div class="star-field reveal-stagger node-map">
-    <svg class="node-map-svg" aria-hidden="true">
-      <g class="node-map-lines"></g>
-    </svg>
+  <div class="row reveal-stagger">
     {% for friend in site.data.friends %}
-      {% assign is_external = friend.link contains "http" %}
-      {% assign description = friend.description %}
-      {% if page.lang == "en" and friend.description_en and friend.description_en != "" %}
-        {% assign description = friend.description_en %}
-      {% endif %}
-      {% include star-node.html title=friend.name image=friend.image href=friend.link importance=friend.importance is_external=is_external meta=description %}
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4 reveal">
+      {% include friend-card.html friend=friend %}
+    </div>
     {% endfor %}
   </div>
 </div>
