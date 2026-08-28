@@ -1,21 +1,97 @@
 .header {
+  position: relative;
   color: $primary;
   background-color: $body-bg;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  // box-shadow: 0 1px 15px rgba(50, 50, 93, 0.2);
-  border-bottom: 1px solid $white-offset;
   padding: 10px 0px;
+  overflow: hidden;
+
+  // Dynamic edge instead of a flat 1px line: a soft gradient that slowly drifts,
+  // like a distant band of the night sky along the bottom of the header.
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba($secondary, 0.55) 20%,
+      rgba($primary, 0.65) 50%,
+      rgba($secondary, 0.55) 80%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: header-edge-drift 10s ease-in-out infinite;
+  }
+
   .container {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: relative;
   }
   &.header-absolute {
     position: absolute;
     z-index: 10;
     width: 100%;
+  }
+}
+
+@keyframes header-edge-drift {
+  0% { background-position: 0% 0; }
+  50% { background-position: 100% 0; }
+  100% { background-position: 0% 0; }
+}
+
+// Small constellation glyph between the logo and the nav — purely decorative,
+// reinforces the "constellation" concept from the background. Desktop only,
+// there just isn't room for it on narrower headers.
+.header-constellation {
+  display: none;
+  pointer-events: none;
+  @include media-breakpoint-up(lg) {
+    display: block;
+    opacity: 0.8;
+  }
+
+  .hc-line {
+    stroke: $secondary;
+    stroke-width: 1;
+    opacity: 0.3;
+  }
+  .hc-line-c {
+    stroke: $primary;
+    opacity: 0.28;
+  }
+
+  .hc-dot {
+    fill: $steel;
+    animation: hc-twinkle 3.6s ease-in-out infinite;
+  }
+  .hc-dot-1 { fill: $primary; animation-delay: 0s; }
+  .hc-dot-2 { animation-delay: 0.6s; }
+  .hc-dot-3 { fill: $secondary; animation-delay: 1.2s; }
+  .hc-dot-4 { animation-delay: 1.9s; }
+}
+
+@keyframes hc-twinkle {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header::after {
+    animation: none;
+    background-position: 50% 0;
+  }
+  .header-constellation .hc-dot {
+    animation: none;
+    opacity: 0.75;
   }
 }
 .lock-scroll {

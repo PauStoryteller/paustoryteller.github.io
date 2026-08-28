@@ -1,9 +1,18 @@
 .bg-canvas {
-  position: fixed;
-  inset: 0;
+  // Absolute (not fixed) on purpose: its width/height are set in JS to match
+  // the real document size, so it scrolls together with the page instead of
+  // being pinned to the viewport. A viewport-pinned canvas is what caused the
+  // "stars only fill the first screen, then a black gap" rendering bug.
+  position: absolute;
+  top: 0;
+  left: 0;
   z-index: 0;
   display: block;
   pointer-events: none;
+}
+
+html, body {
+  position: relative; // anchors the absolutely-positioned canvas to the document, not the viewport
 }
 
 // Keep content above the decorative canvas
