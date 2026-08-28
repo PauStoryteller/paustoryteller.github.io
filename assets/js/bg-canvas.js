@@ -10,7 +10,6 @@
   var SECONDARY = [157, 127, 234]; // $secondary purple
 
   var LINK_DIST = 150;       // max distance to draw a connection between two points
-  var HOVER_LINK_DIST = 180; // max distance for the cursor to "join" nearby points
   var MIN_POINT_DIST = 40;   // minimum spacing between points when generating them
   var PULSE_SPEED = 0.35;    // px per ms
   var PULSE_WIDTH = 70;
@@ -19,8 +18,6 @@
 
   var W = 0, H = 0, DPR = 1;
   var points = [];
-  var mouseX = -9999, mouseY = -9999;
-  var hasMouse = false;
   var pulses = [];
   var rafId = null;
   var resizeTimer = null;
@@ -132,34 +129,10 @@
       }
     }
 
-    // cursor as a phantom node: link to nearby points
-    if (hasMouse) {
-      for (var c = 0; c < points.length; c++) {
-        var pc = points[c];
-        var dxm = pc.x - mouseX, dym = pc.y - mouseY;
-        var distm = Math.sqrt(dxm * dxm + dym * dym);
-        if (distm < HOVER_LINK_DIST) {
-          var a2 = (1 - distm / HOVER_LINK_DIST) * 0.62;
-          ctx.strokeStyle = rgba(pc.color, a2);
-          ctx.lineWidth = 1.1 + (1 - distm / HOVER_LINK_DIST) * 0.8;
-          ctx.beginPath();
-          ctx.moveTo(mouseX, mouseY);
-          ctx.lineTo(pc.x, pc.y);
-          ctx.stroke();
-        }
-      }
-    }
-
     // points on top
     for (var k = 0; k < points.length; k++) {
       var pk = points[k];
-      var hoverBoost = 0;
-      if (hasMouse) {
-        var dh = Math.hypot(pk.x - mouseX, pk.y - mouseY);
-        if (dh < HOVER_LINK_DIST) hoverBoost = (1 - dh / HOVER_LINK_DIST);
-      }
-      var pulseBoost = pulses.length ? pulseBoostAt(pk.x, pk.y, now) : 0;
-      var boost = Math.max(hoverBoost * 0.85, pulseBoost);
+      var boost = pulses.length ? pulseBoostAt(pk.x, pk.y, now) : 0;
       var radius = pk.r + boost * 3.4;
       var alpha = 0.55 + boost * 0.5;
       ctx.beginPath();
@@ -179,17 +152,6 @@
     if (rafId === null && !reduceMotion) rafId = requestAnimationFrame(draw);
   }
 
-  function onMove(e) {
-    hasMouse = true;
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-    ensureLoop();
-  }
-
-  function onLeave() {
-    hasMouse = false;
-  }
-
   function onClick(e) {
     if (reduceMotion) return;
     pulses.push({ x: e.clientX, y: e.clientY, start: performance.now() });
@@ -200,7 +162,6 @@
   function onTouch(e) {
     if (reduceMotion || !e.touches || !e.touches[0]) return;
     var t = e.touches[0];
-    mouseX = t.clientX; mouseY = t.clientY; hasMouse = true;
     pulses.push({ x: t.clientX, y: t.clientY, start: performance.now() });
     if (pulses.length > 5) pulses.shift();
     ensureLoop();
@@ -225,8 +186,6 @@
   resize();
   draw(performance.now());
 
-  window.addEventListener("mousemove", onMove, { passive: true });
-  window.addEventListener("mouseleave", onLeave, { passive: true });
   window.addEventListener("click", onClick, { passive: true });
   window.addEventListener("touchstart", onTouch, { passive: true });
   window.addEventListener("resize", onResize);
