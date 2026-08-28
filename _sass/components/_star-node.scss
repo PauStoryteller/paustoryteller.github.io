@@ -19,7 +19,7 @@
 
 .star-node-circle {
   position: relative;
-  width: min(var(--size, 120px), 40vw);
+  width: unquote("min(var(--size, 120px), 40vw)");
   aspect-ratio: 1 / 1;
   border-radius: 50%;
   overflow: hidden;
