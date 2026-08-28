@@ -12,16 +12,16 @@
   var STARLIGHT = [245, 243, 247]; // near-white
 
   // ---- Tunables ----
-  var BG_AREA_PER_STAR = 13000;   // px^2 of page per background star (sparser = less uniform)
-  var MAX_BG_STARS = 220;
+  var BG_AREA_PER_STAR = 16000;   // px^2 of page per background star (sparser = less uniform)
+  var MAX_BG_STARS = 190;
   var CLUSTER_AREA_PER_INSTANCE = 190000; // one constellation shape roughly every this many px^2
   var MAX_CLUSTERS = 9;
   var CLUSTER_MIN_GAP = 140;      // px, keep constellation shapes from overlapping each other
 
-  var CLICK_RADIUS = 190;         // how far a click reaches to find stars to link
-  var CLICK_MAX_STARS = 5;        // how many nearby stars can join one feedback pulse
-  var CLICK_LIFE = 1000;          // ms
+  var CLICK_RADIUS = 260;         // how far the expanding wave reaches
+  var CLICK_LIFE = 1900;          // ms, slow and dreamy rather than a snap
   var MAX_PULSES = 3;
+  var WAVE_BAND = 26;             // px, thickness of the "leading edge" that lights stars as it passes
 
   var SHOOTING_STAR_MIN_GAP = 6000;
   var SHOOTING_STAR_MAX_GAP = 13000;
@@ -68,17 +68,21 @@
     else if (colorRoll < 0.15) color = SECONDARY;
 
     var sizeRoll = Math.random();
-    var r = sizeRoll > 0.94 ? 1.8 + Math.random() * 0.9 : 0.5 + Math.random() * 1.0; // rare "hero" stars
+    var r = sizeRoll > 0.9 ? 2.3 + Math.random() * 1.3 : 1.0 + Math.random() * 1.3; // bigger, softer stars, rare "hero" stars
     if (weight) r += 0.3;
 
     return {
       x: x, y: y, r: r,
-      baseAlpha: (weight ? 0.55 : 0.3) + Math.random() * 0.45,
+      baseAlpha: (weight ? 0.5 : 0.28) + Math.random() * 0.4,
       color: color,
       phase: Math.random() * Math.PI * 2,
       speed: 0.0005 + Math.random() * 0.0013,
       boost: 0,
-      hero: sizeRoll > 0.94
+      hero: sizeRoll > 0.9,
+      // set for cluster stars only, so a wave passing through can find and
+      // brighten the constellation links that star belongs to
+      clusterIndex: -1,
+      starIndex: -1
     };
   }
 
@@ -141,15 +145,24 @@
         var rotation = Math.random() * Math.PI * 2;
         var cos = Math.cos(rotation), sin = Math.sin(rotation);
 
-        var stars = tpl.points.map(function (p) {
+        var clusterIdx = clusters.length;
+        var stars = tpl.points.map(function (p, si) {
           var lx = (p[0] / 100 - 0.5) * scale;
           var ly = (p[1] / 100 - 0.5) * scale;
           var rx = lx * cos - ly * sin;
           var ry = lx * sin + ly * cos;
-          return makeStar(cx + rx, cy + ry, 1);
+          var star = makeStar(cx + rx, cy + ry, 1);
+          star.clusterIndex = clusterIdx;
+          star.starIndex = si;
+          return star;
         });
 
-        clusters.push({ stars: stars, links: tpl.links, phase: Math.random() * Math.PI * 2 });
+        clusters.push({
+          stars: stars,
+          links: tpl.links,
+          linkBoost: tpl.links.map(function () { return 0; }),
+          phase: Math.random() * Math.PI * 2
+        });
         centers.push({ x: cx, y: cy });
         placed = true;
       }
@@ -169,7 +182,7 @@
       if (d <= maxDist) found.push({ star: s, d: d });
     }
     found.sort(function (a, b) { return a.d - b.d; });
-    return found.slice(0, count);
+    return count ? found.slice(0, count) : found;
   }
 
   // ---- Sizing ----
@@ -203,10 +216,10 @@
     ctx.arc(s.x, s.y, r, 0, 6.2832);
     ctx.fill();
 
-    if (s.hero && alpha > 0.55) {
+    if (s.hero && alpha > 0.5) {
       ctx.beginPath();
-      ctx.fillStyle = rgba(s.color, alpha * 0.12);
-      ctx.arc(s.x, s.y, r * 3.4, 0, 6.2832);
+      ctx.fillStyle = rgba(s.color, alpha * 0.1);
+      ctx.arc(s.x, s.y, r * 4.2, 0, 6.2832);
       ctx.fill();
     }
   }
@@ -215,74 +228,85 @@
     for (var i = 0; i < clusters.length; i++) {
       var c = clusters[i];
       var shimmer = 0.5 + 0.5 * Math.sin(now * 0.00025 + c.phase);
-      var alpha = 0.05 + 0.07 * shimmer;
-      ctx.strokeStyle = rgba(SECONDARY, alpha);
-      ctx.lineWidth = 1;
+      var baseAlpha = 0.05 + 0.07 * shimmer;
       for (var j = 0; j < c.links.length; j++) {
         var a = c.stars[c.links[j][0]], b = c.stars[c.links[j][1]];
+        var boost = c.linkBoost[j];
+        var alpha = baseAlpha + boost * 0.45;
         ctx.beginPath();
         ctx.moveTo(a.x, a.y);
         ctx.lineTo(b.x, b.y);
+        ctx.strokeStyle = rgba(SECONDARY, alpha);
+        ctx.lineWidth = 1 + boost * 0.6;
         ctx.stroke();
+        c.linkBoost[j] *= 0.9;
       }
     }
   }
 
-  // Click feedback: a small, partial set of nearby stars link up briefly, like a
-  // constellation flickering into view for a moment. No artificial extra node,
-  // no reach beyond what's actually there - just the real stars responding.
+  // Click feedback: a soft ring expands outward from the tap. As its leading
+  // edge sweeps past a star, that star gets a gentle, once-only glow - and if
+  // the star belongs to an already-drawn constellation, the links it's part
+  // of brighten too, as if the wave were waking that shape up. Nothing new is
+  // invented or wired together; the wave only reveals what's already there.
   function spawnPulse(x, y) {
-    var near = nearestStars(x, y, CLICK_RADIUS, CLICK_MAX_STARS);
-    var edges = [];
-    for (var i = 0; i < near.length; i++) {
-      // connect each star to its nearest other star within the picked set only
-      // (a light, partial graph - not everyone joined to everyone)
-      var best = -1, bestD = Infinity;
-      for (var j = 0; j < near.length; j++) {
-        if (i === j) continue;
-        var d = Math.hypot(near[i].star.x - near[j].star.x, near[i].star.y - near[j].star.y);
-        if (d < bestD) { bestD = d; best = j; }
-      }
-      if (best !== -1) {
-        var pair = [near[i].star, near[best].star];
-        var dup = edges.some(function (e) {
-          return (e[0] === pair[0] && e[1] === pair[1]) || (e[0] === pair[1] && e[1] === pair[0]);
-        });
-        if (!dup) edges.push(pair);
-      }
-    }
-
-    pulses.push({ x: x, y: y, edges: edges, stars: near.map(function (n) { return n.star; }), start: performance.now() });
+    var candidates = nearestStars(x, y, CLICK_RADIUS);
+    pulses.push({
+      x: x, y: y,
+      start: performance.now(),
+      candidates: candidates,
+      touched: new Array(candidates.length)
+    });
     if (pulses.length > MAX_PULSES) pulses.shift();
+  }
+
+  function easeOutCubic(t) {
+    var f = t - 1;
+    return f * f * f + 1;
   }
 
   function drawPulses(now) {
     pulses = pulses.filter(function (p) { return now - p.start < CLICK_LIFE; });
     for (var i = 0; i < pulses.length; i++) {
       var p = pulses[i];
-      var age = now - p.start;
-      var t = age / CLICK_LIFE;
-      // quick rise, gentle fade
-      var strength = t < 0.25 ? (t / 0.25) : (1 - (t - 0.25) / 0.75);
-      strength = Math.max(0, strength);
+      var t = (now - p.start) / CLICK_LIFE;
+      var radius = easeOutCubic(t) * CLICK_RADIUS;
+      var ringAlpha = (1 - t) * 0.16;
 
-      for (var j = 0; j < p.edges.length; j++) {
-        var a = p.edges[j][0], b = p.edges[j][1];
-        ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
-        ctx.strokeStyle = rgba(SECONDARY, strength * 0.5);
-        ctx.lineWidth = 1.1;
-        ctx.stroke();
-      }
-      for (var k = 0; k < p.stars.length; k++) {
-        p.stars[k].boost = Math.max(p.stars[k].boost, strength * 0.55);
-      }
-
-      // tiny mark at the exact click point, just enough to confirm it registered
+      // the ring itself: one soft expanding circle, fading as it grows
       ctx.beginPath();
-      ctx.fillStyle = rgba(PRIMARY, strength * 0.5);
-      ctx.arc(p.x, p.y, 1.6, 0, 6.2832);
+      ctx.arc(p.x, p.y, radius, 0, 6.2832);
+      ctx.strokeStyle = rgba(SECONDARY, ringAlpha);
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+
+      // light up whatever the leading edge is passing over right now, once each
+      for (var k = 0; k < p.candidates.length; k++) {
+        if (p.touched[k]) continue;
+        var entry = p.candidates[k];
+        if (entry.d > radius) continue;
+        if (radius - entry.d > WAVE_BAND) continue; // wave has already fully passed, don't re-trigger
+        p.touched[k] = true;
+
+        var falloff = 1 - entry.d / CLICK_RADIUS; // farther stars respond a touch dimmer
+        var star = entry.star;
+        star.boost = Math.max(star.boost, 0.4 * falloff);
+
+        if (star.clusterIndex !== -1) {
+          var cluster = clusters[star.clusterIndex];
+          for (var li = 0; li < cluster.links.length; li++) {
+            if (cluster.links[li][0] === star.starIndex || cluster.links[li][1] === star.starIndex) {
+              cluster.linkBoost[li] = Math.min(1, cluster.linkBoost[li] + 0.8 * falloff);
+            }
+          }
+        }
+      }
+
+      // faint mark at the exact click point
+      var markAlpha = (1 - t) * 0.35;
+      ctx.beginPath();
+      ctx.fillStyle = rgba(PRIMARY, markAlpha);
+      ctx.arc(p.x, p.y, 1.3, 0, 6.2832);
       ctx.fill();
     }
   }
