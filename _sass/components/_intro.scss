@@ -46,6 +46,17 @@
   padding-bottom: 30px;
 }
 
+// When the contact box sits at the bottom of the hero, the section right
+// below it (the portfolio character-select) already brings its own top
+// spacing — so trim the hero's bottom padding here to avoid the two gaps
+// stacking into one big empty stretch.
+.intro.intro-has-call {
+  padding-bottom: 30px;
+  @include media-breakpoint-up(md) {
+    padding-bottom: 50px;
+  }
+}
+
 // Entrance animation for the hero (plays once on load, not on scroll)
 .hero-in-left,
 .hero-in-right {

@@ -1,5 +1,5 @@
 main:
-  - name: "About Me"
+  - name: "Portfolio"
     url: "/"
     weight: 1
   - name: "Journal"
@@ -10,7 +10,7 @@ main:
     weight: 3
 
 main_en:
-  - name: "About Me"
+  - name: "Portfolio"
     url: "/en/"
     weight: 1
   - name: "Journal"

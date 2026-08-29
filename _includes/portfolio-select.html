@@ -9,55 +9,98 @@
     </div>
   </div>
 
-  <div class="char-select-viewport reveal">
-    <div class="char-select-track" data-char-track role="list">
-      <span class="char-select-spacer" aria-hidden="true"></span>
-      {% for entry in entries %}
-        {% assign is_external = false %}
-        {% if entry.link and entry.link != "" %}
-          {% assign href = entry.link %}
-          {% if entry.link contains "http" %}{% assign is_external = true %}{% endif %}
-        {% else %}
-          {% assign href = entry.url | relative_url %}
-        {% endif %}
-        {% assign num = forloop.index %}
-        <a
-          class="char-card"
-          role="listitem"
-          data-char-card
-          href="{{ href }}"
-          {% if is_external %}target="_blank" rel="noopener"{% endif %}
-          aria-label="{{ entry.title }}{% if entry.category %}, {{ entry.category }}{% endif %}"
-        >
-          <span class="char-card-frame" aria-hidden="true">
-            <span class="char-border-ring"></span>
-            <span class="char-corner tl"></span>
-            <span class="char-corner tr"></span>
-            <span class="char-corner bl"></span>
-            <span class="char-corner br"></span>
-          </span>
+  <div class="char-select-body">
+    <div class="char-select-viewport reveal">
+      <div class="char-select-track" data-char-track role="list">
+        <span class="char-select-spacer" aria-hidden="true"></span>
+        {% for entry in entries %}
+          {% assign is_external = false %}
+          {% if entry.link and entry.link != "" %}
+            {% assign href = entry.link %}
+            {% if entry.link contains "http" %}{% assign is_external = true %}{% endif %}
+          {% else %}
+            {% assign href = entry.url | relative_url %}
+          {% endif %}
+          {% assign num = forloop.index %}
+          <a
+            class="char-card"
+            role="listitem"
+            data-char-card
+            data-preview-index="{{ num }}"
+            href="{{ href }}"
+            {% if is_external %}target="_blank" rel="noopener"{% endif %}
+            aria-label="{{ entry.title }}{% if entry.category %}, {{ entry.category }}{% endif %}"
+          >
+            <span class="char-card-frame" aria-hidden="true">
+              <span class="char-border-ring"></span>
+              <span class="char-corner tl"></span>
+              <span class="char-corner tr"></span>
+              <span class="char-corner bl"></span>
+              <span class="char-corner br"></span>
+            </span>
 
-          <span class="char-card-num" aria-hidden="true">{% if num < 10 %}0{{ num }}{% else %}{{ num }}{% endif %}</span>
+            <span class="char-card-num" aria-hidden="true">{% if num < 10 %}0{{ num }}{% else %}{{ num }}{% endif %}</span>
 
-          <span class="char-card-media">
-            {% if entry.image %}
-            <img src="{{ entry.image | relative_url }}" alt="" loading="lazy" />
-            {% endif %}
-          </span>
+            <span class="char-card-media">
+              {% if entry.image %}
+              <img src="{{ entry.image | relative_url }}" alt="" loading="lazy" />
+              {% endif %}
+            </span>
 
-          <span class="char-card-info">
-            {% if entry.category %}<span class="char-card-category">{{ entry.category }}</span>{% endif %}
-            <span class="char-card-title">{{ entry.title }}</span>
-          </span>
+            <span class="char-card-info">
+              {% if entry.category %}<span class="char-card-category">{{ entry.category }}</span>{% endif %}
+              <span class="char-card-title">{{ entry.title }}</span>
+            </span>
 
-          <span class="char-card-loading" aria-hidden="true">
-            <span class="char-card-loading-label">{{ t.char_select_loading }}</span>
-            <span class="char-card-loading-track"><span class="char-card-loading-fill"></span></span>
-          </span>
-        </a>
-      {% endfor %}
-      <span class="char-select-spacer" aria-hidden="true"></span>
+            <span class="char-card-loading" aria-hidden="true">
+              <span class="char-card-loading-label">{{ t.char_select_loading }}</span>
+              <span class="char-card-loading-track"><span class="char-card-loading-fill"></span></span>
+            </span>
+          </a>
+        {% endfor %}
+        <span class="char-select-spacer" aria-hidden="true"></span>
+      </div>
     </div>
+
+    <aside class="char-select-preview reveal" data-char-preview aria-live="polite">
+      <div class="char-select-preview-frame">
+        <span class="char-select-preview-corner tl" aria-hidden="true"></span>
+        <span class="char-select-preview-corner tr" aria-hidden="true"></span>
+        <span class="char-select-preview-corner bl" aria-hidden="true"></span>
+        <span class="char-select-preview-corner br" aria-hidden="true"></span>
+
+        <div class="char-select-preview-items">
+          {% for entry in entries %}
+            {% assign is_external = false %}
+            {% if entry.link and entry.link != "" %}
+              {% assign href = entry.link %}
+              {% if entry.link contains "http" %}{% assign is_external = true %}{% endif %}
+            {% else %}
+              {% assign href = entry.url | relative_url %}
+            {% endif %}
+            {% assign num = forloop.index %}
+            <div class="char-select-preview-item{% if forloop.first %} is-active{% endif %}" data-preview-item="{{ num }}">
+              <div class="char-select-preview-media">
+                {% if entry.image %}
+                <img src="{{ entry.image | relative_url }}" alt="" loading="lazy" />
+                {% endif %}
+                <span class="char-select-preview-num" aria-hidden="true">{% if num < 10 %}0{{ num }}{% else %}{{ num }}{% endif %}</span>
+              </div>
+              <div class="char-select-preview-body">
+                {% if entry.category %}<span class="char-select-preview-category">{{ entry.category }}</span>{% endif %}
+                <h3 class="char-select-preview-title">{{ entry.title }}</h3>
+                {% if entry.summary %}<p class="char-select-preview-summary">{{ entry.summary }}</p>{% endif %}
+                <a
+                  class="button button-primary char-select-preview-cta"
+                  href="{{ href }}"
+                  {% if is_external %}target="_blank" rel="noopener"{% endif %}
+                >{{ t.char_select_cta }}</a>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </aside>
   </div>
 
   <div class="container">

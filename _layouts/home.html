@@ -18,7 +18,7 @@ bodyClass: "page-home"
   {% assign all_portfolio = portfolio_docs | sort: "date" | reverse %}
 {% endif %}
 
-<div class="intro">
+<div class="intro{% if page.show_call_box %} intro-has-call{% endif %}">
   <div class="container">
     <div class="row justify-content-start align-items-center">
       <div class="col-12 col-md-8 col-lg-7 order-2 order-md-1 hero-in-left">

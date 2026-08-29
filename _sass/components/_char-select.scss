@@ -1,5 +1,5 @@
 // "Character select" style carousel — replaces the old Portfolio gallery,
-// now embedded in About Me right below the contact box.
+// now embedded in the Portfolio home page right below the contact box.
 
 .char-select {
   position: relative;
@@ -82,6 +82,201 @@
 
 .char-select-spacer {
   flex: 0 0 clamp(20px, 6vw, 90px);
+}
+
+// Roster (viewport) + preview panel, side by side like a character-select
+// screen from the lg breakpoint up. Below that there's not enough width
+// to do both justice, so the preview stacks under the roster instead.
+.char-select-body {
+  display: flex;
+  flex-direction: column;
+
+  @include media-breakpoint-up(lg) {
+    flex-direction: row;
+    align-items: stretch;
+  }
+}
+
+.char-select-viewport {
+  @include media-breakpoint-up(lg) {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+}
+
+// ---- Preview panel ----
+.char-select-preview {
+  padding: 0 clamp(20px, 6vw, 90px);
+  margin-top: 4px;
+
+  @include media-breakpoint-up(lg) {
+    flex: 0 0 340px;
+    padding: 26px 0 44px;
+    margin-top: 0;
+  }
+  @include media-breakpoint-up(xl) {
+    flex-basis: 380px;
+  }
+}
+
+.char-select-preview-frame {
+  position: relative;
+  height: 100%;
+  border: 1px solid $white-offset;
+  border-radius: 10px;
+  background-color: $white;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.char-select-preview-corner {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 2px solid $secondary;
+  opacity: 0.6;
+  z-index: 2;
+  animation: char-border-breathe 3.2s ease-in-out infinite;
+}
+.char-select-preview-corner.tl {
+  top: 8px;
+  left: 8px;
+  border-right: none;
+  border-bottom: none;
+}
+.char-select-preview-corner.tr {
+  top: 8px;
+  right: 8px;
+  border-left: none;
+  border-bottom: none;
+}
+.char-select-preview-corner.bl {
+  bottom: 8px;
+  left: 8px;
+  border-right: none;
+  border-top: none;
+}
+.char-select-preview-corner.br {
+  bottom: 8px;
+  right: 8px;
+  border-left: none;
+  border-top: none;
+  animation-delay: 0.4s;
+}
+
+// Stack every project's preview in the same grid cell so the panel keeps
+// a stable height and switching between them is a plain opacity crossfade
+// rather than a layout jump.
+.char-select-preview-items {
+  display: grid;
+  height: 100%;
+}
+
+.char-select-preview-item {
+  grid-area: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.35s ease, visibility 0s linear 0.35s;
+
+  &.is-active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition: opacity 0.35s ease 0.05s;
+  }
+}
+
+.char-select-preview-media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background-color: $body-bg;
+  flex: 0 0 auto;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(0.85) contrast(1.05);
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(180deg, rgba(11, 10, 13, 0) 55%, rgba(11, 10, 13, 0.75) 100%);
+    pointer-events: none;
+  }
+}
+
+.char-select-preview-num {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 2;
+  font-family: $font-family-heading;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: $steel;
+  background-color: rgba(11, 10, 13, 0.55);
+  padding: 3px 8px;
+  border-radius: 3px;
+}
+
+.char-select-preview-body {
+  padding: 18px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex: 1 1 auto;
+}
+
+.char-select-preview-category {
+  font-family: $font-family-subheading;
+  text-transform: uppercase;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: $secondary;
+  margin-bottom: 6px;
+}
+
+.char-select-preview-title {
+  font-family: $font-family-heading;
+  font-weight: 800;
+  font-size: 20px;
+  line-height: 1.25;
+  color: $black;
+  margin-bottom: 10px;
+}
+
+.char-select-preview-summary {
+  font-size: 14px;
+  line-height: 1.5;
+  color: $steel;
+  margin-bottom: 20px;
+  flex: 1 1 auto;
+}
+
+.char-select-preview-cta {
+  margin-top: auto;
+  align-self: flex-start;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .char-select-preview-corner {
+    animation: none !important;
+    opacity: 0.6;
+  }
+  .char-select-preview-item {
+    transition: none !important;
+  }
 }
 
 .char-card {
@@ -300,7 +495,8 @@
   }
   .char-border-ring {
     opacity: 1;
-    animation: char-border-spin 2.6s linear infinite;
+    animation: char-border-appear 0.5s cubic-bezier(0.22, 1, 0.36, 1) both,
+      char-border-breathe 3.2s ease-in-out 0.5s infinite;
   }
 }
 
@@ -316,9 +512,32 @@
   }
 }
 
-@keyframes char-border-spin {
+// A quick, one-time "power on" sweep when a card is selected...
+@keyframes char-border-appear {
+  from {
+    opacity: 0;
+    filter: brightness(1) saturate(1);
+  }
+  40% {
+    opacity: 1;
+    filter: brightness(1.6) saturate(1.3);
+  }
   to {
-    transform: rotate(360deg);
+    opacity: 1;
+    filter: brightness(1) saturate(1);
+  }
+}
+
+// ...settling into a slow, gentle glow instead of a constant spin.
+@keyframes char-border-breathe {
+  0%,
+  100% {
+    opacity: 0.7;
+    filter: brightness(1);
+  }
+  50% {
+    opacity: 1;
+    filter: brightness(1.25);
   }
 }
 

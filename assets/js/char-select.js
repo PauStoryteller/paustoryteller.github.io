@@ -11,6 +11,30 @@
   var canHover = window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
   var hoverLock = false;
 
+  // ---- Fix: clicking a card sets it to "is-loading" and then navigates
+  // away. If the browser restores this exact page from its back/forward
+  // cache (e.g. the user hits the Back button after opening a project),
+  // that "is-loading" class — and its now-finished progress bar — comes
+  // back frozen on screen. `pageshow` fires on every load, including
+  // bfcache restores, so we use it to always clear that state. ----
+  window.addEventListener("pageshow", function () {
+    cards.forEach(function (card) {
+      card.classList.remove("is-loading");
+      card.style.removeProperty("--load-duration");
+    });
+  });
+
+  // ---- Right-hand "preview panel": mirrors whichever card is active ----
+  var preview = document.querySelector("[data-char-preview]");
+  var previewItems = preview ? Array.prototype.slice.call(preview.querySelectorAll("[data-preview-item]")) : [];
+
+  function setPreview(index) {
+    if (!previewItems.length || !index) return;
+    previewItems.forEach(function (item) {
+      item.classList.toggle("is-active", item.getAttribute("data-preview-item") === index);
+    });
+  }
+
   // ---- "Selection cursor": highlight whichever card is closest to the
   // centre of the carousel — via hover on desktop, via scroll position
   // (and keyboard focus) everywhere else ----
@@ -19,6 +43,7 @@
       c.classList.toggle("is-active", c === card);
     });
     track.classList.toggle("has-active", !!card);
+    if (card) setPreview(card.getAttribute("data-preview-index"));
   }
 
   function updateActiveFromScroll() {
