@@ -6,13 +6,15 @@ bodyClass: "page-piece-single"
 {% assign t = site.data.i18n[lang] %}
 {% assign is_portfolio = false %}
 {% if page.collection contains "portfolio" %}{% assign is_portfolio = true %}{% endif %}
-{% assign back_url = "/portfolio/" %}
-{% assign back_label = t.back_to_portfolio %}
-{% unless is_portfolio %}
+{% if is_portfolio %}
+  {% assign back_label = t.back_to_work %}
+  {% assign back_url = "/#portfolio-select" %}
+  {% if page.lang == "en" %}{% assign back_url = "/en/#portfolio-select" %}{% endif %}
+{% else %}
   {% assign back_label = t.back_to_journal %}
   {% assign back_url = "/journal/" %}
-{% endunless %}
-{% if page.lang == "en" %}{% assign back_url = "/en" | append: back_url %}{% endif %}
+  {% if page.lang == "en" %}{% assign back_url = "/en/journal/" %}{% endif %}
+{% endif %}
 
 <div class="container pt-6 pt-md-10 pb-6 pb-md-10">
   <div class="row justify-content-start">

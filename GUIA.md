@@ -1,13 +1,13 @@
 # Guía rápida de tu web
 
-Web basada en el tema Serif de Zerostatic (MIT license), adaptada a tema oscuro rojo/morado, con tres secciones ("Portfolio", "Journal" y "My Talented Friends") y **dos idiomas: español (por defecto) e inglés**.
+Web basada en el tema Serif de Zerostatic (MIT license), adaptada a tema oscuro rojo/morado, con dos secciones en el menú ("Journal" y "My Talented Friends") más la portada "About Me" — que incluye tu selector de proyectos de Portfolio — y **dos idiomas: español (por defecto) e inglés**.
 
 ## Cómo funciona el idioma
 
-- El español vive en la raíz del sitio: `/`, `/portfolio/`, `/journal/`, `/friends/`.
-- El inglés vive bajo `/en/`: `/en/`, `/en/portfolio/`, `/en/journal/`, `/en/friends/`.
+- El español vive en la raíz del sitio: `/`, `/journal/`, `/friends/` (el Portfolio ya no es una página aparte: vive dentro de `/`, ver más abajo).
+- El inglés vive bajo `/en/`: `/en/`, `/en/journal/`, `/en/friends/`.
 - Arriba a la derecha del menú hay un botón **ES/EN** que cambia de idioma en cualquier momento. Si la página en la que estás tiene una traducción concreta enlazada (ver `translation_url` más abajo), te lleva directamente a ella; si no, te lleva a la portada del otro idioma.
-- Todo el texto de la interfaz (botones, "Email:", cabeceras de "Portfolio destacado", etc.) se traduce automáticamente según en qué idioma estés — se controla desde `_data/i18n.yml`, no hace falta tocarlo salvo que quieras cambiar alguna frase fija.
+- Todo el texto de la interfaz (botones, "Email:", cabeceras de "Journal destacado", los textos del selector de proyectos, etc.) se traduce automáticamente según en qué idioma estés — se controla desde `_data/i18n.yml`, no hace falta tocarlo salvo que quieras cambiar alguna frase fija.
 
 ## Escribir contenido en los dos idiomas
 
@@ -31,10 +31,12 @@ Esto hace que el botón ES/EN, cuando alguien esté leyendo esa pieza en concret
 
 ## Cómo añadir una pieza a Portfolio
 
+Portfolio ya no tiene una página de galería propia: cada pieza que crees aparece automáticamente como una "carta" en el selector de proyectos de la portada (About Me), justo debajo de la caja de contacto, ordenadas de la más reciente a la más antigua.
+
 1. Ve a `_portfolio` (español) o `_portfolio_en` (inglés).
 2. Copia el archivo de ejemplo (`ejemplo-nombre-del-proyecto.md` o `example-project-name.md`) y ponle un nombre nuevo (minúsculas, sin espacios ni tildes, p. ej. `mi-juego-de-plataformas.md`).
-3. Edita las líneas de arriba (entre `---`): `title`, `category`, `date`, `image` (súbela primero a `images`), `summary`, `featured` (`true` si quieres que también aparezca destacada en la portada) y, si la traduces, `translation_url`.
-4. Escribe el contenido completo debajo, en Markdown.
+3. Edita las líneas de arriba (entre `---`): `title`, `category`, `date` (controla el orden: más reciente primero), `image` (súbela primero a `images`; se recorta en formato vertical 3:4, así que centra bien el sujeto), `summary` y, si la traduces, `translation_url`. El campo `featured` puedes dejarlo o borrarlo: ya no afecta a Portfolio (solo sigue funcionando en Journal).
+4. Escribe el contenido completo debajo, en Markdown: esto es lo que se ve al hacer clic en la carta y entrar al proyecto.
 5. Sube los cambios con GitHub Desktop.
 
 ## Cómo añadir una entrada a Journal
@@ -52,13 +54,17 @@ En ambos casos (Portfolio y Journal), el campo `link` es opcional: solo relléna
 
 No hace falta duplicar el archivo de amigos por idioma: es el mismo `_data/friends.yml` para las dos versiones de la web.
 
-## Piezas destacadas en la portada (About Me)
+## El selector de proyectos de Portfolio (About Me)
 
-Cualquier pieza de Portfolio o Journal con `featured: true` en su cabecera aparece automáticamente en la portada de su idioma correspondiente. Se muestran como máximo 3 por columna (lo puedes cambiar en `_config.yml`, clave `home.limit_featured`).
+Debajo de la caja de contacto de la portada aparece un carrusel horizontal con todas tus piezas de Portfolio, con estética de "pantalla de selección de personaje" de videojuego: al pasar el cursor por una carta (o centrarla al deslizar en móvil) se marca como seleccionada con un marco que "escanea" y un ligero desplazamiento, y al hacer clic se ve un momento de "Cargando…" antes de entrar al proyecto. No hay nada que mantener aquí: se genera solo a partir de lo que tengas en `_portfolio` / `_portfolio_en`, en el orden de la fecha (`date`) de cada pieza, de más nueva a más antigua. Si algún día no tienes ninguna pieza de Portfolio, esta sección simplemente no aparece.
+
+## Piezas destacadas en Journal (About Me)
+
+Cualquier entrada de Journal con `featured: true` en su cabecera aparece automáticamente en la columna de "Journal destacado" de la portada, en el idioma correspondiente. Se muestran como máximo 3 (lo puedes cambiar en `_config.yml`, clave `home.limit_featured`).
 
 ## Tus redes sociales y contacto
 
-- `_data/social.json` → tus enlaces reales (Email, Discord, ArtStation, LinkedIn, itch.io...). Estos iconos aparecen en ambos idiomas, en About Me, Portfolio y Journal.
+- `_data/social.json` → tus enlaces reales (Email, Discord, ArtStation, LinkedIn, itch.io...). Estos iconos aparecen en ambos idiomas, en About Me y en Journal.
 - `_data/contact.yml` → tu email real. Se usa tanto en el botón de contacto como en la caja de la portada.
 - El texto que acompaña a los iconos en la portada se edita en `connect_text`, dentro de `index.md` (español) o `en/index.md` (inglés).
 
@@ -69,7 +75,6 @@ Sube tu foto a la carpeta `images` con el nombre exacto `tu-foto.jpg` (sustituye
 ## Páginas y datos que puedes editar
 
 - `index.md` / `en/index.md` → texto de la portada
-- `portfolio.md` / `en/portfolio.md` → texto de cabecera de la sección Portfolio
 - `journal.md` / `en/journal.md` → texto de cabecera de la sección Journal
 - `friends.md` / `en/friends.md` → texto de cabecera de "My Talented Friends"
 - `_portfolio/` / `_portfolio_en/` → tus obras (una página por archivo)

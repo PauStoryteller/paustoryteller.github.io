@@ -1,0 +1,385 @@
+// "Character select" style carousel — replaces the old Portfolio gallery,
+// now embedded in About Me right below the contact box.
+
+.char-select {
+  position: relative;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  @include media-breakpoint-up(md) {
+    padding-top: 20px;
+  }
+}
+
+.char-select-head {
+  margin-bottom: 24px;
+  @include media-breakpoint-up(md) {
+    margin-bottom: 30px;
+  }
+}
+
+.char-select-eyebrow {
+  font-family: $font-family-subheading;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 12px;
+  font-weight: 600;
+  color: $secondary;
+  margin-bottom: 6px;
+}
+
+.char-select-heading {
+  font-family: $font-family-heading;
+  font-weight: 800;
+  color: $black;
+  margin-bottom: 0;
+  display: inline-block;
+
+  &::after {
+    content: "";
+    display: block;
+    width: 64px;
+    height: 3px;
+    margin-top: 14px;
+    background-image: linear-gradient(to right, $primary, $secondary);
+  }
+}
+
+// Full-bleed scroll area so cards can spill to the edge of the viewport,
+// like a console character-select screen.
+.char-select-viewport {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: $primary $white-offset;
+
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background-color: $white-offset;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-image: linear-gradient(to right, $primary, $secondary);
+    border-radius: 10px;
+  }
+}
+
+.char-select-track {
+  display: flex;
+  align-items: stretch;
+  gap: 18px;
+  width: max-content;
+  min-width: 100%;
+  padding: 26px 0 44px;
+  scroll-snap-type: x proximity;
+  scroll-behavior: smooth;
+
+  @include media-breakpoint-up(md) {
+    gap: 24px;
+  }
+}
+
+.char-select-spacer {
+  flex: 0 0 clamp(20px, 6vw, 90px);
+}
+
+.char-card {
+  position: relative;
+  flex: 0 0 auto;
+  width: 190px;
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  background-color: $white;
+  border: 1px solid $white-offset;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  scroll-snap-align: center;
+  transform: scale(1) translateY(0);
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s ease,
+    border-color 0.35s ease,
+    opacity 0.35s ease,
+    filter 0.35s ease;
+
+  @include media-breakpoint-up(sm) {
+    width: 210px;
+  }
+  @include media-breakpoint-up(md) {
+    width: 240px;
+  }
+  @include media-breakpoint-up(lg) {
+    width: 270px;
+  }
+
+  &:hover,
+  &:focus-visible {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $secondary;
+    outline-offset: 5px;
+  }
+}
+
+.char-card-media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background-color: $body-bg;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(0.8) contrast(1.05);
+    transition: transform 0.5s ease, filter 0.35s ease;
+  }
+
+  // vignette so the title bar below always reads clearly
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(180deg, rgba(11, 10, 13, 0) 60%, rgba(11, 10, 13, 0.7) 100%);
+    pointer-events: none;
+  }
+}
+
+.char-card-num {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 3;
+  font-family: $font-family-heading;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: $steel;
+  background-color: rgba(11, 10, 13, 0.55);
+  padding: 3px 8px;
+  border-radius: 3px;
+  transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+.char-card-info {
+  padding: 14px 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.char-card-category {
+  font-family: $font-family-subheading;
+  text-transform: uppercase;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: $secondary;
+}
+
+.char-card-title {
+  font-family: $font-family-heading;
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 1.25;
+  color: $black;
+  @include media-breakpoint-up(lg) {
+    font-size: 16px;
+  }
+}
+
+// ---- Selection cursor: corner brackets + scanning line ----
+.char-card-frame {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.char-corner {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 2px solid $primary;
+  opacity: 0;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.char-corner.tl {
+  top: 6px;
+  left: 6px;
+  border-right: none;
+  border-bottom: none;
+  transform: translate(6px, 6px);
+}
+.char-corner.tr {
+  top: 6px;
+  right: 6px;
+  border-left: none;
+  border-bottom: none;
+  transform: translate(-6px, 6px);
+}
+.char-corner.bl {
+  bottom: 6px;
+  left: 6px;
+  border-right: none;
+  border-top: none;
+  transform: translate(6px, -6px);
+}
+.char-corner.br {
+  bottom: 6px;
+  right: 6px;
+  border-left: none;
+  border-top: none;
+  transform: translate(-6px, -6px);
+}
+
+.char-scanline {
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  top: 4%;
+  height: 2px;
+  background-image: linear-gradient(to right, transparent, $primary, $secondary, transparent);
+  box-shadow: 0 0 8px rgba(229, 72, 77, 0.8);
+  opacity: 0;
+}
+
+.char-card.is-active {
+  transform: scale(1.06) translateY(-6px);
+  border-color: $primary;
+  box-shadow: 0 18px 40px rgba(229, 72, 77, 0.28), 0 0 0 1px rgba(157, 127, 234, 0.25);
+  z-index: 2;
+
+  .char-card-media img {
+    transform: scale(1.08);
+    filter: saturate(1.05) contrast(1.05);
+  }
+  .char-card-num {
+    color: #ffffff;
+    background-color: $primary;
+  }
+  .char-corner {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+  .char-scanline {
+    opacity: 1;
+    animation: char-scan 1.4s linear infinite;
+  }
+}
+
+@keyframes char-scan {
+  0% {
+    top: 4%;
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  100% {
+    top: 94%;
+    opacity: 0;
+  }
+}
+
+// The rest of the roster dims a touch so the active pick reads as "selected"
+.char-select-track.has-active .char-card:not(.is-active) {
+  opacity: 0.55;
+  filter: saturate(0.5);
+  transform: scale(0.95);
+}
+
+// ---- Fake "loading…" screen before entering a project ----
+.char-card-loading {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background-color: rgba(11, 10, 13, 0.9);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+.char-card.is-loading {
+  transform: scale(1.06) translateY(-6px);
+  z-index: 6;
+
+  .char-card-loading {
+    opacity: 1;
+  }
+}
+
+.char-card-loading-label {
+  font-family: $font-family-heading;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 12px;
+  color: $black;
+}
+
+.char-card-loading-track {
+  width: 68%;
+  height: 4px;
+  background-color: $white-offset;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.char-card-loading-fill {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background-image: linear-gradient(to right, $primary, $secondary);
+}
+
+.char-card.is-loading .char-card-loading-fill {
+  animation: char-load-fill var(--load-duration, 500ms) linear forwards;
+}
+
+@keyframes char-load-fill {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.char-select-hint {
+  margin-top: 2px;
+  font-family: $font-family-subheading;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 12px;
+  color: $steel;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .char-card,
+  .char-card-media img,
+  .char-corner,
+  .char-scanline {
+    transition: none !important;
+    animation: none !important;
+  }
+  .char-card.is-active,
+  .char-select-track.has-active .char-card:not(.is-active) {
+    transform: none;
+  }
+}
