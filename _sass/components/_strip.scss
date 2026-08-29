@@ -7,6 +7,25 @@
 }
 .strip-grey {
   background-color: $white-offset;
+  position: relative;
+
+  // A jagged, torn-edge cut instead of a flat rectangle - used wherever the
+  // "¿Hablamos?" connect block closes out a page (gallery lists, single pieces).
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -18px;
+    height: 18px;
+    background-image:
+      linear-gradient(135deg, $white-offset 50%, transparent 50%),
+      linear-gradient(225deg, $white-offset 50%, transparent 50%);
+    background-position: left top;
+    background-size: 26px 18px;
+    background-repeat: repeat-x;
+    pointer-events: none;
+  }
 }
 .strip-diagonal {
   transform: skewY(5deg);

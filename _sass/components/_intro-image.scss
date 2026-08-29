@@ -37,7 +37,7 @@
 // Foto de perfil (en vez de la ilustración grande a sangre)
 .intro-photo {
   width: 100%;
-  max-width: 380px;
+  max-width: 420px;
   aspect-ratio: 1 / 1;
   object-fit: cover;
   border-radius: 8px;
@@ -45,6 +45,6 @@
   margin: 0 auto;
   display: block;
   @include media-breakpoint-up(md) {
-    margin: 0 0 0 auto;
+    margin: 0 auto 0 0;
   }
 }

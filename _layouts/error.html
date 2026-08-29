@@ -1,0 +1,15 @@
+---
+layout: default
+bodyClass: "page-error"
+---
+
+<div class="error-hero">
+  <div class="container">
+    <div class="error-content reveal">
+      <p class="error-code" aria-hidden="true">404</p>
+      <h1 class="error-title">{{ page.title }}</h1>
+      <div class="error-text">{{ content }}</div>
+      <a href="{{ page.home_url | relative_url }}" class="button error-button">{{ page.button_text }}</a>
+    </div>
+  </div>
+</div>
