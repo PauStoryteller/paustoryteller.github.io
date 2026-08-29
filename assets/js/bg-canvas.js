@@ -22,7 +22,6 @@
   var CLICK_RADIUS = 260;         // how far the wave can reach
   var CLICK_MAX_STARS = 9;        // how many stars can be swept into one wave
   var CLICK_SPEED = 0.32;         // px/ms, how fast the wave front travels outward
-  var CLICK_LIFE = 2600;          // ms - total lifetime of a pulse
   var MAX_PULSES = 3;
 
   var W = 0, H = 0, DPR = 1;
@@ -53,7 +52,7 @@
     else if (colorRoll < 0.52) color = SECONDARY;
 
     var sizeRoll = Math.random();
-    var r = sizeRoll > 0.9 ? 2.9 + Math.random() * 1.7 : 1.4 + Math.random() * 1.6; // a touch bigger, rare larger stars
+    var r = sizeRoll > 0.9 ? 3.3 + Math.random() * 1.9 : 1.7 + Math.random() * 1.8; // bigger again, rare larger stars
 
     return {
       x: x, y: y, r: r,
@@ -142,8 +141,8 @@
 
   // ---- Drawing ----
   function drawStar(s, now) {
-    // A very slow, shallow breathing motion - present but never attention-grabbing.
-    var breathe = 0.92 + 0.08 * Math.sin(now * s.speed + s.phase);
+    // A slow, shallow breathing motion - present but never attention-grabbing.
+    var breathe = 0.88 + 0.12 * Math.sin(now * s.speed + s.phase);
     var alpha = Math.min(1, s.baseAlpha * breathe + s.boost);
     s.boost *= 0.94;
     if (alpha < 0.03) return;
@@ -161,9 +160,14 @@
 
   // Click feedback: an expanding wave. Real stars near the tap connect first,
   // and as the front keeps traveling outward it reaches farther stars too -
-  // but weaker each time, and with less time left to shine before the whole
-  // pulse dissolves. Nothing permanent is created; every connection here only
-  // exists for the moment the wave is passing through it.
+  // but weaker each time. Each connection is a straight line that draws
+  // itself toward the direction the wave is heading (from the near star to
+  // the far one), holds a moment, then "undraws" the same way: its start
+  // catches up to its end, so it disappears by being consumed forward rather
+  // than retreating backward.
+  var GROW_MIN = 140;   // ms, minimum time a line takes to draw/undraw
+  var HOLD_TIME = 260;  // ms, full-strength pause between drawing and undrawing
+
   function spawnPulse(x, y) {
     var near = nearestStars(x, y, CLICK_RADIUS, CLICK_MAX_STARS);
     if (!near.length) return;
@@ -187,65 +191,80 @@
       return {
         star: star,
         onset: dist / CLICK_SPEED,          // when the wave front reaches this star
-        weaken: 1 - dist / CLICK_RADIUS      // farther = weaker, all the way to the end
+        weaken: 1 - dist / CLICK_RADIUS      // farther = weaker, all the way through
       };
     });
 
+    // build directed edges: from whichever endpoint the wave reaches first,
+    // toward the one it reaches later - so every line points outward
+    var edges = [];
+    for (var i = 0; i < nodes.length - 1; i++) {
+      var n1 = nodes[i], n2 = nodes[i + 1];
+      var near_ = n1.onset <= n2.onset ? n1 : n2;
+      var far_ = n1.onset <= n2.onset ? n2 : n1;
+      var growDuration = Math.max(GROW_MIN, far_.onset - near_.onset);
+      edges.push({
+        a: near_, b: far_,
+        weaken: (near_.weaken + far_.weaken) / 2,
+        t0: near_.onset,
+        t1: near_.onset + growDuration,
+        t2: near_.onset + growDuration + HOLD_TIME,
+        t3: near_.onset + growDuration * 2 + HOLD_TIME,
+        growDuration: growDuration
+      });
+    }
+
     var color = Math.random() < 0.5 ? SECONDARY : PRIMARY;
-    pulses.push({ start: performance.now(), nodes: nodes, color: color });
+    pulses.push({ start: performance.now(), edges: edges, color: color });
     if (pulses.length > MAX_PULSES) pulses.shift();
   }
 
-  // Strength of a single connection at a given moment: 0 before the wave
-  // arrives, a quick rise, then a fade that always finishes by CLICK_LIFE -
-  // so connections reached late by the wave barely get to exist at all.
-  function edgeStrength(elapsed, onset) {
-    if (elapsed <= onset) return 0;
-    var windowLeft = CLICK_LIFE - onset;
-    if (windowLeft <= 0) return 0;
-    var local = elapsed - onset;
-    var riseTime = Math.min(180, windowLeft * 0.35);
-    var s;
-    if (local < riseTime) {
-      s = easeInOut(local / riseTime);
-    } else {
-      s = 1 - easeInOut((local - riseTime) / (windowLeft - riseTime));
-    }
-    return Math.max(0, Math.min(1, s));
-  }
-
   function drawPulses(now) {
-    pulses = pulses.filter(function (p) { return now - p.start < CLICK_LIFE; });
+    pulses = pulses.filter(function (p) {
+      var maxT3 = 0;
+      for (var i = 0; i < p.edges.length; i++) maxT3 = Math.max(maxT3, p.edges[i].t3);
+      return now - p.start < maxT3;
+    });
+
     for (var i = 0; i < pulses.length; i++) {
       var p = pulses[i];
       var elapsed = now - p.start;
 
-      ctx.strokeStyle = rgba(p.color, 1); // alpha set per-edge below via globalAlpha
-      ctx.lineWidth = 1;
-      for (var j = 0; j < p.nodes.length - 1; j++) {
-        var na = p.nodes[j], nb = p.nodes[j + 1];
-        var onset = Math.max(na.onset, nb.onset);
-        var strength = edgeStrength(elapsed, onset);
-        if (strength <= 0.01) continue;
-        var weaken = (na.weaken + nb.weaken) / 2;
-        var alpha = strength * weaken * 0.4;
-        if (alpha <= 0.01) continue;
+      for (var j = 0; j < p.edges.length; j++) {
+        var e = p.edges[j];
+        if (elapsed <= e.t0 || elapsed >= e.t3) continue;
 
-        var a = na.star, b = nb.star;
-        var mx = (a.x + b.x) / 2 - (b.y - a.y) * 0.06;
-        var my = (a.y + b.y) / 2 + (b.x - a.x) * 0.06;
+        var p0frac, p1frac;
+        if (elapsed < e.t1) {
+          // drawing forward: tip travels from A to B
+          p0frac = 0;
+          p1frac = easeInOut((elapsed - e.t0) / e.growDuration);
+        } else if (elapsed < e.t2) {
+          // holding: fully connected
+          p0frac = 0;
+          p1frac = 1;
+        } else {
+          // undrawing: the start catches up to B, consumed in the same direction it was drawn
+          p0frac = easeInOut((elapsed - e.t2) / e.growDuration);
+          p1frac = 1;
+        }
+
+        var A = e.a.star, B = e.b.star;
+        var x0 = A.x + (B.x - A.x) * p0frac, y0 = A.y + (B.y - A.y) * p0frac;
+        var x1 = A.x + (B.x - A.x) * p1frac, y1 = A.y + (B.y - A.y) * p1frac;
+
+        var alpha = e.weaken * 0.62;
+        if (alpha <= 0.01) continue;
         ctx.beginPath();
         ctx.strokeStyle = rgba(p.color, alpha);
-        ctx.moveTo(a.x, a.y);
-        ctx.quadraticCurveTo(mx, my, b.x, b.y);
+        ctx.lineWidth = 1.3;
+        ctx.moveTo(x0, y0);
+        ctx.lineTo(x1, y1);
         ctx.stroke();
-      }
 
-      for (var k = 0; k < p.nodes.length; k++) {
-        var node = p.nodes[k];
-        var nodeStrength = edgeStrength(elapsed, node.onset);
-        if (nodeStrength <= 0) continue;
-        node.star.boost = Math.max(node.star.boost, nodeStrength * node.weaken * 0.5);
+        // the trailing tip (whichever end is currently "live") gives its star a soft glow
+        if (elapsed < e.t2) B.boost = Math.max(B.boost, e.weaken * 0.55);
+        if (elapsed < e.t2) A.boost = Math.max(A.boost, e.weaken * 0.4);
       }
     }
   }
