@@ -196,12 +196,43 @@
   }
 }
 
-// ---- Selection cursor: corner brackets + scanning line ----
+// ---- Selection cursor: corner brackets + animated glow border ----
 .char-card-frame {
   position: absolute;
   inset: 0;
   pointer-events: none;
   z-index: 4;
+}
+
+// Rotating gradient ring, masked down to just its edge — the "energy border"
+.char-border-ring {
+  position: absolute;
+  inset: -3px;
+  border-radius: 13px;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+// Only paint the ring where the browser can mask it down to an outline;
+// otherwise it stays invisible instead of covering the card as a solid block.
+@supports ((mask-composite: exclude) or (-webkit-mask-composite: xor)) {
+  .char-border-ring {
+    padding: 2px;
+    background-image: conic-gradient(
+      from 0deg,
+      transparent 0%,
+      $primary 20%,
+      $secondary 45%,
+      transparent 55%,
+      $secondary 80%,
+      $primary 95%,
+      transparent 100%
+    );
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+  }
 }
 
 .char-corner {
@@ -241,17 +272,6 @@
   transform: translate(-6px, -6px);
 }
 
-.char-scanline {
-  position: absolute;
-  left: 6px;
-  right: 6px;
-  top: 4%;
-  height: 2px;
-  background-image: linear-gradient(to right, transparent, $primary, $secondary, transparent);
-  box-shadow: 0 0 8px rgba(229, 72, 77, 0.8);
-  opacity: 0;
-}
-
 .char-card.is-active {
   transform: scale(1.06) translateY(-6px);
   border-color: $primary;
@@ -269,27 +289,36 @@
   .char-corner {
     opacity: 1;
     transform: translate(0, 0);
+    animation: char-corner-pulse 1.6s ease-in-out infinite;
   }
-  .char-scanline {
+  .char-corner.tr,
+  .char-corner.bl {
+    animation-delay: 0.15s;
+  }
+  .char-corner.br {
+    animation-delay: 0.3s;
+  }
+  .char-border-ring {
     opacity: 1;
-    animation: char-scan 1.4s linear infinite;
+    animation: char-border-spin 2.6s linear infinite;
   }
 }
 
-@keyframes char-scan {
-  0% {
-    top: 4%;
-    opacity: 0;
-  }
-  8% {
-    opacity: 1;
-  }
-  92% {
-    opacity: 1;
-  }
+@keyframes char-corner-pulse {
+  0%,
   100% {
-    top: 94%;
-    opacity: 0;
+    border-color: $primary;
+    filter: drop-shadow(0 0 0 rgba(229, 72, 77, 0));
+  }
+  50% {
+    border-color: $secondary;
+    filter: drop-shadow(0 0 4px rgba(157, 127, 234, 0.9));
+  }
+}
+
+@keyframes char-border-spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 
@@ -374,7 +403,7 @@
   .char-card,
   .char-card-media img,
   .char-corner,
-  .char-scanline {
+  .char-border-ring {
     transition: none !important;
     animation: none !important;
   }

@@ -30,11 +30,11 @@
           aria-label="{{ entry.title }}{% if entry.category %}, {{ entry.category }}{% endif %}"
         >
           <span class="char-card-frame" aria-hidden="true">
+            <span class="char-border-ring"></span>
             <span class="char-corner tl"></span>
             <span class="char-corner tr"></span>
             <span class="char-corner bl"></span>
             <span class="char-corner br"></span>
-            <span class="char-scanline"></span>
           </span>
 
           <span class="char-card-num" aria-hidden="true">{% if num < 10 %}0{{ num }}{% else %}{{ num }}{% endif %}</span>
