@@ -14,16 +14,15 @@
 
   // ---- Tunables ----
   var BG_AREA_PER_STAR = 15000;   // px^2 of page per background star (sparser = less uniform)
-  var MAX_BG_STARS = 190;
+  var MAX_BG_STARS = 180;
+  var MIN_STAR_GAP = 34;          // px, minimum distance between any two stars - no clumping
 
-  // Click: no permanent shapes, no highlighting of anything pre-drawn.
-  // Every tap builds a small, temporary constellation out of whichever real
-  // stars happen to be nearby, then lets it dissolve.
-  var CLICK_RADIUS = 170;         // how far a click looks for nearby stars
-  var CLICK_MAX_STARS = 5;        // how many stars can join one temporary shape
-  var CLICK_LIFE = 2600;          // ms - slow, soft fade in and out
-  var CLICK_FADE_IN = 0.22;       // fraction of life spent easing in
-  var CLICK_FADE_OUT = 0.55;      // fraction of life where the fade-out begins
+  // Click: an expanding wave that visibly links whichever real stars it
+  // passes, growing weaker the farther it travels from the tap.
+  var CLICK_RADIUS = 260;         // how far the wave can reach
+  var CLICK_MAX_STARS = 9;        // how many stars can be swept into one wave
+  var CLICK_SPEED = 0.32;         // px/ms, how fast the wave front travels outward
+  var CLICK_LIFE = 2600;          // ms - total lifetime of a pulse
   var MAX_PULSES = 3;
 
   var W = 0, H = 0, DPR = 1;
@@ -54,7 +53,7 @@
     else if (colorRoll < 0.52) color = SECONDARY;
 
     var sizeRoll = Math.random();
-    var r = sizeRoll > 0.9 ? 2.6 + Math.random() * 1.5 : 1.2 + Math.random() * 1.5; // rare, slightly larger stars
+    var r = sizeRoll > 0.9 ? 2.9 + Math.random() * 1.7 : 1.4 + Math.random() * 1.6; // a touch bigger, rare larger stars
 
     return {
       x: x, y: y, r: r,
@@ -69,7 +68,8 @@
 
   // ---- Non-uniform background scatter ----
   // A few soft "density blobs" (like faint dust lanes) plus a thin uniform base,
-  // so the sky has looser and denser patches instead of an even grid.
+  // so the sky has looser and denser patches instead of an even grid - but a
+  // minimum gap between stars keeps any patch from clumping into a knot.
   function buildBackgroundStars() {
     bgStars = [];
     var targetCount = Math.min(MAX_BG_STARS, Math.max(35, Math.round((W * H) / BG_AREA_PER_STAR)));
@@ -80,19 +80,20 @@
       blobs.push({
         x: Math.random() * W,
         y: Math.random() * H,
-        radius: H * (0.18 + Math.random() * 0.22)
+        radius: H * (0.2 + Math.random() * 0.24)
       });
     }
 
     var attempts = 0;
-    while (bgStars.length < targetCount && attempts < targetCount * 6) {
+    while (bgStars.length < targetCount && attempts < targetCount * 12) {
       attempts++;
       var x, y;
-      if (Math.random() < 0.65 && blobs.length) {
-        // biased toward a random blob center
+      if (Math.random() < 0.55 && blobs.length) {
+        // biased toward a random blob center, but with a shallower falloff
+        // than before so it reads as a loose region, not a dense core
         var blob = blobs[Math.floor(Math.random() * blobs.length)];
         var ang = Math.random() * Math.PI * 2;
-        var dist = Math.pow(Math.random(), 1.6) * blob.radius; // denser near the center
+        var dist = Math.pow(Math.random(), 1.15) * blob.radius;
         x = blob.x + Math.cos(ang) * dist;
         y = blob.y + Math.sin(ang) * dist;
       } else {
@@ -101,6 +102,13 @@
         y = Math.random() * H;
       }
       if (x < 0 || x > W || y < 0 || y > H) continue;
+
+      var tooClose = false;
+      for (var i = 0; i < bgStars.length; i++) {
+        if (Math.hypot(bgStars[i].x - x, bgStars[i].y - y) < MIN_STAR_GAP) { tooClose = true; break; }
+      }
+      if (tooClose) continue;
+
       bgStars.push(makeStar(x, y));
     }
   }
@@ -151,15 +159,17 @@
     return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
   }
 
-  // Click feedback: build one small, temporary constellation from whichever
-  // real stars are nearby - connected as a wandering path (nearest-neighbor
-  // chain) so it reads as a natural shape instead of a tangle - then let the
-  // whole thing breathe in and dissolve. Nothing permanent is created or
-  // highlighted; it only ever exists for the life of the pulse.
+  // Click feedback: an expanding wave. Real stars near the tap connect first,
+  // and as the front keeps traveling outward it reaches farther stars too -
+  // but weaker each time, and with less time left to shine before the whole
+  // pulse dissolves. Nothing permanent is created; every connection here only
+  // exists for the moment the wave is passing through it.
   function spawnPulse(x, y) {
     var near = nearestStars(x, y, CLICK_RADIUS, CLICK_MAX_STARS);
     if (!near.length) return;
 
+    // connect them as a wandering nearest-neighbor chain (starting from the
+    // point closest to the tap) so the shape reads naturally, not as a tangle
     var pool = near.map(function (n) { return n.star; });
     var path = [pool.shift()];
     while (pool.length) {
@@ -172,43 +182,70 @@
       path.push(pool.splice(bestIdx, 1)[0]);
     }
 
+    var nodes = path.map(function (star) {
+      var dist = Math.hypot(star.x - x, star.y - y);
+      return {
+        star: star,
+        onset: dist / CLICK_SPEED,          // when the wave front reaches this star
+        weaken: 1 - dist / CLICK_RADIUS      // farther = weaker, all the way to the end
+      };
+    });
+
     var color = Math.random() < 0.5 ? SECONDARY : PRIMARY;
-    pulses.push({ start: performance.now(), path: path, color: color });
+    pulses.push({ start: performance.now(), nodes: nodes, color: color });
     if (pulses.length > MAX_PULSES) pulses.shift();
+  }
+
+  // Strength of a single connection at a given moment: 0 before the wave
+  // arrives, a quick rise, then a fade that always finishes by CLICK_LIFE -
+  // so connections reached late by the wave barely get to exist at all.
+  function edgeStrength(elapsed, onset) {
+    if (elapsed <= onset) return 0;
+    var windowLeft = CLICK_LIFE - onset;
+    if (windowLeft <= 0) return 0;
+    var local = elapsed - onset;
+    var riseTime = Math.min(180, windowLeft * 0.35);
+    var s;
+    if (local < riseTime) {
+      s = easeInOut(local / riseTime);
+    } else {
+      s = 1 - easeInOut((local - riseTime) / (windowLeft - riseTime));
+    }
+    return Math.max(0, Math.min(1, s));
   }
 
   function drawPulses(now) {
     pulses = pulses.filter(function (p) { return now - p.start < CLICK_LIFE; });
     for (var i = 0; i < pulses.length; i++) {
       var p = pulses[i];
-      var t = (now - p.start) / CLICK_LIFE;
+      var elapsed = now - p.start;
 
-      var strength;
-      if (t < CLICK_FADE_IN) {
-        strength = easeInOut(t / CLICK_FADE_IN);
-      } else if (t < CLICK_FADE_OUT) {
-        strength = 1;
-      } else {
-        strength = 1 - easeInOut((t - CLICK_FADE_OUT) / (1 - CLICK_FADE_OUT));
-      }
-      strength = Math.max(0, Math.min(1, strength));
-      if (strength <= 0.01) continue;
-
-      ctx.strokeStyle = rgba(p.color, strength * 0.22);
+      ctx.strokeStyle = rgba(p.color, 1); // alpha set per-edge below via globalAlpha
       ctx.lineWidth = 1;
-      ctx.beginPath();
-      for (var j = 0; j < p.path.length - 1; j++) {
-        var a = p.path[j], b = p.path[j + 1];
-        // a gentle bow instead of a straight line, softer and less mechanical
+      for (var j = 0; j < p.nodes.length - 1; j++) {
+        var na = p.nodes[j], nb = p.nodes[j + 1];
+        var onset = Math.max(na.onset, nb.onset);
+        var strength = edgeStrength(elapsed, onset);
+        if (strength <= 0.01) continue;
+        var weaken = (na.weaken + nb.weaken) / 2;
+        var alpha = strength * weaken * 0.4;
+        if (alpha <= 0.01) continue;
+
+        var a = na.star, b = nb.star;
         var mx = (a.x + b.x) / 2 - (b.y - a.y) * 0.06;
         var my = (a.y + b.y) / 2 + (b.x - a.x) * 0.06;
+        ctx.beginPath();
+        ctx.strokeStyle = rgba(p.color, alpha);
         ctx.moveTo(a.x, a.y);
         ctx.quadraticCurveTo(mx, my, b.x, b.y);
+        ctx.stroke();
       }
-      ctx.stroke();
 
-      for (var k = 0; k < p.path.length; k++) {
-        p.path[k].boost = Math.max(p.path[k].boost, strength * 0.3);
+      for (var k = 0; k < p.nodes.length; k++) {
+        var node = p.nodes[k];
+        var nodeStrength = edgeStrength(elapsed, node.onset);
+        if (nodeStrength <= 0) continue;
+        node.star.boost = Math.max(node.star.boost, nodeStrength * node.weaken * 0.5);
       }
     }
   }

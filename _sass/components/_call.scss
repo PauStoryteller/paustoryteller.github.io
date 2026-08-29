@@ -3,39 +3,12 @@
   overflow: hidden;
   background-color: $white-offset;
   border-radius: 4px;
-  // box-shadow: 0 15px 35px rgba(50, 50, 93, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);
   width: 100%;
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-  flex-wrap: wrap;
   z-index: 2;
-  @include media-breakpoint-up(sm) {
-    align-items: center;
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-  .call-box-top {
-    flex: 1 0 auto;
-    padding: 20px;
-    @include media-breakpoint-up(md) {
-    }
-  }
-  .call-box-bottom {
-    flex: auto;
-    padding: 20px;
-    border-top: 1px solid darken($white-offset, 5%);
-    @include media-breakpoint-up(sm) {
-      flex: 0 0 auto;
-      border: none;
-    }
-  }
+
   .call-box-connect {
     flex: 1 0 100%;
-    padding: 4px 20px 20px 20px;
-    border-top: 1px solid darken($white-offset, 5%);
-    margin-top: 4px;
-    padding-top: 16px;
+    padding: 26px 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -44,7 +17,10 @@
   .call-connect-text {
     color: $steel;
     font-size: 14px;
-    margin-bottom: 8px;
+    margin-bottom: 14px;
+  }
+  .call-contact-button {
+    margin-top: 18px;
   }
   .call-name {
     font-size: 1.1rem;
@@ -52,15 +28,6 @@
   }
   .call-phone {
     margin-bottom: 5px;
-  }
-  .call-email {
-    a {
-      color: $black;
-      transition: color 0.15s ease;
-      &:hover {
-        color: $primary;
-      }
-    }
   }
   strong {
     font-weight: bold;

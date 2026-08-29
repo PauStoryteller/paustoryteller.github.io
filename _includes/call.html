@@ -1,24 +1,13 @@
 {% assign lang = page.lang | default: "es" %}
 {% assign t = site.data.i18n[lang] %}
 <div class="call">
-  <div class="call-box-top">
-    {% if site.data.contact.email %}
-    <div class="call-email"><strong>{{ t.email_label }} </strong>
-      <a href="mailto:{{ site.data.contact.email }}">
-        {{ site.data.contact.email }}
-      </a>
-    </div>
-    {% endif %}
-  </div>
-    {% if include.show_button %}
-      <div class="call-box-bottom">
-        <a href="mailto:{{ site.data.contact.email }}" class="button">{{ t.contact_button }}</a>
-      </div>
-    {% endif %}
     {% if include.show_connect %}
       <div class="call-box-connect">
         {% if include.connect_text %}<p class="call-connect-text">{{ include.connect_text }}</p>{% endif %}
         {% include social.html %}
+        {% if include.show_button %}
+          <a href="mailto:{{ site.data.contact.email }}" class="button call-contact-button">{{ t.contact_button }}</a>
+        {% endif %}
       </div>
     {% endif %}
 </div>
