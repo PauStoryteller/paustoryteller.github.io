@@ -28,7 +28,11 @@
   </div>
 
   <div class="char-select-body">
-    <div class="char-select-viewport reveal">
+    <div class="char-select-viewport-wrap">
+      <button type="button" class="char-select-arrow char-select-arrow-prev" data-char-prev aria-label="{{ t.char_select_prev | default: 'Anterior' }}" aria-controls="portfolio-select">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    <div class="char-select-viewport reveal" data-char-viewport>
       <div class="char-select-track" data-char-track role="list">
         <span class="char-select-spacer" aria-hidden="true"></span>
         {% for entry in entries %}
@@ -100,6 +104,10 @@
         {% endfor %}
         <span class="char-select-spacer" aria-hidden="true"></span>
       </div>
+    </div>
+      <button type="button" class="char-select-arrow char-select-arrow-next" data-char-next aria-label="{{ t.char_select_next | default: 'Siguiente' }}" aria-controls="portfolio-select">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
     </div>
 
     <aside class="char-select-preview reveal" data-char-preview aria-live="polite">

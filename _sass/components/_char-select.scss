@@ -11,9 +11,9 @@
 }
 
 .char-select-head {
-  margin-bottom: 24px;
+  margin-bottom: 14px;
   @include media-breakpoint-up(md) {
-    margin-bottom: 30px;
+    margin-bottom: 18px;
   }
 }
 
@@ -24,22 +24,33 @@
   font-size: 12px;
   font-weight: 600;
   color: $secondary;
-  margin-bottom: 6px;
+  margin-bottom: 2px;
 }
 
 .char-select-heading {
   font-family: $font-family-heading;
   font-weight: 800;
-  color: $black;
+  font-size: 30px;
+  letter-spacing: 0.01em;
+  line-height: 1.15;
   margin-bottom: 0;
   display: inline-block;
+  background-image: linear-gradient(95deg, $black 40%, $primary 75%, $secondary 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+
+  @include media-breakpoint-up(md) {
+    font-size: 38px;
+  }
 
   &::after {
     content: "";
     display: block;
     width: 64px;
     height: 3px;
-    margin-top: 14px;
+    margin-top: 10px;
     background-image: linear-gradient(to right, $primary, $secondary);
   }
 }
@@ -52,6 +63,14 @@
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
   scrollbar-color: $primary $white-offset;
+  scroll-snap-type: x proximity;
+  scroll-behavior: smooth;
+  cursor: grab;
+
+  &.is-dragging {
+    cursor: grabbing;
+    scroll-behavior: auto;
+  }
 
   &::-webkit-scrollbar {
     height: 6px;
@@ -63,6 +82,11 @@
     background-image: linear-gradient(to right, $primary, $secondary);
     border-radius: 10px;
   }
+
+  @include media-breakpoint-up(lg) {
+    -webkit-mask-image: linear-gradient(to right, transparent 0, $body-bg 44px, $body-bg calc(100% - 44px), transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0, $body-bg 44px, $body-bg calc(100% - 44px), transparent 100%);
+  }
 }
 
 .char-select-track {
@@ -71,8 +95,6 @@
   gap: 18px;
   width: max-content;
   padding: 26px 0 44px;
-  scroll-snap-type: x proximity;
-  scroll-behavior: smooth;
 
   @include media-breakpoint-up(md) {
     gap: 24px;
@@ -96,10 +118,77 @@
   }
 }
 
-.char-select-viewport {
+.char-select-viewport-wrap {
+  position: relative;
+  min-width: 0;
+
   @include media-breakpoint-up(lg) {
     flex: 0 1 auto;
+  }
+}
+
+.char-select-viewport {
+  @include media-breakpoint-up(lg) {
     min-width: 0;
+  }
+}
+
+// ---- Prev / next arrow buttons, centred over the roster's edges ----
+.char-select-arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 3;
+  transform: translateY(calc(-50% - 22px));
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid $white-offset;
+  background-color: rgba(11, 10, 13, 0.7);
+  color: $black;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease, opacity 0.2s ease;
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    border-color: $primary;
+    background-color: rgba(229, 72, 77, 0.18);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(calc(-50% - 22px)) scale(0.9);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $secondary;
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.25;
+    cursor: default;
+  }
+}
+
+.char-select-arrow-prev {
+  left: 4px;
+  @include media-breakpoint-up(md) {
+    left: 10px;
+  }
+}
+
+.char-select-arrow-next {
+  right: 4px;
+  @include media-breakpoint-up(md) {
+    right: 10px;
   }
 }
 

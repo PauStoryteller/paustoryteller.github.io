@@ -1,8 +1,7 @@
 .page {
   display: flex;
-  min-height: 100vh;
   flex-direction: column;
   .wrapper {
-    flex: 1 0 0;
+    flex: 1 0 auto;
   }
 }

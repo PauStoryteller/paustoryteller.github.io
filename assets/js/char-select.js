@@ -1,11 +1,15 @@
 (function () {
   "use strict";
 
+  var viewport = document.querySelector("[data-char-viewport]");
   var track = document.querySelector("[data-char-track]");
-  if (!track) return;
+  if (!viewport || !track) return;
 
   var cards = Array.prototype.slice.call(track.querySelectorAll("[data-char-card]"));
   if (!cards.length) return;
+
+  var prevBtn = document.querySelector("[data-char-prev]");
+  var nextBtn = document.querySelector("[data-char-next]");
 
   var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var canHover = window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
@@ -106,9 +110,31 @@
     if (card) setPreview(card);
   }
 
+  // ---- Scroll the viewport so a given card sits centred in it. This is
+  // the element that actually has the overflow (its child, the track, is
+  // just as wide as its content and never scrolls on its own) ----
+  function centerCard(card, smooth) {
+    if (!card) return;
+    var maxScroll = viewport.scrollWidth - viewport.clientWidth;
+    if (maxScroll <= 0) return;
+    var target = card.offsetLeft + card.offsetWidth / 2 - viewport.clientWidth / 2;
+    target = Math.max(0, Math.min(maxScroll, target));
+    viewport.scrollTo({ left: target, behavior: smooth ? "smooth" : "auto" });
+  }
+
+  function updateNavButtons() {
+    var maxScroll = viewport.scrollWidth - viewport.clientWidth;
+    var atStart = viewport.scrollLeft <= 1;
+    var atEnd = viewport.scrollLeft >= maxScroll - 1;
+    var noOverflow = maxScroll <= 0;
+    if (prevBtn) prevBtn.disabled = atStart || noOverflow;
+    if (nextBtn) nextBtn.disabled = atEnd || noOverflow;
+  }
+
   function updateActiveFromScroll() {
+    updateNavButtons();
     if (hoverLock) return;
-    var viewportRect = track.getBoundingClientRect();
+    var viewportRect = viewport.getBoundingClientRect();
     var center = viewportRect.left + viewportRect.width / 2;
     var closest = null;
     var closestDist = Infinity;
@@ -124,8 +150,34 @@
     setActive(closest);
   }
 
+  // Move the selection to whichever card sits before/after the currently
+  // active one, and smoothly recentre the viewport on it.
+  function stepToCard(direction) {
+    var activeIndex = cards.findIndex(function (c) {
+      return c.classList.contains("is-active");
+    });
+    if (activeIndex === -1) activeIndex = 0;
+    var nextIndex = Math.max(0, Math.min(cards.length - 1, activeIndex + direction));
+    var nextCard = cards[nextIndex];
+    hoverLock = true;
+    setActive(nextCard);
+    centerCard(nextCard, true);
+    return nextCard;
+  }
+
+  if (prevBtn) {
+    prevBtn.addEventListener("click", function () {
+      stepToCard(-1);
+    });
+  }
+  if (nextBtn) {
+    nextBtn.addEventListener("click", function () {
+      stepToCard(1);
+    });
+  }
+
   var scrollTicking = false;
-  track.addEventListener(
+  viewport.addEventListener(
     "scroll",
     function () {
       if (!scrollTicking) {
@@ -164,7 +216,15 @@
     });
   });
 
-  window.setTimeout(updateActiveFromScroll, 60);
+  // ---- Land with the default (first) card centred, neighbours peeking in
+  // on both sides, instead of pinned flush to the left edge ----
+  function centerInitialCard() {
+    var initial = cards.find(function (c) { return c.classList.contains("is-active"); }) || cards[0];
+    setActive(initial);
+    centerCard(initial, false);
+    updateNavButtons();
+  }
+  window.setTimeout(centerInitialCard, 60);
   window.addEventListener("resize", updateActiveFromScroll);
 
   // ---- Mouse wheel support: a vertical scroll/wheel gesture over the
@@ -173,23 +233,84 @@
   // natively) and only when the carousel actually has room to move that
   // way — otherwise we let the event through so the page keeps scrolling
   // normally once the roster is fully scrolled to either end. ----
-  track.addEventListener(
+  viewport.addEventListener(
     "wheel",
     function (event) {
       if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
 
-      var maxScroll = track.scrollWidth - track.clientWidth;
+      var maxScroll = viewport.scrollWidth - viewport.clientWidth;
       if (maxScroll <= 0) return;
 
-      var atEnd = event.deltaY > 0 && track.scrollLeft >= maxScroll - 1;
-      var atStart = event.deltaY < 0 && track.scrollLeft <= 1;
+      var atEnd = event.deltaY > 0 && viewport.scrollLeft >= maxScroll - 1;
+      var atStart = event.deltaY < 0 && viewport.scrollLeft <= 1;
       if (atEnd || atStart) return;
 
       event.preventDefault();
-      track.scrollLeft += event.deltaY;
+      viewport.scrollLeft += event.deltaY;
     },
     { passive: false }
   );
+
+  // ---- Click-and-drag support for mouse users (no trackpad / no wheel
+  // gesture is a natural fit for a mouse, so this is the fallback most
+  // desktop visitors will actually reach for) ----
+  var isDragging = false;
+  var dragMoved = false;
+  var dragStartX = 0;
+  var dragStartScroll = 0;
+
+  viewport.addEventListener("pointerdown", function (event) {
+    if (event.pointerType === "touch") return; // native touch scrolling stays untouched
+    var maxScroll = viewport.scrollWidth - viewport.clientWidth;
+    if (maxScroll <= 0) return;
+    isDragging = true;
+    dragMoved = false;
+    dragStartX = event.clientX;
+    dragStartScroll = viewport.scrollLeft;
+    viewport.classList.add("is-dragging");
+  });
+
+  viewport.addEventListener("pointermove", function (event) {
+    if (!isDragging) return;
+    var delta = event.clientX - dragStartX;
+    if (Math.abs(delta) > 4) dragMoved = true;
+    viewport.scrollLeft = dragStartScroll - delta;
+  });
+
+  function endDrag() {
+    if (!isDragging) return;
+    isDragging = false;
+    viewport.classList.remove("is-dragging");
+  }
+  viewport.addEventListener("pointerup", endDrag);
+  viewport.addEventListener("pointerleave", endDrag);
+  viewport.addEventListener("pointercancel", endDrag);
+
+  // A drag that actually moved the carousel shouldn't also trigger the
+  // card's own click-to-navigate handler.
+  viewport.addEventListener(
+    "click",
+    function (event) {
+      if (dragMoved) {
+        event.preventDefault();
+        event.stopPropagation();
+        dragMoved = false;
+      }
+    },
+    true
+  );
+
+  // ---- Keyboard: left/right arrows move the selection between cards from
+  // anywhere in the roster, not just when a specific card has focus ----
+  viewport.addEventListener("keydown", function (event) {
+    if (event.key === "ArrowRight") {
+      event.preventDefault();
+      stepToCard(1).focus();
+    } else if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      stepToCard(-1).focus();
+    }
+  });
 
   // ---- Fake "loading" screen before entering a project ----
   // Respect reduced-motion users and anyone opening in a new tab: let the

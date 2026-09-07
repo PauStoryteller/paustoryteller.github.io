@@ -16,6 +16,8 @@ es:
   char_select_loading: "Cargando…"
   char_select_cta: "Saber más"
   char_select_journal_label: "Journal relacionado"
+  char_select_prev: "Proyecto anterior"
+  char_select_next: "Siguiente proyecto"
 
 en:
   email_label: "Email:"
@@ -35,3 +37,5 @@ en:
   char_select_loading: "Loading…"
   char_select_cta: "Learn more"
   char_select_journal_label: "Related journal"
+  char_select_prev: "Previous project"
+  char_select_next: "Next project"
