@@ -130,7 +130,10 @@
               <span class="char-select-preview-journal-thumb">
                 <img data-preview-target="journal-image" src="{{ first_journal.image | relative_url }}" alt="" />
               </span>
-              <span class="char-select-preview-journal-title" data-preview-target="journal-title">{{ first_journal.title }}</span>
+              <span class="char-select-preview-journal-body">
+                <span class="char-select-preview-journal-title" data-preview-target="journal-title">{{ first_journal.title }}</span>
+                <span class="char-select-preview-journal-summary" data-preview-target="journal-summary">{{ first_journal.summary }}</span>
+              </span>
             </a>
           </div>
         </div>

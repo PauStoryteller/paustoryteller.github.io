@@ -76,6 +76,9 @@
       previewTargets.journal.hidden = !journalTitle;
       if (journalTitle) {
         if (previewTargets["journal-title"]) previewTargets["journal-title"].textContent = journalTitle;
+        if (previewTargets["journal-summary"]) {
+          previewTargets["journal-summary"].textContent = card.getAttribute("data-preview-journal-summary") || "";
+        }
         if (previewTargets["journal-image"]) {
           previewTargets["journal-image"].src = card.getAttribute("data-preview-journal-image") || "";
           previewTargets["journal-image"].alt = journalTitle;

@@ -9,22 +9,31 @@
   background-color: $white-offset;
   position: relative;
 
-  // A jagged, torn-edge cut instead of a flat rectangle - used wherever the
-  // "¿Hablamos?" connect block closes out a page (gallery lists, single pieces).
-  &::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -18px;
-    height: 18px;
-    background-image:
-      linear-gradient(135deg, $white-offset 50%, transparent 50%),
-      linear-gradient(225deg, $white-offset 50%, transparent 50%);
-    background-position: left top;
-    background-size: 26px 18px;
-    background-repeat: repeat-x;
-    pointer-events: none;
+  // A refined jagged "mountain peak" top edge instead of a flat rectangle —
+  // marks the start of the grey block (contact/journal sections etc). The
+  // bottom stays a clean straight edge.
+  clip-path: polygon(
+    0% 16px, 7% 2px, 14% 22px, 22% 5px, 30% 24px, 38% 0, 46% 17px, 54% 4px,
+    62% 25px, 70% 2px, 78% 15px, 86% 3px, 93% 21px, 100% 8px,
+    100% 100%, 0% 100%
+  );
+  -webkit-clip-path: polygon(
+    0% 16px, 7% 2px, 14% 22px, 22% 5px, 30% 24px, 38% 0, 46% 17px, 54% 4px,
+    62% 25px, 70% 2px, 78% 15px, 86% 3px, 93% 21px, 100% 8px,
+    100% 100%, 0% 100%
+  );
+
+  @include media-breakpoint-down(sm) {
+    clip-path: polygon(
+      0% 10px, 8% 1px, 16% 13px, 25% 2px, 33% 14px, 42% 0, 50% 10px,
+      58% 3px, 67% 14px, 75% 1px, 84% 12px, 92% 2px, 100% 8px,
+      100% 100%, 0% 100%
+    );
+    -webkit-clip-path: polygon(
+      0% 10px, 8% 1px, 16% 13px, 25% 2px, 33% 14px, 42% 0, 50% 10px,
+      58% 3px, 67% 14px, 75% 1px, 84% 12px, 92% 2px, 100% 8px,
+      100% 100%, 0% 100%
+    );
   }
 }
 .strip-diagonal {
