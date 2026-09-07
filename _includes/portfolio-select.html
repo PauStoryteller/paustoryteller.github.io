@@ -1,6 +1,7 @@
 {% assign entries = include.entries %}
 {% assign journal_docs = include.journal_docs %}
 {% assign t = include.t %}
+{% assign default_journal = include.default_journal %}
 {% if entries and entries.size > 0 %}
 {% assign first_entry = entries.first %}
 {% assign first_href = first_entry.url | relative_url %}
@@ -19,6 +20,7 @@
     {% endif %}
   {% endfor %}
 {% endif %}
+{% unless first_journal %}{% assign first_journal = default_journal %}{% endunless %}
 <section class="char-select" id="portfolio-select" aria-label="{{ t.char_select_heading }}">
   <div class="container">
     <div class="char-select-head reveal">
@@ -54,6 +56,7 @@
               {% endif %}
             {% endfor %}
           {% endif %}
+          {% unless card_journal %}{% assign card_journal = default_journal %}{% endunless %}
           <a
             class="char-card"
             role="listitem"

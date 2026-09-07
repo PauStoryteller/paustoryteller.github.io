@@ -17,6 +17,14 @@ bodyClass: "page-home"
 {% if portfolio_docs %}
   {% assign all_portfolio = portfolio_docs | sort: "date" | reverse %}
 {% endif %}
+{% assign featured_journal = "" | split: "" %}
+{% if journal_docs %}
+  {% assign featured_journal = journal_docs | where: "featured", true | sort: "date" | reverse %}
+{% endif %}
+{% assign default_journal = featured_journal.first %}
+{% unless default_journal %}
+  {% if journal_docs %}{% assign default_journal = journal_docs | sort: "date" | reverse | first %}{% endif %}
+{% endunless %}
 
 <div class="intro{% if page.show_call_box %} intro-has-call{% endif %}">
   <div class="container">
@@ -40,17 +48,13 @@ bodyClass: "page-home"
   </div>
 </div>
 
-{% include portfolio-select.html entries=all_portfolio journal_docs=journal_docs t=t %}
+{% include portfolio-select.html entries=all_portfolio journal_docs=journal_docs t=t default_journal=default_journal %}
 
 <div class="strip strip-grey">
   <div class="container pt-8 pb-6 pb-md-10">
     <div class="row justify-content-start">
       <div class="col-12 col-md-7 col-lg-6">
         <h2 class="section-heading reveal">{{ t.featured_journal_heading }}</h2>
-        {% assign featured_journal = "" | split: "" %}
-        {% if journal_docs %}
-          {% assign featured_journal = journal_docs | where: "featured", true | sort: "date" | reverse %}
-        {% endif %}
         <div class="featured-stack reveal-stagger">
           {% for entry in featured_journal limit: site.home.limit_featured %}
           <div class="featured-card-wrap reveal">
