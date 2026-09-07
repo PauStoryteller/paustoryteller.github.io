@@ -4,9 +4,7 @@ layout: home
 description: Videojuegos, escritura, modelado 3D y análisis — trabajo y proceso creativo.
 intro_image: "images/tu-foto.jpg"
 intro_photo: true
-show_call_box: true
-show_connect: true
-connect_text: "Sígueme: también ando por redes, si te apetece ver más trabajo o simplemente saludar."
+show_call_box: false
 translation_url: "/en/"
 ---
 

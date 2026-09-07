@@ -6,9 +6,7 @@ lang: en
 description: Video games, writing, 3D modeling and analysis — work and creative process.
 intro_image: "images/tu-foto.jpg"
 intro_photo: true
-show_call_box: true
-show_connect: true
-connect_text: "Follow me: I'm also on social media, if you'd like to see more work or just say hi."
+show_call_box: false
 translation_url: "/"
 ---
 

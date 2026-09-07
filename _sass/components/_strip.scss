@@ -9,29 +9,33 @@
   background-color: $white-offset;
   position: relative;
 
-  // A refined jagged "mountain peak" top edge instead of a flat rectangle —
-  // marks the start of the grey block (contact/journal sections etc). The
-  // bottom stays a clean straight edge.
+  // A jagged, irregular "torn paper" top edge — marks the start of the grey
+  // block (contact/journal sections etc). Peaks and valleys are deliberately
+  // uneven in both spacing and height for a more hand-torn look, with taller
+  // spikes than before. The bottom is always left as a clean, flat edge —
+  // no zigzag there.
   clip-path: polygon(
-    0% 16px, 7% 2px, 14% 22px, 22% 5px, 30% 24px, 38% 0, 46% 17px, 54% 4px,
-    62% 25px, 70% 2px, 78% 15px, 86% 3px, 93% 21px, 100% 8px,
+    0% 20px, 5% 2px, 9% 34px, 15% 6px, 21% 40px, 28% 0, 33% 30px, 41% 10px,
+    47% 38px, 55% 4px, 61% 26px, 68% 2px, 74% 36px, 80% 8px, 87% 42px, 93% 3px,
+    100% 22px,
     100% 100%, 0% 100%
   );
   -webkit-clip-path: polygon(
-    0% 16px, 7% 2px, 14% 22px, 22% 5px, 30% 24px, 38% 0, 46% 17px, 54% 4px,
-    62% 25px, 70% 2px, 78% 15px, 86% 3px, 93% 21px, 100% 8px,
+    0% 20px, 5% 2px, 9% 34px, 15% 6px, 21% 40px, 28% 0, 33% 30px, 41% 10px,
+    47% 38px, 55% 4px, 61% 26px, 68% 2px, 74% 36px, 80% 8px, 87% 42px, 93% 3px,
+    100% 22px,
     100% 100%, 0% 100%
   );
 
   @include media-breakpoint-down(sm) {
     clip-path: polygon(
-      0% 10px, 8% 1px, 16% 13px, 25% 2px, 33% 14px, 42% 0, 50% 10px,
-      58% 3px, 67% 14px, 75% 1px, 84% 12px, 92% 2px, 100% 8px,
+      0% 12px, 6% 1px, 11% 20px, 18% 3px, 24% 24px, 32% 0, 38% 18px, 46% 6px,
+      53% 22px, 60% 2px, 66% 16px, 73% 1px, 79% 21px, 86% 4px, 100% 13px,
       100% 100%, 0% 100%
     );
     -webkit-clip-path: polygon(
-      0% 10px, 8% 1px, 16% 13px, 25% 2px, 33% 14px, 42% 0, 50% 10px,
-      58% 3px, 67% 14px, 75% 1px, 84% 12px, 92% 2px, 100% 8px,
+      0% 12px, 6% 1px, 11% 20px, 18% 3px, 24% 24px, 32% 0, 38% 18px, 46% 6px,
+      53% 22px, 60% 2px, 66% 16px, 73% 1px, 79% 21px, 86% 4px, 100% 13px,
       100% 100%, 0% 100%
     );
   }
