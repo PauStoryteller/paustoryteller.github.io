@@ -15,6 +15,7 @@ es:
   char_select_hint: "Pasa el cursor o desliza para elegir · Toca para entrar"
   char_select_loading: "Cargando…"
   char_select_cta: "Saber más"
+  char_select_journal_label: "Journal relacionado"
 
 en:
   email_label: "Email:"
@@ -33,3 +34,4 @@ en:
   char_select_hint: "Hover or swipe to choose · Tap to enter"
   char_select_loading: "Loading…"
   char_select_cta: "Learn more"
+  char_select_journal_label: "Related journal"

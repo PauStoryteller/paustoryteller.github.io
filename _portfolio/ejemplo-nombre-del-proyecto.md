@@ -6,6 +6,7 @@ image: "images/austin-distel-nGc5RT2HmF0-unsplash.jpg"
 summary: "Resumen corto de en qué consiste este proyecto, para que se vea en la galería y en la portada."
 featured: true
 translation_url: "/en/portfolio/example-project-name/"
+journal_ref: "ejemplo-titulo-del-diario"   # opcional: nombre del archivo (sin .md) de un artículo del Journal relacionado con esta pieza
 # link: ""   # opcional: si lo rellenas (por ejemplo con una URL de itch.io), la tarjeta enlazará ahí en vez de a esta página
 ---
 

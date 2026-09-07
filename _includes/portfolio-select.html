@@ -1,6 +1,24 @@
 {% assign entries = include.entries %}
+{% assign journal_docs = include.journal_docs %}
 {% assign t = include.t %}
 {% if entries and entries.size > 0 %}
+{% assign first_entry = entries.first %}
+{% assign first_href = first_entry.url | relative_url %}
+{% assign first_is_external = false %}
+{% if first_entry.link and first_entry.link != "" %}
+  {% assign first_href = first_entry.link %}
+  {% if first_entry.link contains "http" %}{% assign first_is_external = true %}{% endif %}
+{% endif %}
+{% assign first_journal = nil %}
+{% if first_entry.journal_ref and journal_docs %}
+  {% for j in journal_docs %}
+    {% assign j_slug = j.path | split: "/" | last | remove: ".md" %}
+    {% if j_slug == first_entry.journal_ref %}
+      {% assign first_journal = j %}
+      {% break %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
 <section class="char-select" id="portfolio-select" aria-label="{{ t.char_select_heading }}">
   <div class="container">
     <div class="char-select-head reveal">
@@ -22,14 +40,36 @@
             {% assign href = entry.url | relative_url %}
           {% endif %}
           {% assign num = forloop.index %}
+          {% assign card_journal = nil %}
+          {% if entry.journal_ref and journal_docs %}
+            {% for j in journal_docs %}
+              {% assign j_slug = j.path | split: "/" | last | remove: ".md" %}
+              {% if j_slug == entry.journal_ref %}
+                {% assign card_journal = j %}
+                {% break %}
+              {% endif %}
+            {% endfor %}
+          {% endif %}
           <a
             class="char-card"
             role="listitem"
             data-char-card
-            data-preview-index="{{ num }}"
             href="{{ href }}"
             {% if is_external %}target="_blank" rel="noopener"{% endif %}
             aria-label="{{ entry.title }}{% if entry.category %}, {{ entry.category }}{% endif %}"
+            data-preview-num="{% if num < 10 %}0{{ num }}{% else %}{{ num }}{% endif %}"
+            data-preview-category="{{ entry.category | default: '' | escape }}"
+            data-preview-title="{{ entry.title | default: '' | escape }}"
+            data-preview-summary="{{ entry.summary | default: '' | escape }}"
+            data-preview-image="{{ entry.image | relative_url }}"
+            data-preview-href="{{ href }}"
+            data-preview-external="{{ is_external }}"
+            {% if card_journal %}
+            data-preview-journal-title="{{ card_journal.title | default: '' | escape }}"
+            data-preview-journal-summary="{{ card_journal.summary | default: '' | escape }}"
+            data-preview-journal-image="{{ card_journal.image | relative_url }}"
+            data-preview-journal-href="{{ card_journal.url | relative_url }}"
+            {% endif %}
           >
             <span class="char-card-frame" aria-hidden="true">
               <span class="char-border-ring"></span>
@@ -69,35 +109,30 @@
         <span class="char-select-preview-corner bl" aria-hidden="true"></span>
         <span class="char-select-preview-corner br" aria-hidden="true"></span>
 
-        <div class="char-select-preview-items">
-          {% for entry in entries %}
-            {% assign is_external = false %}
-            {% if entry.link and entry.link != "" %}
-              {% assign href = entry.link %}
-              {% if entry.link contains "http" %}{% assign is_external = true %}{% endif %}
-            {% else %}
-              {% assign href = entry.url | relative_url %}
-            {% endif %}
-            {% assign num = forloop.index %}
-            <div class="char-select-preview-item{% if forloop.first %} is-active{% endif %}" data-preview-item="{{ num }}">
-              <div class="char-select-preview-media">
-                {% if entry.image %}
-                <img src="{{ entry.image | relative_url }}" alt="" loading="lazy" />
-                {% endif %}
-                <span class="char-select-preview-num" aria-hidden="true">{% if num < 10 %}0{{ num }}{% else %}{{ num }}{% endif %}</span>
-              </div>
-              <div class="char-select-preview-body">
-                {% if entry.category %}<span class="char-select-preview-category">{{ entry.category }}</span>{% endif %}
-                <h3 class="char-select-preview-title">{{ entry.title }}</h3>
-                {% if entry.summary %}<p class="char-select-preview-summary">{{ entry.summary }}</p>{% endif %}
-                <a
-                  class="button button-primary char-select-preview-cta"
-                  href="{{ href }}"
-                  {% if is_external %}target="_blank" rel="noopener"{% endif %}
-                >{{ t.char_select_cta }}</a>
-              </div>
-            </div>
-          {% endfor %}
+        <div class="char-select-preview-media">
+          <img data-preview-target="image" src="{{ first_entry.image | relative_url }}" alt="" />
+          <span class="char-select-preview-num" data-preview-target="num" aria-hidden="true">01</span>
+        </div>
+        <div class="char-select-preview-body">
+          <span class="char-select-preview-category" data-preview-target="category"{% unless first_entry.category %} hidden{% endunless %}>{{ first_entry.category }}</span>
+          <h3 class="char-select-preview-title" data-preview-target="title">{{ first_entry.title }}</h3>
+          <p class="char-select-preview-summary" data-preview-target="summary"{% unless first_entry.summary %} hidden{% endunless %}>{{ first_entry.summary }}</p>
+          <a
+            class="button button-primary char-select-preview-cta"
+            data-preview-target="cta"
+            href="{{ first_href }}"
+            {% if first_is_external %}target="_blank" rel="noopener"{% endif %}
+          >{{ t.char_select_cta }}</a>
+
+          <div class="char-select-preview-journal" data-preview-target="journal"{% unless first_journal %} hidden{% endunless %}>
+            <span class="char-select-preview-journal-label">{{ t.char_select_journal_label }}</span>
+            <a class="char-select-preview-journal-card" data-preview-target="journal-link" href="{{ first_journal.url | relative_url }}">
+              <span class="char-select-preview-journal-thumb">
+                <img data-preview-target="journal-image" src="{{ first_journal.image | relative_url }}" alt="" />
+              </span>
+              <span class="char-select-preview-journal-title" data-preview-target="journal-title">{{ first_journal.title }}</span>
+            </a>
+          </div>
         </div>
       </div>
     </aside>

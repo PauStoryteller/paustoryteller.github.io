@@ -5,6 +5,7 @@ date: 2026-01-10
 image: "images/team/nonsap-visuals-kMJp7620W6U-unsplash.jpg"
 summary: "Placeholder para probar el desplazamiento del selector. Bórrala cuando subas tus proyectos reales."
 translation_url: "/en/portfolio/project-6-arcade-prototype/"
+# journal_ref: ""   # opcional: nombre del archivo (sin .md) de un articulo del Journal relacionado con esta pieza
 ---
 
 Esto es una **pieza de placeholder**, pensada solo para ver cómo se comporta el carrusel de selección con varias cartas. Bórrala o edítala.

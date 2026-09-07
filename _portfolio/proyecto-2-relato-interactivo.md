@@ -5,6 +5,7 @@ date: 2026-05-20
 image: "images/thom-holmes-Lrfw0U_o9I0-unsplash.jpg"
 summary: "Placeholder para probar el desplazamiento del selector. Bórrala cuando subas tus proyectos reales."
 translation_url: "/en/portfolio/project-2-interactive-story/"
+# journal_ref: ""   # opcional: nombre del archivo (sin .md) de un articulo del Journal relacionado con esta pieza
 ---
 
 Esto es una **pieza de placeholder**, pensada solo para ver cómo se comporta el carrusel de selección con varias cartas. Bórrala o edítala.

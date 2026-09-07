@@ -70,7 +70,6 @@
   align-items: stretch;
   gap: 18px;
   width: max-content;
-  min-width: 100%;
   padding: 26px 0 44px;
   scroll-snap-type: x proximity;
   scroll-behavior: smooth;
@@ -93,13 +92,13 @@
 
   @include media-breakpoint-up(lg) {
     flex-direction: row;
-    align-items: stretch;
+    align-items: flex-start;
   }
 }
 
 .char-select-viewport {
   @include media-breakpoint-up(lg) {
-    flex: 1 1 auto;
+    flex: 0 1 auto;
     min-width: 0;
   }
 }
@@ -110,18 +109,15 @@
   margin-top: 4px;
 
   @include media-breakpoint-up(lg) {
-    flex: 0 0 340px;
+    flex: 1 1 320px;
+    max-width: 420px;
     padding: 26px 0 44px;
     margin-top: 0;
-  }
-  @include media-breakpoint-up(xl) {
-    flex-basis: 380px;
   }
 }
 
 .char-select-preview-frame {
   position: relative;
-  height: 100%;
   border: 1px solid $white-offset;
   border-radius: 10px;
   background-color: $white;
@@ -165,28 +161,19 @@
   animation-delay: 0.4s;
 }
 
-// Stack every project's preview in the same grid cell so the panel keeps
-// a stable height and switching between them is a plain opacity crossfade
-// rather than a layout jump.
-.char-select-preview-items {
-  display: grid;
-  height: 100%;
+// Small "refresh" flash whenever setPreview() swaps in new content, so a
+// change reads as an update rather than a silent, easy-to-miss text swap.
+.char-select-preview.is-updating .char-select-preview-media,
+.char-select-preview.is-updating .char-select-preview-body {
+  animation: char-preview-flash 0.4s ease;
 }
 
-.char-select-preview-item {
-  grid-area: 1 / 1;
-  display: flex;
-  flex-direction: column;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transition: opacity 0.35s ease, visibility 0s linear 0.35s;
-
-  &.is-active {
+@keyframes char-preview-flash {
+  0% {
+    opacity: 0.35;
+  }
+  100% {
     opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    transition: opacity 0.35s ease 0.05s;
   }
 }
 
@@ -269,13 +256,79 @@
   align-self: flex-start;
 }
 
+// ---- Related journal mini-card ----
+.char-select-preview-journal {
+  width: 100%;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid $white-offset;
+}
+
+.char-select-preview-journal-label {
+  display: block;
+  font-family: $font-family-subheading;
+  text-transform: uppercase;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: $steel;
+  margin-bottom: 8px;
+}
+
+.char-select-preview-journal-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: inherit;
+  border-radius: 8px;
+  padding: 6px;
+  margin: -6px;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: $white-offset;
+    text-decoration: none;
+    color: inherit;
+
+    .char-select-preview-journal-title {
+      color: $primary;
+    }
+  }
+}
+
+.char-select-preview-journal-thumb {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
+  overflow: hidden;
+  background-color: $body-bg;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.char-select-preview-journal-title {
+  font-family: $font-family-heading;
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1.3;
+  color: $black;
+  transition: color 0.2s ease;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .char-select-preview-corner {
     animation: none !important;
     opacity: 0.6;
   }
-  .char-select-preview-item {
-    transition: none !important;
+  .char-select-preview.is-updating .char-select-preview-media,
+  .char-select-preview.is-updating .char-select-preview-body {
+    animation: none !important;
   }
 }
 
