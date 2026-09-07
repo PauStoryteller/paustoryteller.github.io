@@ -13,7 +13,8 @@
 
   var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var canHover = window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-  var hoverLock = false;
+
+  var activeIndex = 0;
 
   // ---- Fix: clicking a card sets it to "is-loading" and then navigates
   // away. If the browser restores this exact page from its back/forward
@@ -99,69 +100,72 @@
     preview.classList.add("is-updating");
   }
 
-  // ---- "Selection cursor": highlight whichever card is closest to the
-  // centre of the carousel — via hover on desktop, via scroll position
-  // (and keyboard focus) everywhere else ----
+  // ---- "Wheel" look: every card gets a data-dist attribute (its distance
+  // from the active one), which the CSS uses to shrink/dim/cut cards off
+  // the further they sit from the centre. ----
+  function updateDistances() {
+    cards.forEach(function (card, i) {
+      var dist = Math.abs(i - activeIndex);
+      if (dist === 0) {
+        card.removeAttribute("data-dist");
+      } else if (dist === 1) {
+        card.setAttribute("data-dist", "1");
+      } else if (dist === 2) {
+        card.setAttribute("data-dist", "2");
+      } else {
+        card.setAttribute("data-dist", "far");
+      }
+    });
+  }
+
+  // ---- "Selection cursor": whichever card is active gets the glow/corner
+  // treatment, feeds the preview panel, and becomes the centre of the wheel.
   function setActive(card) {
+    if (!card) return;
+    var index = cards.indexOf(card);
+    if (index === -1) return;
+    activeIndex = index;
+
     cards.forEach(function (c) {
       c.classList.toggle("is-active", c === card);
     });
-    track.classList.toggle("has-active", !!card);
-    if (card) setPreview(card);
+    track.classList.add("has-active");
+    updateDistances();
+    setPreview(card);
   }
 
-  // ---- Scroll the viewport so a given card sits centred in it. This is
-  // the element that actually has the overflow (its child, the track, is
-  // just as wide as its content and never scrolls on its own) ----
-  function centerCard(card, smooth) {
+  // ---- Move the track so a given card sits centred in the viewport. This
+  // replaces native scrolling entirely: the viewport never scrolls, the
+  // track just slides via a CSS transform. ----
+  function centerCard(card, animate) {
     if (!card) return;
-    var maxScroll = viewport.scrollWidth - viewport.clientWidth;
-    if (maxScroll <= 0) return;
+    var maxOffset = Math.max(0, track.scrollWidth - viewport.clientWidth);
     var target = card.offsetLeft + card.offsetWidth / 2 - viewport.clientWidth / 2;
-    target = Math.max(0, Math.min(maxScroll, target));
-    viewport.scrollTo({ left: target, behavior: smooth ? "smooth" : "auto" });
+    target = Math.max(0, Math.min(maxOffset, target));
+
+    if (!animate) track.classList.add("no-anim");
+    track.style.transform = "translate3d(-" + target + "px, 0, 0)";
+    if (!animate) {
+      // Force layout so the transform above applies before we remove the
+      // "no transition" class, otherwise the browser would animate it.
+      void track.offsetWidth;
+      track.classList.remove("no-anim");
+    }
   }
 
   function updateNavButtons() {
-    var maxScroll = viewport.scrollWidth - viewport.clientWidth;
-    var atStart = viewport.scrollLeft <= 1;
-    var atEnd = viewport.scrollLeft >= maxScroll - 1;
-    var noOverflow = maxScroll <= 0;
-    if (prevBtn) prevBtn.disabled = atStart || noOverflow;
-    if (nextBtn) nextBtn.disabled = atEnd || noOverflow;
-  }
-
-  function updateActiveFromScroll() {
-    updateNavButtons();
-    if (hoverLock) return;
-    var viewportRect = viewport.getBoundingClientRect();
-    var center = viewportRect.left + viewportRect.width / 2;
-    var closest = null;
-    var closestDist = Infinity;
-    cards.forEach(function (card) {
-      var rect = card.getBoundingClientRect();
-      var cardCenter = rect.left + rect.width / 2;
-      var dist = Math.abs(cardCenter - center);
-      if (dist < closestDist) {
-        closestDist = dist;
-        closest = card;
-      }
-    });
-    setActive(closest);
+    if (prevBtn) prevBtn.disabled = activeIndex <= 0;
+    if (nextBtn) nextBtn.disabled = activeIndex >= cards.length - 1;
   }
 
   // Move the selection to whichever card sits before/after the currently
-  // active one, and smoothly recentre the viewport on it.
+  // active one, and slide the wheel to recentre on it.
   function stepToCard(direction) {
-    var activeIndex = cards.findIndex(function (c) {
-      return c.classList.contains("is-active");
-    });
-    if (activeIndex === -1) activeIndex = 0;
     var nextIndex = Math.max(0, Math.min(cards.length - 1, activeIndex + direction));
     var nextCard = cards[nextIndex];
-    hoverLock = true;
     setActive(nextCard);
     centerCard(nextCard, true);
+    updateNavButtons();
     return nextCard;
   }
 
@@ -176,48 +180,33 @@
     });
   }
 
-  var scrollTicking = false;
-  viewport.addEventListener(
-    "scroll",
-    function () {
-      if (!scrollTicking) {
-        window.requestAnimationFrame(function () {
-          updateActiveFromScroll();
-          scrollTicking = false;
-        });
-        scrollTicking = true;
-      }
-    },
-    { passive: true }
-  );
-
+  // Desktop mouse users can still preview a neighbouring card by hovering
+  // it, without that changing the wheel's position — only the arrows (or
+  // the keyboard) move the selection itself.
   if (canHover) {
     cards.forEach(function (card) {
       card.addEventListener("mouseenter", function () {
-        hoverLock = true;
-        setActive(card);
+        setPreview(card);
       });
       card.addEventListener("mouseleave", function () {
-        hoverLock = false;
-        updateActiveFromScroll();
+        setPreview(cards[activeIndex]);
       });
     });
   }
 
-  // Keyboard users: focusing a card also "selects" it
-  cards.forEach(function (card) {
+  // Keyboard users tabbing through the roster: focusing a card selects it
+  // and recentres the wheel, same as pressing an arrow.
+  cards.forEach(function (card, i) {
     card.addEventListener("focus", function () {
-      hoverLock = true;
+      if (i === activeIndex) return;
       setActive(card);
-    });
-    card.addEventListener("blur", function () {
-      hoverLock = false;
-      updateActiveFromScroll();
+      centerCard(card, true);
+      updateNavButtons();
     });
   });
 
-  // ---- Land with the default (first) card centred, neighbours peeking in
-  // on both sides, instead of pinned flush to the left edge ----
+  // ---- Land with the default (first, or already-active) card centred,
+  // neighbours peeking in on both sides ----
   function centerInitialCard() {
     var initial = cards.find(function (c) { return c.classList.contains("is-active"); }) || cards[0];
     setActive(initial);
@@ -225,80 +214,16 @@
     updateNavButtons();
   }
   window.setTimeout(centerInitialCard, 60);
-  window.addEventListener("resize", updateActiveFromScroll);
 
-  // ---- Mouse wheel support: a vertical scroll/wheel gesture over the
-  // carousel moves it horizontally instead. We only take over when the
-  // gesture reads as vertical (so trackpad horizontal swipes still work
-  // natively) and only when the carousel actually has room to move that
-  // way — otherwise we let the event through so the page keeps scrolling
-  // normally once the roster is fully scrolled to either end. ----
-  viewport.addEventListener(
-    "wheel",
-    function (event) {
-      if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
-
-      var maxScroll = viewport.scrollWidth - viewport.clientWidth;
-      if (maxScroll <= 0) return;
-
-      var atEnd = event.deltaY > 0 && viewport.scrollLeft >= maxScroll - 1;
-      var atStart = event.deltaY < 0 && viewport.scrollLeft <= 1;
-      if (atEnd || atStart) return;
-
-      event.preventDefault();
-      viewport.scrollLeft += event.deltaY;
-    },
-    { passive: false }
-  );
-
-  // ---- Click-and-drag support for mouse users (no trackpad / no wheel
-  // gesture is a natural fit for a mouse, so this is the fallback most
-  // desktop visitors will actually reach for) ----
-  var isDragging = false;
-  var dragMoved = false;
-  var dragStartX = 0;
-  var dragStartScroll = 0;
-
-  viewport.addEventListener("pointerdown", function (event) {
-    if (event.pointerType === "touch") return; // native touch scrolling stays untouched
-    var maxScroll = viewport.scrollWidth - viewport.clientWidth;
-    if (maxScroll <= 0) return;
-    isDragging = true;
-    dragMoved = false;
-    dragStartX = event.clientX;
-    dragStartScroll = viewport.scrollLeft;
-    viewport.classList.add("is-dragging");
+  // Keep the active card centred if the viewport is resized (e.g. rotating
+  // a tablet, or the browser window changing width).
+  var resizeTimer = null;
+  window.addEventListener("resize", function () {
+    if (resizeTimer) window.clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(function () {
+      centerCard(cards[activeIndex], false);
+    }, 100);
   });
-
-  viewport.addEventListener("pointermove", function (event) {
-    if (!isDragging) return;
-    var delta = event.clientX - dragStartX;
-    if (Math.abs(delta) > 4) dragMoved = true;
-    viewport.scrollLeft = dragStartScroll - delta;
-  });
-
-  function endDrag() {
-    if (!isDragging) return;
-    isDragging = false;
-    viewport.classList.remove("is-dragging");
-  }
-  viewport.addEventListener("pointerup", endDrag);
-  viewport.addEventListener("pointerleave", endDrag);
-  viewport.addEventListener("pointercancel", endDrag);
-
-  // A drag that actually moved the carousel shouldn't also trigger the
-  // card's own click-to-navigate handler.
-  viewport.addEventListener(
-    "click",
-    function (event) {
-      if (dragMoved) {
-        event.preventDefault();
-        event.stopPropagation();
-        dragMoved = false;
-      }
-    },
-    true
-  );
 
   // ---- Keyboard: left/right arrows move the selection between cards from
   // anywhere in the roster, not just when a specific card has focus ----

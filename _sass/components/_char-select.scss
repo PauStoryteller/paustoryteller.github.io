@@ -51,38 +51,15 @@
   }
 }
 
-// Full-bleed scroll area so cards can spill to the edge of the viewport,
-// like a console character-select screen.
+// Fixed viewing window onto the "wheel" — no native scrolling any more.
+// Movement only ever happens through the JS-driven transform on
+// .char-select-track (triggered by the arrows or the keyboard), and the
+// mask gradient fades neighbouring cards out right at this box's edges,
+// like they're rounding the far side of a wheel.
 .char-select-viewport {
-  overflow-x: auto;
-  overflow-y: hidden;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-  scrollbar-color: $primary $white-offset;
-  scroll-snap-type: x proximity;
-  scroll-behavior: smooth;
-  cursor: grab;
-
-  &.is-dragging {
-    cursor: grabbing;
-    scroll-behavior: auto;
-  }
-
-  &::-webkit-scrollbar {
-    height: 6px;
-  }
-  &::-webkit-scrollbar-track {
-    background-color: $white-offset;
-  }
-  &::-webkit-scrollbar-thumb {
-    background-image: linear-gradient(to right, $primary, $secondary);
-    border-radius: 10px;
-  }
-
-  @include media-breakpoint-up(lg) {
-    -webkit-mask-image: linear-gradient(to right, transparent 0, $body-bg 44px, $body-bg calc(100% - 44px), transparent 100%);
-    mask-image: linear-gradient(to right, transparent 0, $body-bg 44px, $body-bg calc(100% - 44px), transparent 100%);
-  }
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, $body-bg clamp(24px, 6vw, 64px), $body-bg calc(100% - clamp(24px, 6vw, 64px)), transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, $body-bg clamp(24px, 6vw, 64px), $body-bg calc(100% - clamp(24px, 6vw, 64px)), transparent 100%);
 }
 
 .char-select-track {
@@ -91,6 +68,14 @@
   gap: 18px;
   width: max-content;
   padding: 26px 0 44px;
+  will-change: transform;
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+
+  // Used briefly by the JS to jump to a position (initial load, resize)
+  // without animating the snap.
+  &.no-anim {
+    transition: none;
+  }
 
   @include media-breakpoint-up(md) {
     gap: 24px;
@@ -104,13 +89,26 @@
 // Roster (viewport) + preview panel, side by side like a character-select
 // screen from the lg breakpoint up. Below that there's not enough width
 // to do both justice, so the preview stacks under the roster instead.
+//
+// This row is intentionally capped and centred (rather than left flush to
+// the browser edge) so it stays lined up with the rest of the page's
+// content — the roster is still allowed to visually "bleed" up to that
+// centred boundary via the mask gradient on .char-select-viewport.
 .char-select-body {
   display: flex;
   flex-direction: column;
+  max-width: 1600px;
+  margin-left: auto;
+  margin-right: auto;
 
   @include media-breakpoint-up(lg) {
     flex-direction: row;
     align-items: flex-start;
+    padding-left: clamp(16px, 3vw, 48px);
+    padding-right: clamp(16px, 3vw, 48px);
+    // Extra clearance so the journal post-it has room to overhang the
+    // bottom of the preview window without colliding with the hint text.
+    margin-bottom: 28px;
   }
 }
 
@@ -119,7 +117,12 @@
   min-width: 0;
 
   @include media-breakpoint-up(lg) {
-    flex: 0 1 auto;
+    // Fills whatever width the preview panel doesn't take, instead of
+    // shrinking to fit its own content — this gives the "wheel" a fixed
+    // frame to turn inside, with neighbouring cards cut off by the mask
+    // gradient right at its edges.
+    flex: 1 1 auto;
+    order: 2;
   }
 }
 
@@ -189,17 +192,22 @@
 }
 
 // ---- Preview panel ----
+// Sits to the left of the roster (order: 1) and takes a larger, wider slice
+// of the row than before, so the selected card's info/image/journal block
+// reads as the main focus rather than a sidebar.
 .char-select-preview {
+  position: relative;
   padding: 0 clamp(20px, 6vw, 90px);
   margin-top: 4px;
 
   @include media-breakpoint-up(lg) {
-    flex: 0 0 320px;
-    padding: 26px 0 44px;
+    order: 1;
+    flex: 0 0 clamp(360px, 36vw, 460px);
+    padding: 26px clamp(16px, 2vw, 28px) 44px 0;
     margin-top: 0;
   }
   @include media-breakpoint-up(xl) {
-    flex-basis: 360px;
+    flex-basis: clamp(400px, 34vw, 500px);
   }
 }
 
@@ -344,13 +352,25 @@
   align-self: flex-start;
 }
 
-// ---- Related journal mini-card (mirrors the real "Journal destacado"
-// card layout: full-width photo on top, title and summary below) ----
+// ---- Related journal "post-it": a small note that overlaps the corner
+// of the preview window instead of living inside its box. On mobile there's
+// no room to let it float free, so it just sits underneath as a compact
+// card instead. ----
 .char-select-preview-journal {
   width: 100%;
-  margin-top: 18px;
-  padding-top: 16px;
-  border-top: 1px solid $white-offset;
+  margin-top: 16px;
+
+  @include media-breakpoint-up(lg) {
+    // Anchored to the right so it overlaps the photo/frame corner instead
+    // of the call-to-action button, which stays left-aligned lower down.
+    position: absolute;
+    right: clamp(-18px, -2vw, -8px);
+    left: auto;
+    bottom: clamp(-26px, -3vw, -16px);
+    width: min(64%, 220px);
+    margin-top: 0;
+    z-index: 5;
+  }
 }
 
 .char-select-preview-journal-label {
@@ -361,10 +381,16 @@
   font-weight: 600;
   letter-spacing: 0.1em;
   color: $steel;
-  margin-bottom: 10px;
+  padding: 10px 14px 0;
+
+  @include media-breakpoint-up(lg) {
+    padding: 8px 12px 0;
+    color: $secondary;
+  }
 }
 
 .char-select-preview-journal-card {
+  position: relative;
   display: flex;
   flex-direction: column;
   text-decoration: none;
@@ -373,7 +399,7 @@
   border-radius: 8px;
   overflow: hidden;
   background-color: $body-bg;
-  transition: border-color 0.2s ease, transform 0.2s ease;
+  transition: border-color 0.2s ease, transform 0.25s ease, box-shadow 0.25s ease;
 
   &:hover {
     text-decoration: none;
@@ -387,6 +413,41 @@
     .char-select-preview-journal-thumb img {
       transform: scale(1.05);
     }
+  }
+
+  // ---- The "post-it" treatment only kicks in once there's room for it to
+  // float free of the preview box, beside/below the roster ----
+  @include media-breakpoint-up(lg) {
+    border: none;
+    border-radius: 4px;
+    background-color: $white;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.32), 0 2px 6px rgba(0, 0, 0, 0.18);
+    transform: rotate(-3deg);
+
+    &:hover {
+      transform: rotate(-1deg) translateY(-4px);
+      box-shadow: 0 16px 30px rgba(0, 0, 0, 0.38), 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+  }
+}
+
+// A little "pinned" tab peeking above the note, so it visibly overlaps the
+// preview window rather than reading as part of the same box.
+.char-select-preview-journal-pin {
+  display: none;
+
+  @include media-breakpoint-up(lg) {
+    display: block;
+    position: absolute;
+    top: -7px;
+    left: 20px;
+    width: 26px;
+    height: 14px;
+    background-color: rgba(157, 127, 234, 0.55);
+    border: 1px solid rgba(157, 127, 234, 0.75);
+    border-radius: 2px;
+    transform: rotate(4deg);
+    z-index: 1;
   }
 }
 
@@ -402,10 +463,18 @@
     object-fit: cover;
     transition: transform 0.4s ease;
   }
+
+  @include media-breakpoint-up(lg) {
+    aspect-ratio: 4 / 3;
+  }
 }
 
 .char-select-preview-journal-body {
   padding: 12px 14px 14px;
+
+  @include media-breakpoint-up(lg) {
+    padding: 8px 12px 12px;
+  }
 }
 
 .char-select-preview-journal-title {
@@ -450,7 +519,6 @@
   border-radius: 10px;
   overflow: hidden;
   cursor: pointer;
-  scroll-snap-align: center;
   transform: scale(1) translateY(0);
   transition:
     transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
@@ -699,11 +767,27 @@
   }
 }
 
-// The rest of the roster dims a touch so the active pick reads as "selected"
-.char-select-track.has-active .char-card:not(.is-active) {
+// ---- "Wheel" effect: cards fade, shrink and desaturate the further they
+// sit from the selected one, so the roster reads like a character-select
+// carousel curving away on either side of the pick. Distance is written
+// onto each card by the JS (data-dist) whenever the selection changes. ----
+.char-card[data-dist="1"] {
+  transform: scale(0.84) translateY(10px);
   opacity: 0.55;
-  filter: saturate(0.5);
-  transform: scale(0.95);
+  filter: saturate(0.35) brightness(0.85);
+}
+
+.char-card[data-dist="2"] {
+  transform: scale(0.7) translateY(16px);
+  opacity: 0.3;
+  filter: saturate(0.2) brightness(0.75);
+}
+
+.char-card[data-dist="far"] {
+  transform: scale(0.62) translateY(20px);
+  opacity: 0;
+  filter: saturate(0) brightness(0.7);
+  pointer-events: none;
 }
 
 // ---- Fake "loading…" screen before entering a project ----
@@ -780,12 +864,15 @@
   .char-card,
   .char-card-media img,
   .char-corner,
-  .char-border-ring {
+  .char-border-ring,
+  .char-select-track {
     transition: none !important;
     animation: none !important;
   }
   .char-card.is-active,
-  .char-select-track.has-active .char-card:not(.is-active) {
+  .char-card[data-dist="1"],
+  .char-card[data-dist="2"],
+  .char-card[data-dist="far"] {
     transform: none;
   }
 }
