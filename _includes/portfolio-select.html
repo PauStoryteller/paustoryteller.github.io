@@ -32,7 +32,7 @@
   <div class="char-select-body">
     <div class="char-select-viewport-wrap">
       <button type="button" class="char-select-arrow char-select-arrow-prev" data-char-prev aria-label="{{ t.char_select_prev | default: 'Anterior' }}" aria-controls="portfolio-select">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="17,4 9,4 6,12 9,20 17,20 13,12" fill="currentColor"/></svg>
       </button>
     <div class="char-select-viewport reveal" data-char-viewport>
       <div class="char-select-track" data-char-track role="list">
@@ -109,7 +109,7 @@
       </div>
     </div>
       <button type="button" class="char-select-arrow char-select-arrow-next" data-char-next aria-label="{{ t.char_select_next | default: 'Siguiente' }}" aria-controls="portfolio-select">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="7,4 15,4 18,12 15,20 7,20 11,12" fill="currentColor"/></svg>
       </button>
     </div>
 
@@ -133,7 +133,6 @@
           <span class="char-select-preview-category" data-preview-target="category"{% unless first_entry.category %} hidden{% endunless %}>{{ first_entry.category }}</span>
           <h3 class="char-select-preview-title" data-preview-target="title">{{ first_entry.title }}</h3>
           <p class="char-select-preview-summary" data-preview-target="summary"{% unless first_entry.summary %} hidden{% endunless %}>{{ first_entry.summary }}</p>
-          <span class="button button-primary char-select-preview-cta" aria-hidden="true">{{ t.char_select_cta }}</span>
         </div>
       </a>
 

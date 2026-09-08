@@ -8,6 +8,8 @@
   var cards = Array.prototype.slice.call(track.querySelectorAll("[data-char-card]"));
   if (!cards.length) return;
 
+  var spacers = Array.prototype.slice.call(track.querySelectorAll(".char-select-spacer"));
+
   var prevBtn = document.querySelector("[data-char-prev]");
   var nextBtn = document.querySelector("[data-char-next]");
 
@@ -164,6 +166,19 @@
     return ((index % total) + total) % total;
   }
 
+  // ---- The spacers at each end of the track need to be roughly half the
+  // viewport's width, or there isn't enough empty room to slide the first
+  // or last card all the way to centre — they'd get stuck part-way there,
+  // clamped against the start/end of the track. Recomputed on load and
+  // resize since the viewport's width changes. ----
+  function updateSpacers() {
+    if (!spacers.length) return;
+    var half = Math.round(viewport.clientWidth / 2);
+    spacers.forEach(function (spacer) {
+      spacer.style.flexBasis = half + "px";
+    });
+  }
+
   // Move the selection to whichever card sits before/after the currently
   // active one (looping around the ends), and slide the wheel to recentre
   // on it.
@@ -213,6 +228,7 @@
   // ---- Land with the default (first, or already-active) card centred,
   // neighbours peeking in on both sides ----
   function centerInitialCard() {
+    updateSpacers();
     var initial = cards.find(function (c) { return c.classList.contains("is-active"); }) || cards[0];
     setActive(initial);
     centerCard(initial, false);
@@ -225,6 +241,7 @@
   window.addEventListener("resize", function () {
     if (resizeTimer) window.clearTimeout(resizeTimer);
     resizeTimer = window.setTimeout(function () {
+      updateSpacers();
       centerCard(cards[activeIndex], false);
     }, 100);
   });

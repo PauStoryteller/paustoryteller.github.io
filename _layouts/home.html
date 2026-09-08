@@ -7,11 +7,9 @@ bodyClass: "page-home"
 {% if lang == "en" %}
   {% assign portfolio_docs = site.portfolio_en %}
   {% assign journal_docs = site.journal_en %}
-  {% assign journal_url = "/en/journal" %}
 {% else %}
   {% assign portfolio_docs = site.portfolio %}
   {% assign journal_docs = site.journal %}
-  {% assign journal_url = "/journal" %}
 {% endif %}
 {% assign all_portfolio = "" | split: "" %}
 {% if portfolio_docs %}
@@ -51,22 +49,8 @@ bodyClass: "page-home"
 {% include portfolio-select.html entries=all_portfolio journal_docs=journal_docs t=t default_journal=default_journal %}
 
 <div class="strip strip-grey">
-  <div class="container pt-8 pb-6 pb-md-10">
+  <div class="container pt-6 pb-6 pt-md-8 pb-md-8">
     <div class="row justify-content-start">
-      <div class="col-12 col-md-7 col-lg-6">
-        <h2 class="section-heading reveal">{{ t.featured_journal_heading }}</h2>
-        <div class="featured-stack reveal-stagger">
-          {% for entry in featured_journal limit: site.home.limit_featured %}
-          <div class="featured-card-wrap reveal">
-            {% include work-card.html entry=entry %}
-          </div>
-          {% endfor %}
-        </div>
-        <a class="button button-primary reveal" href="{{ journal_url | relative_url }}">{{ t.view_journal }}</a>
-      </div>
-    </div>
-
-    <div class="row justify-content-start mt-6 mt-md-8 pt-6 pt-md-8 strip-connect-row">
       <div class="col-12 col-md-8 reveal">
         {% assign connect_title = page.connect_title | default: t.connect_default_title %}
         {% assign connect_text = page.connect_text | default: t.connect_default_text %}

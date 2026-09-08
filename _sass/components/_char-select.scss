@@ -71,7 +71,7 @@
   width: max-content;
   padding: 26px 0 44px;
   will-change: transform;
-  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 
   // Used briefly by the JS to jump to a position (initial load, resize)
   // without animating the snap.
@@ -271,8 +271,13 @@
     border-color: $secondary;
     box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(157, 127, 234, 0.35);
 
-    .char-select-preview-cta {
-      background-color: $primary-dark;
+    .char-select-preview-media img {
+      transform: scale(1.04);
+    }
+
+    .char-select-preview-corner {
+      opacity: 1;
+      animation-play-state: paused;
     }
   }
 
@@ -353,6 +358,7 @@
     height: 100%;
     object-fit: cover;
     filter: saturate(0.85) contrast(1.05);
+    transition: transform 0.35s ease;
   }
 
   &::after {
@@ -415,13 +421,8 @@
   font-size: 14px;
   line-height: 1.5;
   color: $steel;
-  margin-bottom: 20px;
+  margin-bottom: 0;
   flex: 1 1 auto;
-}
-
-.char-select-preview-cta {
-  margin-top: auto;
-  align-self: flex-start;
 }
 
 // ---- Related journal "post-it": a small note that overlaps the corner
@@ -439,7 +440,9 @@
     right: clamp(-18px, -2vw, -8px);
     left: auto;
     bottom: clamp(-26px, -3vw, -16px);
-    width: min(64%, 220px);
+    // Wider than before so the text has room to sit beside the thumbnail
+    // instead of underneath it.
+    width: min(80%, 300px);
     margin-top: 0;
     z-index: 5;
   }
@@ -456,7 +459,8 @@
   padding: 10px 14px 0;
 
   @include media-breakpoint-up(lg) {
-    padding: 8px 12px 0;
+    grid-area: label;
+    padding: 8px 12px 4px;
     color: $secondary;
   }
 }
@@ -488,13 +492,22 @@
   }
 
   // ---- The "post-it" treatment only kicks in once there's room for it to
-  // float free of the preview box, beside/below the roster ----
+  // float free of the preview box, beside/below the roster. From here up,
+  // it also switches from a stacked (image-over-text) card to a small
+  // horizontal one — label spanning the top, thumbnail and text side by
+  // side underneath — so the text isn't squeezed into a narrow column. ----
   @include media-breakpoint-up(lg) {
     border: none;
     border-radius: 4px;
     background-color: $white;
     box-shadow: 0 10px 24px rgba(0, 0, 0, 0.32), 0 2px 6px rgba(0, 0, 0, 0.18);
     transform: rotate(-3deg);
+
+    display: grid;
+    grid-template-columns: 84px 1fr;
+    grid-template-rows: auto 1fr;
+    grid-template-areas: "label label" "thumb body";
+    align-items: stretch;
 
     &:hover {
       transform: rotate(-1deg) translateY(-4px);
@@ -537,7 +550,10 @@
   }
 
   @include media-breakpoint-up(lg) {
-    aspect-ratio: 4 / 3;
+    grid-area: thumb;
+    width: auto;
+    height: 100%;
+    aspect-ratio: auto;
   }
 }
 
@@ -545,7 +561,11 @@
   padding: 12px 14px 14px;
 
   @include media-breakpoint-up(lg) {
-    padding: 8px 12px 12px;
+    grid-area: body;
+    padding: 6px 12px 10px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 }
 
@@ -558,6 +578,13 @@
   color: $black;
   margin-bottom: 4px;
   transition: color 0.2s ease;
+
+  @include media-breakpoint-up(lg) {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
 }
 
 .char-select-preview-journal-summary {
@@ -565,6 +592,13 @@
   font-size: 12px;
   line-height: 1.45;
   color: $steel;
+
+  @include media-breakpoint-up(lg) {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

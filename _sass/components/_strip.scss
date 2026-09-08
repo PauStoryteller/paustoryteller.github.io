@@ -40,14 +40,6 @@
     );
   }
 }
-// Thin separator between two stacked blocks inside the same .strip-grey
-// (e.g. the featured-journal grid and the "¿Hablamos?" contact block below
-// it) — faint on purpose, just enough to read as two sections without a
-// second jagged cut.
-.strip-connect-row {
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-}
-
 .strip-diagonal {
   transform: skewY(5deg);
   padding-bottom: 50px;
