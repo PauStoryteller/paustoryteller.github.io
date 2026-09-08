@@ -1,10 +1,10 @@
 source "https://rubygems.org"
 
+# Standard Gemfile for GitHub Pages' classic build (Settings > Pages >
+# "Deploy from a branch"). No custom Sass converter version is pinned here
+# on purpose: assets/css/style.css already ships pre-compiled (Bootstrap
+# 5.3's SCSS needs a modern Sass engine that GitHub Pages' classic build
+# doesn't have), so Jekyll only needs to copy it as a static file — it
+# never has to run Sass at all.
+gem "github-pages", group: :jekyll_plugins
 gem "webrick", "~> 1.7"
-gem "jekyll", "~> 4.3"
-
-# El conversor de Sass moderno (usa Dart Sass) es necesario para poder compilar
-# el SCSS de Bootstrap 5.3. La gema "github-pages" que usa el build clásico de
-# GitHub Pages trae una versión de Sass antigua incompatible con Bootstrap 5.3,
-# por eso hace falta este Gemfile + el workflow de Actions en .github/workflows/.
-gem "jekyll-sass-converter", "~> 3.0"

@@ -136,34 +136,60 @@
   }
 }
 
-// ---- Prev / next arrow buttons, centred over the roster's edges ----
+// ---- Prev / next arrow buttons, centred over the roster's edges. Angular
+// "HUD button" shape (clipped corners) instead of a plain circle, so they
+// read as part of the same sci-fi character-select kit as the cards. ----
 .char-select-arrow {
   position: absolute;
   top: 50%;
   z-index: 3;
   transform: translateY(calc(-50% - 22px));
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0;
-  border-radius: 50%;
+  clip-path: polygon(9px 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%, 0 9px);
   border: 1px solid $white-offset;
-  background-color: rgba(11, 10, 13, 0.7);
+  background-color: rgba(11, 10, 13, 0.75);
   color: $black;
   cursor: pointer;
-  transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease, opacity 0.2s ease;
+  overflow: hidden;
+  transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease,
+    opacity 0.2s ease, filter 0.2s ease;
 
   svg {
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
+    position: relative;
+    z-index: 1;
+    transition: transform 0.2s ease;
+  }
+
+  // Thin conic-gradient sliver behind the icon, in the same red/purple mix
+  // as the active card's ring — only shows through on hover/focus.
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    background-image: conic-gradient(from 0deg, $primary, $secondary, $primary);
+    transition: opacity 0.25s ease;
   }
 
   &:hover:not(:disabled),
   &:focus-visible:not(:disabled) {
-    border-color: $primary;
-    background-color: rgba(229, 72, 77, 0.18);
+    border-color: $secondary;
+    filter: drop-shadow(0 0 6px rgba(157, 127, 234, 0.55));
+
+    &::before {
+      opacity: 0.22;
+    }
+  }
+
+  &:hover:not(:disabled) svg {
+    transform: scale(1.1);
   }
 
   &:active:not(:disabled) {
@@ -178,6 +204,13 @@
   &:disabled {
     opacity: 0.25;
     cursor: default;
+  }
+}
+
+.char-select-arrow-next svg {
+  // Nudge the "next" chevron so hovering feels like it's pointing forward.
+  &:hover {
+    transform: translateX(1px);
   }
 }
 
@@ -226,6 +259,27 @@
   display: flex;
   flex-direction: column;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+
+  &:hover,
+  &:focus-visible {
+    text-decoration: none;
+    color: inherit;
+    border-color: $secondary;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(157, 127, 234, 0.35);
+
+    .char-select-preview-cta {
+      background-color: $primary-dark;
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid $secondary;
+    outline-offset: 3px;
+  }
 }
 
 .char-select-preview-corner {
@@ -310,21 +364,6 @@
   }
 }
 
-.char-select-preview-num {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 2;
-  font-family: $font-family-heading;
-  font-weight: 700;
-  font-size: 11px;
-  letter-spacing: 0.05em;
-  color: $steel;
-  background-color: rgba(11, 10, 13, 0.55);
-  padding: 3px 8px;
-  border-radius: 3px;
-}
-
 .char-select-preview-body {
   padding: 18px 20px 20px;
   display: flex;
@@ -350,10 +389,26 @@
 .char-select-preview-title {
   font-family: $font-family-heading;
   font-weight: 800;
-  font-size: 20px;
+  font-size: clamp(19px, 2.2vw, 22px);
   line-height: 1.25;
   color: $black;
   margin-bottom: 10px;
+  letter-spacing: 0.01em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  // "Selection cursor" tick, same red-to-purple gradient as the active
+  // card's glow ring — reads as a HUD marker calling out the pick.
+  &::before {
+    content: "";
+    flex: 0 0 auto;
+    width: 4px;
+    height: 1.1em;
+    border-radius: 2px;
+    background-image: linear-gradient(180deg, $primary, $secondary);
+    box-shadow: 0 0 8px rgba(157, 127, 234, 0.55);
+  }
 }
 
 .char-select-preview-summary {

@@ -1,5 +1,19 @@
----
----
+
+// ---------------------------------------------------------------------
+// This is the master Sass entry point (variables + Bootstrap imports +
+// component partials) used to generate assets/css/style.css.
+//
+// GitHub Pages' classic build uses a very old Sass engine that can't
+// compile Bootstrap 5.3's SCSS, so this project ships a pre-compiled,
+// plain assets/css/style.css instead of letting Jekyll compile Sass at
+// deploy time. This file is kept here (as a "_partial", so Jekyll never
+// tries to build it directly) purely as the source of truth for
+// re-generating that CSS whenever a _sass/**/*.scss file changes.
+//
+// To regenerate assets/css/style.css after editing any partial:
+//   npx sass --load-path=_sass --style=compressed _sass/_entry-source.scss assets/css/style.css
+// (requires Node/npm; `npx sass` downloads Dart Sass on first run)
+// ---------------------------------------------------------------------
 
 // Colors — tema oscuro rojo/morado
 $primary: #e5484d; // rojo

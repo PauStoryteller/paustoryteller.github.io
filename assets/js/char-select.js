@@ -46,12 +46,10 @@
     var category = card.getAttribute("data-preview-category") || "";
     var summary = card.getAttribute("data-preview-summary") || "";
     var image = card.getAttribute("data-preview-image") || "";
-    var num = card.getAttribute("data-preview-num") || "";
     var href = card.getAttribute("data-preview-href") || card.getAttribute("href");
     var isExternal = card.getAttribute("data-preview-external") === "true";
 
     if (previewTargets.title) previewTargets.title.textContent = title;
-    if (previewTargets.num) previewTargets.num.textContent = num;
 
     if (previewTargets.category) {
       previewTargets.category.textContent = category;
@@ -65,14 +63,15 @@
       previewTargets.image.src = image;
       previewTargets.image.alt = title;
     }
-    if (previewTargets.cta) {
-      previewTargets.cta.setAttribute("href", href);
+    if (previewTargets.frame) {
+      previewTargets.frame.setAttribute("href", href);
+      previewTargets.frame.setAttribute("aria-label", title);
       if (isExternal) {
-        previewTargets.cta.setAttribute("target", "_blank");
-        previewTargets.cta.setAttribute("rel", "noopener");
+        previewTargets.frame.setAttribute("target", "_blank");
+        previewTargets.frame.setAttribute("rel", "noopener");
       } else {
-        previewTargets.cta.removeAttribute("target");
-        previewTargets.cta.removeAttribute("rel");
+        previewTargets.frame.removeAttribute("target");
+        previewTargets.frame.removeAttribute("rel");
       }
     }
 
@@ -102,10 +101,14 @@
 
   // ---- "Wheel" look: every card gets a data-dist attribute (its distance
   // from the active one), which the CSS uses to shrink/dim/cut cards off
-  // the further they sit from the centre. ----
+  // the further they sit from the centre. Distance wraps around (the roster
+  // loops), so a card near the far end can read as "close" to an active
+  // card near the opposite end. ----
   function updateDistances() {
+    var total = cards.length;
     cards.forEach(function (card, i) {
-      var dist = Math.abs(i - activeIndex);
+      var diff = Math.abs(i - activeIndex);
+      var dist = Math.min(diff, total - diff);
       if (dist === 0) {
         card.removeAttribute("data-dist");
       } else if (dist === 1) {
@@ -134,25 +137,13 @@
     setPreview(card);
   }
 
-  // ---- Move the track so the active card sits where it makes sense for
-  // the current layout. From the lg breakpoint up, the preview panel sits
-  // to the right of the roster, so the active card is pinned near the
-  // viewport's right edge (with a small buffer so it doesn't get caught in
-  // the fade-out mask right at that edge) — it always reads as "glued" to
-  // the preview. Below lg the preview stacks underneath instead, so the
-  // active card is just centred as before. The track just slides via a CSS
-  // transform; the viewport itself never scrolls natively. ----
-  var EDGE_BUFFER = 32;
-  var LG_BREAKPOINT = 992;
+  // ---- Move the track so the active card sits centred in the viewport.
+  // The viewport never scrolls natively — the track just slides via a CSS
+  // transform. ----
   function centerCard(card, animate) {
     if (!card) return;
     var maxOffset = Math.max(0, track.scrollWidth - viewport.clientWidth);
-    var target;
-    if (window.innerWidth >= LG_BREAKPOINT) {
-      target = card.offsetLeft + card.offsetWidth - viewport.clientWidth + EDGE_BUFFER;
-    } else {
-      target = card.offsetLeft + card.offsetWidth / 2 - viewport.clientWidth / 2;
-    }
+    var target = card.offsetLeft + card.offsetWidth / 2 - viewport.clientWidth / 2;
     target = Math.max(0, Math.min(maxOffset, target));
 
     if (!animate) track.classList.add("no-anim");
@@ -165,19 +156,22 @@
     }
   }
 
-  function updateNavButtons() {
-    if (prevBtn) prevBtn.disabled = activeIndex <= 0;
-    if (nextBtn) nextBtn.disabled = activeIndex >= cards.length - 1;
+  // ---- Roster loops: past the last project it wraps back to the first,
+  // and before the first it wraps back to the last — so the arrows (and
+  // the wheel) never hit a dead end. ----
+  function wrapIndex(index) {
+    var total = cards.length;
+    return ((index % total) + total) % total;
   }
 
   // Move the selection to whichever card sits before/after the currently
-  // active one, and slide the wheel to recentre on it.
+  // active one (looping around the ends), and slide the wheel to recentre
+  // on it.
   function stepToCard(direction) {
-    var nextIndex = Math.max(0, Math.min(cards.length - 1, activeIndex + direction));
+    var nextIndex = wrapIndex(activeIndex + direction);
     var nextCard = cards[nextIndex];
     setActive(nextCard);
     centerCard(nextCard, true);
-    updateNavButtons();
     return nextCard;
   }
 
@@ -213,7 +207,6 @@
       if (i === activeIndex) return;
       setActive(card);
       centerCard(card, true);
-      updateNavButtons();
     });
   });
 
@@ -223,7 +216,6 @@
     var initial = cards.find(function (c) { return c.classList.contains("is-active"); }) || cards[0];
     setActive(initial);
     centerCard(initial, false);
-    updateNavButtons();
   }
   window.setTimeout(centerInitialCard, 60);
 

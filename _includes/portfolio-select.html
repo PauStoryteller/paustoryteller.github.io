@@ -114,7 +114,13 @@
     </div>
 
     <aside class="char-select-preview reveal" data-char-preview aria-live="polite">
-      <div class="char-select-preview-frame">
+      <a
+        class="char-select-preview-frame"
+        data-preview-target="frame"
+        href="{{ first_href }}"
+        {% if first_is_external %}target="_blank" rel="noopener"{% endif %}
+        aria-label="{{ t.char_select_cta }}: {{ first_entry.title }}"
+      >
         <span class="char-select-preview-corner tl" aria-hidden="true"></span>
         <span class="char-select-preview-corner tr" aria-hidden="true"></span>
         <span class="char-select-preview-corner bl" aria-hidden="true"></span>
@@ -122,20 +128,14 @@
 
         <div class="char-select-preview-media">
           <img data-preview-target="image" src="{{ first_entry.image | relative_url }}" alt="" />
-          <span class="char-select-preview-num" data-preview-target="num" aria-hidden="true">01</span>
         </div>
         <div class="char-select-preview-body">
           <span class="char-select-preview-category" data-preview-target="category"{% unless first_entry.category %} hidden{% endunless %}>{{ first_entry.category }}</span>
           <h3 class="char-select-preview-title" data-preview-target="title">{{ first_entry.title }}</h3>
           <p class="char-select-preview-summary" data-preview-target="summary"{% unless first_entry.summary %} hidden{% endunless %}>{{ first_entry.summary }}</p>
-          <a
-            class="button button-primary char-select-preview-cta"
-            data-preview-target="cta"
-            href="{{ first_href }}"
-            {% if first_is_external %}target="_blank" rel="noopener"{% endif %}
-          >{{ t.char_select_cta }}</a>
+          <span class="button button-primary char-select-preview-cta" aria-hidden="true">{{ t.char_select_cta }}</span>
         </div>
-      </div>
+      </a>
 
       <div class="char-select-preview-journal" data-preview-target="journal"{% unless first_journal %} hidden{% endunless %}>
         <a class="char-select-preview-journal-card" data-preview-target="journal-link" href="{{ first_journal.url | relative_url }}">

@@ -1,4 +1,6 @@
-// assets/css/style.scss is where Jekyll loads the main stylesheet
+// _sass/_entry-source.scss is the master entry point (variables live
+// there). It's compiled locally into the pre-built assets/css/style.css —
+// see the comment at the top of _entry-source.scss for how to regenerate it.
 
 $grid-breakpoints: (
   xs: 0,

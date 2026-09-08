@@ -102,7 +102,7 @@ El icono del menú y el favicon (`images/logo/icon.png`, `images/favicon-*.png` 
 
 ## Colores y tipografía
 
-Se controlan desde `assets/css/style.scss`, casi al principio del archivo (variables `$primary` = rojo, `$secondary` = morado, `$body-bg` = fondo). No hace falta tocar el resto del CSS.
+Se controlan desde `_sass/_entry-source.scss`, casi al principio del archivo (variables `$primary` = rojo, `$secondary` = morado, `$body-bg` = fondo). El sitio ya no compila Sass en GitHub Pages (usa un `assets/css/style.css` pre-compilado); para que un cambio de color se refleje, hay que volver a generar ese CSS (ver las instrucciones en la cabecera de `_entry-source.scss`) o pedírselo a Claude.
 
 ## Dominio propio (paustoryteller.com)
 
