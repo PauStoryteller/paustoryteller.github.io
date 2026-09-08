@@ -30,26 +30,97 @@
 }
 
 .char-select-heading {
+  position: relative;
   font-family: $font-family-heading;
   font-weight: 800;
   font-size: 28px;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.02em;
   line-height: 1.1;
   margin-bottom: 0;
   color: $black;
-  display: inline-block;
+  display: inline-flex;
+  padding: 8px 20px;
 
   @include media-breakpoint-up(md) {
     font-size: 34px;
+    padding: 10px 26px;
   }
+}
+
+// Corner brackets, same motif as the selection cursor on the active card
+// in the carousel below — this title reads as "targeted" by the same HUD.
+.char-select-heading-corner {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 2px solid $primary;
+  opacity: 0.85;
+}
+.char-select-heading-corner.tl {
+  top: 0;
+  left: 0;
+  border-right: none;
+  border-bottom: none;
+}
+.char-select-heading-corner.br {
+  bottom: 0;
+  right: 0;
+  border-left: none;
+  border-top: none;
+  border-color: $secondary;
+}
+
+// A single soft "scan" of light crosses the title the moment the section
+// reveals on scroll — like the HUD locking onto it — then fades away
+// completely. The text itself always stays plain and fully legible; this
+// is a separate glint layered on top, so there's no risk of it looking
+// broken before the animation runs (or with JS/animations off).
+.char-select-heading-text {
+  position: relative;
+  display: inline-block;
 
   &::after {
     content: "";
-    display: block;
-    width: 64px;
-    height: 3px;
-    margin-top: 8px;
-    background-image: linear-gradient(to right, $primary, $secondary);
+    position: absolute;
+    inset: -6px -14px;
+    background-image: linear-gradient(
+      100deg,
+      transparent 35%,
+      rgba($secondary, 0.55) 48%,
+      rgba($primary, 0.65) 55%,
+      transparent 68%
+    );
+    mix-blend-mode: overlay;
+    opacity: 0;
+    transform: translateX(-60%);
+    pointer-events: none;
+  }
+}
+
+.char-select-head.is-visible .char-select-heading-text::after {
+  animation: char-heading-scan 1s 0.15s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes char-heading-scan {
+  0% {
+    opacity: 0;
+    transform: translateX(-60%);
+  }
+  18% {
+    opacity: 1;
+  }
+  82% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(60%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .char-select-heading-text::after {
+    display: none;
   }
 }
 
@@ -71,7 +142,8 @@
   width: max-content;
   padding: 26px 0 44px;
   will-change: transform;
-  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  // Smooth ease-out with no overshoot/bounce at the end of the slide.
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 
   // Used briefly by the JS to jump to a position (initial load, resize)
   // without animating the snap.
@@ -107,7 +179,7 @@
     flex-direction: row;
     align-items: flex-start;
     padding-left: clamp(16px, 3vw, 48px);
-    padding-right: clamp(16px, 3vw, 48px);
+    padding-right: clamp(28px, 4.5vw, 64px);
     // Extra clearance so the journal post-it has room to overhang the
     // bottom of the preview window without colliding with the hint text.
     margin-bottom: 28px;
@@ -136,60 +208,39 @@
   }
 }
 
-// ---- Prev / next arrow buttons, centred over the roster's edges. Angular
-// "HUD button" shape (clipped corners) instead of a plain circle, so they
-// read as part of the same sci-fi character-select kit as the cards. ----
+// ---- Prev / next arrow buttons, centred over the roster's edges. Simple,
+// quiet circular buttons — integrated into the rest of the roster instead
+// of standing out as a separate HUD element. ----
 .char-select-arrow {
   position: absolute;
   top: 50%;
   z-index: 3;
   transform: translateY(calc(-50% - 22px));
-  width: 42px;
-  height: 42px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0;
-  clip-path: polygon(9px 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%, 0 9px);
-  border: 1px solid $white-offset;
-  background-color: rgba(11, 10, 13, 0.75);
-  color: $black;
+  border-radius: 50%;
+  border: 1px solid rgba($black, 0.14);
+  background-color: rgba(11, 10, 13, 0.55);
+  color: $steel;
   cursor: pointer;
-  overflow: hidden;
-  transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease,
-    opacity 0.2s ease, filter 0.2s ease;
+  transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease,
+    transform 0.2s ease, opacity 0.2s ease;
 
   svg {
-    width: 20px;
-    height: 20px;
-    position: relative;
-    z-index: 1;
+    width: 15px;
+    height: 15px;
     transition: transform 0.2s ease;
-  }
-
-  // Thin conic-gradient sliver behind the icon, in the same red/purple mix
-  // as the active card's ring — only shows through on hover/focus.
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    background-image: conic-gradient(from 0deg, $primary, $secondary, $primary);
-    transition: opacity 0.25s ease;
   }
 
   &:hover:not(:disabled),
   &:focus-visible:not(:disabled) {
-    border-color: $secondary;
-    filter: drop-shadow(0 0 6px rgba(157, 127, 234, 0.55));
-
-    &::before {
-      opacity: 0.22;
-    }
-  }
-
-  &:hover:not(:disabled) svg {
-    transform: scale(1.1);
+    border-color: $primary;
+    background-color: rgba(229, 72, 77, 0.14);
+    color: $primary;
   }
 
   &:active:not(:disabled) {
@@ -436,13 +487,13 @@
   @include media-breakpoint-up(lg) {
     // Anchored to the right so it overlaps the photo/frame corner instead
     // of the call-to-action button, which stays left-aligned lower down.
+    // Pushed further out past the frame's edge than before, so the note
+    // has more room to breathe and its text isn't as cramped.
     position: absolute;
-    right: clamp(-18px, -2vw, -8px);
+    right: clamp(-38px, -3.6vw, -20px);
     left: auto;
     bottom: clamp(-26px, -3vw, -16px);
-    // Wider than before so the text has room to sit beside the thumbnail
-    // instead of underneath it.
-    width: min(80%, 300px);
+    width: min(84%, 330px);
     margin-top: 0;
     z-index: 5;
   }
@@ -562,7 +613,7 @@
 
   @include media-breakpoint-up(lg) {
     grid-area: body;
-    padding: 6px 12px 10px 0;
+    padding: 6px 16px 10px 0;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -670,14 +721,41 @@
     transition: transform 0.5s ease, filter 0.35s ease;
   }
 
+  // Red tint over every card that isn't the active pick — fades away the
+  // moment a card becomes selected (see .char-card.is-active below).
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background-color: rgba($primary, 0.4);
+    mix-blend-mode: multiply;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+  }
+
   // vignette so the title bar below always reads clearly
   &::after {
     content: "";
     position: absolute;
     inset: 0;
+    z-index: 2;
     background-image: linear-gradient(180deg, rgba(11, 10, 13, 0) 60%, rgba(11, 10, 13, 0.7) 100%);
     pointer-events: none;
   }
+}
+
+.char-card:not(.is-active) .char-card-media::before {
+  opacity: 0.38;
+}
+
+.char-card[data-dist="2"] .char-card-media::before {
+  opacity: 0.5;
+}
+
+.char-card[data-dist="far"] .char-card-media::before {
+  opacity: 0.6;
 }
 
 .char-card-num {
@@ -797,6 +875,20 @@
   border-left: none;
   border-top: none;
   transform: translate(-6px, -6px);
+}
+
+// ---- Wrap-around filler cards ----
+// Purely decorative duplicates of the last/first project, placed at the
+// two ends of the track so that when the actual first (or last) card is
+// centred, there's something in the "neighbour" slot instead of empty
+// space — like the roster loops around. They're never interactive
+// (pointer-events: none, aria-hidden) and never change: they always look
+// like a dimmed, distant neighbour, matching data-dist="1".
+.char-card-clone {
+  pointer-events: none;
+  transform: scale(0.84) translateY(10px);
+  opacity: 0.55;
+  filter: saturate(0.35) brightness(0.85);
 }
 
 .char-card.is-active {
@@ -978,7 +1070,8 @@
   .char-card.is-active,
   .char-card[data-dist="1"],
   .char-card[data-dist="2"],
-  .char-card[data-dist="far"] {
+  .char-card[data-dist="far"],
+  .char-card-clone {
     transform: none;
   }
 }

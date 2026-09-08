@@ -56,11 +56,13 @@
 
     return {
       x: x, y: y, r: r,
-      // Alpha barely breathes around this base value - present, but never "blinking".
+      // Alpha breathes gently around this base value - a soft twinkle,
+      // never a "blink". Each star has its own phase/speed so they never
+      // move in sync with each other.
       baseAlpha: 0.3 + Math.random() * 0.28,
       color: color,
       phase: Math.random() * Math.PI * 2,
-      speed: 0.00012 + Math.random() * 0.00018, // slow, gentle breathing
+      speed: 0.00025 + Math.random() * 0.00035, // slow, gentle breathing (twinkle)
       boost: 0
     };
   }
@@ -142,7 +144,7 @@
   // ---- Drawing ----
   function drawStar(s, now) {
     // A slow, shallow breathing motion - present but never attention-grabbing.
-    var breathe = 0.88 + 0.12 * Math.sin(now * s.speed + s.phase);
+    var breathe = 0.78 + 0.22 * Math.sin(now * s.speed + s.phase);
     var alpha = Math.min(1, s.baseAlpha * breathe + s.boost);
     s.boost *= 0.94;
     if (alpha < 0.03) return;

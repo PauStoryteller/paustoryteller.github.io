@@ -10,6 +10,13 @@
   {% assign first_href = first_entry.link %}
   {% if first_entry.link contains "http" %}{% assign first_is_external = true %}{% endif %}
 {% endif %}
+{% assign last_entry = entries.last %}
+{% assign last_href = last_entry.url | relative_url %}
+{% assign last_is_external = false %}
+{% if last_entry.link and last_entry.link != "" %}
+  {% assign last_href = last_entry.link %}
+  {% if last_entry.link contains "http" %}{% assign last_is_external = true %}{% endif %}
+{% endif %}
 {% assign first_journal = nil %}
 {% if first_entry.journal_ref and journal_docs %}
   {% for j in journal_docs %}
@@ -25,7 +32,11 @@
   <div class="container">
     <div class="char-select-head reveal">
       <p class="char-select-eyebrow">{{ t.char_select_eyebrow }}</p>
-      <h2 class="char-select-heading">{{ t.char_select_heading }}</h2>
+      <h2 class="char-select-heading">
+        <span class="char-select-heading-corner tl" aria-hidden="true"></span>
+        <span class="char-select-heading-corner br" aria-hidden="true"></span>
+        <span class="char-select-heading-text">{{ t.char_select_heading }}</span>
+      </h2>
     </div>
   </div>
 
@@ -37,6 +48,17 @@
     <div class="char-select-viewport reveal" data-char-viewport>
       <div class="char-select-track" data-char-track role="list">
         <span class="char-select-spacer" aria-hidden="true"></span>
+        {% if entries.size > 1 %}
+        <span class="char-card char-card-clone" aria-hidden="true">
+          <span class="char-card-media">
+            {% if last_entry.image %}<img src="{{ last_entry.image | relative_url }}" alt="" loading="lazy" />{% endif %}
+          </span>
+          <span class="char-card-info">
+            {% if last_entry.category %}<span class="char-card-category">{{ last_entry.category }}</span>{% endif %}
+            <span class="char-card-title">{{ last_entry.title }}</span>
+          </span>
+        </span>
+        {% endif %}
         {% for entry in entries %}
           {% assign is_external = false %}
           {% if entry.link and entry.link != "" %}
@@ -105,6 +127,17 @@
             </span>
           </a>
         {% endfor %}
+        {% if entries.size > 1 %}
+        <span class="char-card char-card-clone" aria-hidden="true">
+          <span class="char-card-media">
+            {% if first_entry.image %}<img src="{{ first_entry.image | relative_url }}" alt="" loading="lazy" />{% endif %}
+          </span>
+          <span class="char-card-info">
+            {% if first_entry.category %}<span class="char-card-category">{{ first_entry.category }}</span>{% endif %}
+            <span class="char-card-title">{{ first_entry.title }}</span>
+          </span>
+        </span>
+        {% endif %}
         <span class="char-select-spacer" aria-hidden="true"></span>
       </div>
     </div>
