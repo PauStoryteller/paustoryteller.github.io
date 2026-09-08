@@ -32,11 +32,6 @@
   <div class="container">
     <div class="char-select-head reveal">
       <p class="char-select-eyebrow">{{ t.char_select_eyebrow }}</p>
-      <h2 class="char-select-heading">
-        <span class="char-select-heading-corner tl" aria-hidden="true"></span>
-        <span class="char-select-heading-corner br" aria-hidden="true"></span>
-        <span class="char-select-heading-text">{{ t.char_select_heading }}</span>
-      </h2>
     </div>
   </div>
 
@@ -49,7 +44,14 @@
       <div class="char-select-track" data-char-track role="list">
         <span class="char-select-spacer" aria-hidden="true"></span>
         {% if entries.size > 1 %}
-        <span class="char-card char-card-clone" aria-hidden="true">
+        <span class="char-card char-card-clone" aria-hidden="true" data-char-clone="prev">
+          <span class="char-card-frame" aria-hidden="true">
+            <span class="char-border-ring"></span>
+            <span class="char-corner tl"></span>
+            <span class="char-corner tr"></span>
+            <span class="char-corner bl"></span>
+            <span class="char-corner br"></span>
+          </span>
           <span class="char-card-media">
             {% if last_entry.image %}<img src="{{ last_entry.image | relative_url }}" alt="" loading="lazy" />{% endif %}
           </span>
@@ -128,7 +130,14 @@
           </a>
         {% endfor %}
         {% if entries.size > 1 %}
-        <span class="char-card char-card-clone" aria-hidden="true">
+        <span class="char-card char-card-clone" aria-hidden="true" data-char-clone="next">
+          <span class="char-card-frame" aria-hidden="true">
+            <span class="char-border-ring"></span>
+            <span class="char-corner tl"></span>
+            <span class="char-corner tr"></span>
+            <span class="char-corner bl"></span>
+            <span class="char-corner br"></span>
+          </span>
           <span class="char-card-media">
             {% if first_entry.image %}<img src="{{ first_entry.image | relative_url }}" alt="" loading="lazy" />{% endif %}
           </span>

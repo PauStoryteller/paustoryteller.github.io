@@ -55,7 +55,14 @@
 // ---- Persistent, slim footer bar (Portfolio home page only) ----
 // The same contact block, but pinned to the bottom of the viewport at all
 // times instead of sitting at the end of the page like a regular section.
-.connect-footer {
+//
+// IMPORTANT: this is written as `.strip-grey.connect-footer` (both classes
+// together), not just `.connect-footer` — `.strip-grey` (in _strip.scss)
+// also sets `position: relative` and its own `clip-path`, and because that
+// partial happens to be imported after this one, a plain `.connect-footer`
+// rule would lose that tie on specificity and silently stop being fixed.
+// The compound selector outranks it regardless of import order.
+.strip-grey.connect-footer {
   position: fixed;
   left: 0;
   right: 0;
@@ -77,11 +84,11 @@
   );
 
   .connect-footer-inner {
-    padding-top: 14px;
-    padding-bottom: 14px;
+    padding-top: 22px;
+    padding-bottom: 22px;
     @include media-breakpoint-up(md) {
-      padding-top: 16px;
-      padding-bottom: 16px;
+      padding-top: 26px;
+      padding-bottom: 26px;
     }
   }
 
@@ -118,12 +125,14 @@
 
 // Reserve room at the bottom of the home page so the fixed bar above never
 // overlaps the last bit of content (the portfolio selector's hint text).
+// Kept a little taller than the bar itself as a safety margin, since the
+// bar's exact height can vary slightly (icon wrapping, font rendering).
 body.page-home {
-  padding-bottom: 92px;
+  padding-bottom: 130px;
   @include media-breakpoint-up(sm) {
-    padding-bottom: 76px;
+    padding-bottom: 112px;
   }
   @include media-breakpoint-up(md) {
-    padding-bottom: 70px;
+    padding-bottom: 106px;
   }
 }

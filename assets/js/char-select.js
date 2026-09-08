@@ -179,25 +179,97 @@
     });
   }
 
+  // ---- Wrapping around the ends without a big visual jump ----
+  // Going from the last card to the first (or first to last) used to just
+  // recentre on that card directly — which sits at the opposite end of the
+  // (very long) track, so the wheel swooped all the way across itself.
+  // Instead: slide onto the decorative clone sitting right next door (an
+  // ordinary, single-step slide, same distance as any other step), let it
+  // borrow the "active" look for that instant, then — the moment it's
+  // actually centred — swap to the real card at the same spot with no
+  // transition at all. Since the clone is a pixel-for-pixel twin of that
+  // real card, the swap itself is invisible; only the one ordinary step
+  // was ever seen.
+  var cloneStart = track.querySelector('[data-char-clone="prev"]'); // stand-in for the last card
+  var cloneEnd = track.querySelector('[data-char-clone="next"]'); // stand-in for the first card
+  var isWrapping = false;
+
+  function playCloneSwap(clone, realCard, onSettled) {
+    if (!clone) {
+      setActive(realCard);
+      centerCard(realCard, true);
+      if (onSettled) onSettled();
+      return;
+    }
+
+    if (reduceMotion) {
+      // No motion wanted — just land on the real card directly, instantly.
+      setActive(realCard);
+      centerCard(realCard, false);
+      if (onSettled) onSettled();
+      return;
+    }
+
+    isWrapping = true;
+    cards.forEach(function (c) {
+      c.classList.remove("is-active");
+    });
+    clone.classList.add("is-active");
+    centerCard(clone, true);
+
+    var settled = false;
+    function settle() {
+      if (settled) return;
+      settled = true;
+      track.removeEventListener("transitionend", onEnd);
+      clone.classList.remove("is-active");
+      setActive(realCard);
+      centerCard(realCard, false); // instant — same on-screen spot the clone was just in
+      isWrapping = false;
+      if (onSettled) onSettled();
+    }
+    function onEnd(event) {
+      if (event.target === track && event.propertyName === "transform") settle();
+    }
+    track.addEventListener("transitionend", onEnd);
+    // Safety net in case the transitionend event never arrives.
+    window.setTimeout(settle, 600);
+  }
+
   // Move the selection to whichever card sits before/after the currently
-  // active one (looping around the ends), and slide the wheel to recentre
-  // on it.
-  function stepToCard(direction) {
+  // active one (looping around the ends via the clone swap above), and
+  // slide the wheel to recentre on it. `focusAfter` defers focusing the
+  // card until the wrap swap (if any) has actually finished, so the
+  // browser doesn't yank the wheel straight to the real card early.
+  function stepToCard(direction, focusAfter) {
+    if (isWrapping) return cards[activeIndex];
+
+    var wrappingBack = direction === -1 && activeIndex === 0 && cloneStart;
+    var wrappingForward = direction === 1 && activeIndex === cards.length - 1 && cloneEnd;
+
+    if (wrappingBack || wrappingForward) {
+      var clone = wrappingBack ? cloneStart : cloneEnd;
+      var realCard = wrappingBack ? cards[cards.length - 1] : cards[0];
+      playCloneSwap(clone, realCard, focusAfter ? function () { realCard.focus(); } : null);
+      return realCard;
+    }
+
     var nextIndex = wrapIndex(activeIndex + direction);
     var nextCard = cards[nextIndex];
     setActive(nextCard);
     centerCard(nextCard, true);
+    if (focusAfter) nextCard.focus();
     return nextCard;
   }
 
   if (prevBtn) {
     prevBtn.addEventListener("click", function () {
-      stepToCard(-1);
+      stepToCard(-1, false);
     });
   }
   if (nextBtn) {
     nextBtn.addEventListener("click", function () {
-      stepToCard(1);
+      stepToCard(1, false);
     });
   }
 
@@ -251,10 +323,10 @@
   viewport.addEventListener("keydown", function (event) {
     if (event.key === "ArrowRight") {
       event.preventDefault();
-      stepToCard(1).focus();
+      stepToCard(1, true);
     } else if (event.key === "ArrowLeft") {
       event.preventDefault();
-      stepToCard(-1).focus();
+      stepToCard(-1, true);
     }
   });
 

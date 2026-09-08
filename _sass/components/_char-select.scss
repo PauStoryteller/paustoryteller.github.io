@@ -208,52 +208,53 @@
   }
 }
 
-// ---- Prev / next arrow buttons, centred over the roster's edges. Simple,
-// quiet circular buttons — integrated into the rest of the roster instead
-// of standing out as a separate HUD element. ----
+// ---- Prev / next arrow buttons ----
+// No button chrome at all (no circle, no border) — they're a soft fade
+// from the page background at each edge (matching the mask-fade the cards
+// already vanish into) with a quiet chevron sitting inside it. At rest the
+// icon is faint, more a hint than a control; it only brightens on
+// hover/focus. This makes the arrows read as part of the roster's own
+// edge instead of a separate floating widget.
 .char-select-arrow {
   position: absolute;
-  top: 50%;
+  top: 0;
+  bottom: 0;
   z-index: 3;
-  transform: translateY(calc(-50% - 22px));
-  width: 36px;
-  height: 36px;
+  width: clamp(40px, 7vw, 72px);
   display: flex;
   align-items: center;
-  justify-content: center;
   padding: 0;
-  border-radius: 50%;
-  border: 1px solid rgba($black, 0.14);
-  background-color: rgba(11, 10, 13, 0.55);
+  border: none;
+  background-color: transparent;
   color: $steel;
   cursor: pointer;
-  transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease,
-    transform 0.2s ease, opacity 0.2s ease;
+  transition: color 0.2s ease;
 
   svg {
-    width: 15px;
-    height: 15px;
-    transition: transform 0.2s ease;
+    position: relative;
+    width: 18px;
+    height: 18px;
+    opacity: 0.5;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  &:hover:not(:disabled) svg,
+  &:focus-visible:not(:disabled) svg {
+    opacity: 1;
   }
 
   &:hover:not(:disabled),
   &:focus-visible:not(:disabled) {
-    border-color: $primary;
-    background-color: rgba(229, 72, 77, 0.14);
     color: $primary;
-  }
-
-  &:active:not(:disabled) {
-    transform: translateY(calc(-50% - 22px)) scale(0.9);
   }
 
   &:focus-visible {
     outline: 2px solid $secondary;
-    outline-offset: 2px;
+    outline-offset: -3px;
   }
 
   &:disabled {
-    opacity: 0.25;
+    opacity: 0.2;
     cursor: default;
   }
 }
@@ -266,17 +267,17 @@
 }
 
 .char-select-arrow-prev {
-  left: 4px;
-  @include media-breakpoint-up(md) {
-    left: 10px;
-  }
+  left: 0;
+  justify-content: flex-start;
+  padding-left: clamp(4px, 1.5vw, 14px);
+  background-image: linear-gradient(to right, $body-bg, rgba($body-bg, 0));
 }
 
 .char-select-arrow-next {
-  right: 4px;
-  @include media-breakpoint-up(md) {
-    right: 10px;
-  }
+  right: 0;
+  justify-content: flex-end;
+  padding-right: clamp(4px, 1.5vw, 14px);
+  background-image: linear-gradient(to left, $body-bg, rgba($body-bg, 0));
 }
 
 // ---- Preview panel ----
@@ -493,7 +494,7 @@
     right: clamp(-38px, -3.6vw, -20px);
     left: auto;
     bottom: clamp(-26px, -3vw, -16px);
-    width: min(84%, 330px);
+    width: min(88%, 350px);
     margin-top: 0;
     z-index: 5;
   }
@@ -555,10 +556,13 @@
     transform: rotate(-3deg);
 
     display: grid;
-    grid-template-columns: 84px 1fr;
+    grid-template-columns: 90px 1fr;
     grid-template-rows: auto 1fr;
     grid-template-areas: "label label" "thumb body";
     align-items: stretch;
+    // There was no gap at all between the thumbnail and the text before —
+    // this is what actually creates the breathing room she's after.
+    column-gap: 18px;
 
     &:hover {
       transform: rotate(-1deg) translateY(-4px);
@@ -613,7 +617,7 @@
 
   @include media-breakpoint-up(lg) {
     grid-area: body;
-    padding: 6px 16px 10px 0;
+    padding: 6px 16px 10px 4px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -721,20 +725,6 @@
     transition: transform 0.5s ease, filter 0.35s ease;
   }
 
-  // Red tint over every card that isn't the active pick — fades away the
-  // moment a card becomes selected (see .char-card.is-active below).
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    background-color: rgba($primary, 0.4);
-    mix-blend-mode: multiply;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.35s ease;
-  }
-
   // vignette so the title bar below always reads clearly
   &::after {
     content: "";
@@ -744,18 +734,6 @@
     background-image: linear-gradient(180deg, rgba(11, 10, 13, 0) 60%, rgba(11, 10, 13, 0.7) 100%);
     pointer-events: none;
   }
-}
-
-.char-card:not(.is-active) .char-card-media::before {
-  opacity: 0.38;
-}
-
-.char-card[data-dist="2"] .char-card-media::before {
-  opacity: 0.5;
-}
-
-.char-card[data-dist="far"] .char-card-media::before {
-  opacity: 0.6;
 }
 
 .char-card-num {
@@ -888,7 +866,7 @@
   pointer-events: none;
   transform: scale(0.84) translateY(10px);
   opacity: 0.55;
-  filter: saturate(0.35) brightness(0.85);
+  filter: sepia(0.55) hue-rotate(-50deg) saturate(2.4) brightness(0.82);
 }
 
 .char-card.is-active {
@@ -968,23 +946,26 @@
 // ---- "Wheel" effect: cards fade, shrink and desaturate the further they
 // sit from the selected one, so the roster reads like a character-select
 // carousel curving away on either side of the pick. Distance is written
-// onto each card by the JS (data-dist) whenever the selection changes. ----
+// onto each card by the JS (data-dist) whenever the selection changes.
+// The desaturation is tinted red rather than plain grey (sepia + hue-rotate
+// pushes the monochrome result toward the site's red instead of neutral
+// grey) so unselected cards read as "not the pick" at a glance. ----
 .char-card[data-dist="1"] {
   transform: scale(0.84) translateY(10px);
   opacity: 0.55;
-  filter: saturate(0.35) brightness(0.85);
+  filter: sepia(0.55) hue-rotate(-50deg) saturate(2.4) brightness(0.82);
 }
 
 .char-card[data-dist="2"] {
   transform: scale(0.7) translateY(16px);
   opacity: 0.3;
-  filter: saturate(0.2) brightness(0.75);
+  filter: sepia(0.65) hue-rotate(-50deg) saturate(2) brightness(0.7);
 }
 
 .char-card[data-dist="far"] {
   transform: scale(0.62) translateY(20px);
   opacity: 0;
-  filter: saturate(0) brightness(0.7);
+  filter: sepia(0.65) hue-rotate(-50deg) saturate(1.6) brightness(0.65);
   pointer-events: none;
 }
 
