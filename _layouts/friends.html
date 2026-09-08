@@ -2,6 +2,8 @@
 layout: default
 bodyClass: "page-friends"
 ---
+{% assign lang = page.lang | default: "es" %}
+{% assign t = site.data.i18n[lang] %}
 
 <div class="container pt-6 pt-md-10">
   <div class="row justify-content-start">
@@ -19,5 +21,17 @@ bodyClass: "page-friends"
       {% include friend-card.html friend=friend %}
     </div>
     {% endfor %}
+  </div>
+</div>
+
+<div class="strip strip-grey">
+  <div class="container pt-6 pb-6 pt-md-8 pb-md-8">
+    <div class="row justify-content-start">
+      <div class="col-12 col-md-8 reveal">
+        {% assign connect_title = page.connect_title | default: t.connect_default_title %}
+        {% assign connect_text = page.connect_text | default: t.connect_default_text %}
+        {% include connect.html title=connect_title text=connect_text show_contact=true %}
+      </div>
+    </div>
   </div>
 </div>

@@ -65,6 +65,14 @@ bodyClass: "page-home"
         <a class="button button-primary reveal" href="{{ journal_url | relative_url }}">{{ t.view_journal }}</a>
       </div>
     </div>
+
+    <div class="row justify-content-start mt-6 mt-md-8 pt-6 pt-md-8 strip-connect-row">
+      <div class="col-12 col-md-8 reveal">
+        {% assign connect_title = page.connect_title | default: t.connect_default_title %}
+        {% assign connect_text = page.connect_text | default: t.connect_default_text %}
+        {% include connect.html title=connect_title text=connect_text show_contact=true %}
+      </div>
+    </div>
   </div>
 </div>
 

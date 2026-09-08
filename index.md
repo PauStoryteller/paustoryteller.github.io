@@ -5,6 +5,7 @@ description: Videojuegos, escritura, modelado 3D y análisis — trabajo y proce
 intro_image: "images/tu-foto.jpg"
 intro_photo: true
 show_call_box: false
+connect_text: "Sígueme en redes para ver más proyectos, o escríbeme si quieres hablar de alguno."
 translation_url: "/en/"
 ---
 

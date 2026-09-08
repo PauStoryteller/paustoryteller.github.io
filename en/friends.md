@@ -4,6 +4,7 @@ layout: friends
 permalink: /en/friends/
 lang: en
 description: Talented people Pau admires and follows.
+connect_text: "Follow me, or drop me a line if you'd like an introduction to anyone on this list."
 translation_url: "/friends/"
 ---
 

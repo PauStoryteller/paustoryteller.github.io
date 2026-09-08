@@ -7,6 +7,7 @@ description: Video games, writing, 3D modeling and analysis — work and creativ
 intro_image: "images/tu-foto.jpg"
 intro_photo: true
 show_call_box: false
+connect_text: "Follow me for more projects, or drop me a line if you want to talk about one."
 translation_url: "/"
 ---
 
