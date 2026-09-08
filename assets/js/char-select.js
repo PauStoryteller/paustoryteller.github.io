@@ -134,13 +134,25 @@
     setPreview(card);
   }
 
-  // ---- Move the track so a given card sits centred in the viewport. This
-  // replaces native scrolling entirely: the viewport never scrolls, the
-  // track just slides via a CSS transform. ----
+  // ---- Move the track so the active card sits where it makes sense for
+  // the current layout. From the lg breakpoint up, the preview panel sits
+  // to the right of the roster, so the active card is pinned near the
+  // viewport's right edge (with a small buffer so it doesn't get caught in
+  // the fade-out mask right at that edge) — it always reads as "glued" to
+  // the preview. Below lg the preview stacks underneath instead, so the
+  // active card is just centred as before. The track just slides via a CSS
+  // transform; the viewport itself never scrolls natively. ----
+  var EDGE_BUFFER = 32;
+  var LG_BREAKPOINT = 992;
   function centerCard(card, animate) {
     if (!card) return;
     var maxOffset = Math.max(0, track.scrollWidth - viewport.clientWidth);
-    var target = card.offsetLeft + card.offsetWidth / 2 - viewport.clientWidth / 2;
+    var target;
+    if (window.innerWidth >= LG_BREAKPOINT) {
+      target = card.offsetLeft + card.offsetWidth - viewport.clientWidth + EDGE_BUFFER;
+    } else {
+      target = card.offsetLeft + card.offsetWidth / 2 - viewport.clientWidth / 2;
+    }
     target = Math.max(0, Math.min(maxOffset, target));
 
     if (!animate) track.classList.add("no-anim");

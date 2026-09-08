@@ -3,17 +3,19 @@
 
 .char-select {
   position: relative;
-  padding-top: 6px;
+  padding-top: 16px;
   padding-bottom: 10px;
   @include media-breakpoint-up(md) {
-    padding-top: 12px;
+    padding-top: 24px;
   }
 }
 
+// More room between the heading and the cards than before, to balance out
+// the (now smaller) gap coming down from the intro above.
 .char-select-head {
-  margin-bottom: 8px;
+  margin-bottom: 20px;
   @include media-breakpoint-up(md) {
-    margin-bottom: 10px;
+    margin-bottom: 28px;
   }
 }
 
@@ -122,7 +124,9 @@
     // frame to turn inside, with neighbouring cards cut off by the mask
     // gradient right at its edges.
     flex: 1 1 auto;
-    order: 2;
+    // Roster now comes first (left), preview follows (right) — see
+    // .char-select-preview below.
+    order: 1;
   }
 }
 
@@ -192,18 +196,20 @@
 }
 
 // ---- Preview panel ----
-// Sits to the left of the roster (order: 1) and takes a larger, wider slice
-// of the row than before, so the selected card's info/image/journal block
-// reads as the main focus rather than a sidebar.
+// Sits to the right of the roster (order: 2) — the visitor sees the cards
+// first and reads the description of whichever one is selected right next
+// to it, rather than reading a description before choosing anything.
 .char-select-preview {
   position: relative;
   padding: 0 clamp(20px, 6vw, 90px);
   margin-top: 4px;
 
   @include media-breakpoint-up(lg) {
-    order: 1;
+    order: 2;
     flex: 0 0 clamp(360px, 36vw, 460px);
-    padding: 26px clamp(16px, 2vw, 28px) 44px 0;
+    // Gap now sits on the left (facing the roster); right side is flush
+    // with the row's own outer edge.
+    padding: 26px 0 44px clamp(16px, 2vw, 28px);
     margin-top: 0;
   }
   @include media-breakpoint-up(xl) {
@@ -281,6 +287,13 @@
   background-color: $body-bg;
   flex: 0 0 auto;
 
+  // From lg up, the journal post-it overhangs the bottom-right corner of
+  // this frame. Putting the image last means that corner eats into the
+  // (non-critical) picture instead of cutting off the summary text.
+  @include media-breakpoint-up(lg) {
+    order: 2;
+  }
+
   img {
     width: 100%;
     height: 100%;
@@ -318,6 +331,10 @@
   flex-direction: column;
   align-items: flex-start;
   flex: 1 1 auto;
+
+  @include media-breakpoint-up(lg) {
+    order: 1;
+  }
 }
 
 .char-select-preview-category {
