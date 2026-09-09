@@ -380,23 +380,52 @@
         event.preventDefault();
         return;
       }
-
       event.preventDefault();
-      var href = card.getAttribute("href");
-      var isExternal = card.getAttribute("target") === "_blank";
-      var duration = 400 + Math.floor(Math.random() * 200); // 400–600ms
+      startLoadingAndNavigate(card);
+    });
+  });
 
-      card.style.setProperty("--load-duration", duration + "ms");
-      card.classList.add("is-loading");
+  function startLoadingAndNavigate(card) {
+    var href = card.getAttribute("href");
+    var isExternal = card.getAttribute("target") === "_blank";
+    var duration = 400 + Math.floor(Math.random() * 200); // 400–600ms
 
-      window.setTimeout(function () {
-        if (isExternal) {
-          window.open(href, "_blank", "noopener");
-          card.classList.remove("is-loading");
-        } else {
-          window.location.href = href;
-        }
-      }, duration);
+    card.style.setProperty("--load-duration", duration + "ms");
+    card.classList.add("is-loading");
+
+    window.setTimeout(function () {
+      if (isExternal) {
+        window.open(href, "_blank", "noopener");
+        card.classList.remove("is-loading");
+      } else {
+        window.location.href = href;
+      }
+    }, duration);
+  }
+
+  // ---- The two decorative wrap-around cards are clickable too: clicking
+  // the one standing in for the last project (before the first card) or
+  // the first project (after the last card) plays the exact same one-step
+  // swap the arrows/keyboard already use when wrapping around, and then
+  // opens that project — same as clicking any other card. This is what
+  // makes wrapping "by clicking" feel identical to stepping between any
+  // other two neighbours instead of doing nothing (they used to be inert,
+  // decorative-only elements). ----
+  [cloneStart, cloneEnd].forEach(function (clone) {
+    if (!clone) return;
+    var realCard = clone === cloneStart ? cards[cards.length - 1] : cards[0];
+    clone.addEventListener("click", function (event) {
+      if (event.button === 1 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+        return; // let the browser open it in a new tab, etc., natively
+      }
+      if (isWrapping || realCard.classList.contains("is-loading")) {
+        event.preventDefault();
+        return;
+      }
+      event.preventDefault();
+      playCloneSwap(clone, realCard, function () {
+        startLoadingAndNavigate(realCard);
+      });
     });
   });
 })();

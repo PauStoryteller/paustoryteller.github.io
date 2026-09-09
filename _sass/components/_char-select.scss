@@ -33,42 +33,49 @@
 // the way a fighting-game character-select screen shows the name of
 // whichever fighter you're hovering/have picked. Updated by the JS
 // (setPreview) on both hover and selection — this is the "title" now,
-// instead of a static line of text. A slot counter (e.g. "02/06") sits
-// to the left like the little number badge already on each card. ----
+// instead of a static line of text. The slot counter is a small filled
+// chip (same idea as the "01" numbered badge on each card), and the name
+// itself is big and bold — this needs to read as a title at a glance, not
+// as a caption. ----
 .char-select-live-title {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   flex-wrap: wrap;
-  column-gap: 14px;
-  row-gap: 4px;
-  margin-top: 6px;
-  padding-left: 14px;
-  border-left: 3px solid $primary;
+  column-gap: 16px;
+  row-gap: 8px;
+  margin-top: 10px;
 }
 
 .char-select-live-num {
+  display: inline-flex;
+  align-items: baseline;
   font-family: $font-family-heading;
   font-weight: 700;
-  font-size: 14px;
-  letter-spacing: 0.04em;
-  color: $secondary;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  color: #ffffff;
+  background-color: $primary;
+  padding: 5px 10px;
+  border-radius: 4px;
   white-space: nowrap;
 }
 
 .char-select-live-sep {
-  margin: 0 2px;
-  opacity: 0.5;
+  margin: 0 1px;
+  opacity: 0.7;
 }
 
 .char-select-live-name {
   font-family: $font-family-heading;
   font-weight: 800;
-  font-size: 26px;
-  line-height: 1.15;
+  font-size: 30px;
+  line-height: 1.05;
+  letter-spacing: 0.005em;
   color: $black;
+  text-shadow: 0 0 30px rgba($primary, 0.4);
 
   @include media-breakpoint-up(md) {
-    font-size: 32px;
+    font-size: 42px;
   }
 }
 
@@ -812,20 +819,20 @@
 // (pointer-events: none, aria-hidden) and never change: they always look
 // like a dimmed, distant neighbour, matching data-dist="1".
 .char-card-clone {
-  pointer-events: none;
   transform: scale(0.84) translateY(10px);
   opacity: 0.55;
-  border-color: rgba($primary, 0.4);
-  background-color: mix($primary, $white, 15%);
+  border-color: rgba($primary, 0.7);
+  background-color: mix($primary, $white, 22%);
+  box-shadow: 0 0 0 1px rgba($primary, 0.35), 0 0 18px rgba($primary, 0.22);
 
   .char-card-media img {
-    filter: sepia(0.55) hue-rotate(-50deg) saturate(2.4) brightness(0.82);
+    filter: sepia(0.65) hue-rotate(-50deg) saturate(3) brightness(0.85);
   }
 }
 
 .char-card.is-active {
   transform: scale(1.06) translateY(-6px);
-  border-color: $primary;
+  border-color: transparent;
   box-shadow: 0 18px 40px rgba(229, 72, 77, 0.28), 0 0 0 1px rgba(157, 127, 234, 0.25);
   z-index: 2;
 
@@ -902,17 +909,19 @@
 // carousel curving away on either side of the pick. Distance is written
 // onto each card by the JS (data-dist) whenever the selection changes.
 //
-// The red tint is applied twice, deliberately: once as an explicit
-// border/background colour on the card itself (so the info bar and edges
-// read as tinted too, not just the photo — a filter alone barely shows up
-// on the card's already-dark chrome), and once as a sepia+hue-rotate
-// filter on just the photo (which is what actually colours a photo red,
-// rather than only darkening it like a plain desaturation would). ----
+// Every unselected card gets a clearly red border + soft red rim glow, on
+// top of the red-tinted photo and background — a strong, unmistakably
+// "not the pick" red treatment across the whole card. The moment a card
+// is scrolled into the centre and becomes active, its border and glow
+// both fade out (border-color/box-shadow are already transitioned on the
+// base .char-card rule), so the red visibly "switches off" right as the
+// selection lands, instead of just sitting there statically. ----
 .char-card[data-dist="1"],
 .char-card[data-dist="2"],
 .char-card[data-dist="far"] {
-  border-color: rgba($primary, 0.4);
-  background-color: mix($primary, $white, 15%);
+  border-color: rgba($primary, 0.7);
+  background-color: mix($primary, $white, 22%);
+  box-shadow: 0 0 0 1px rgba($primary, 0.35), 0 0 18px rgba($primary, 0.22);
 }
 
 .char-card[data-dist="1"] {
@@ -920,7 +929,7 @@
   opacity: 0.55;
 
   .char-card-media img {
-    filter: sepia(0.55) hue-rotate(-50deg) saturate(2.4) brightness(0.82);
+    filter: sepia(0.65) hue-rotate(-50deg) saturate(3) brightness(0.85);
   }
 }
 
@@ -929,7 +938,7 @@
   opacity: 0.3;
 
   .char-card-media img {
-    filter: sepia(0.65) hue-rotate(-50deg) saturate(2) brightness(0.7);
+    filter: sepia(0.75) hue-rotate(-50deg) saturate(2.6) brightness(0.72);
   }
 }
 
@@ -939,7 +948,7 @@
   pointer-events: none;
 
   .char-card-media img {
-    filter: sepia(0.65) hue-rotate(-50deg) saturate(1.6) brightness(0.65);
+    filter: sepia(0.75) hue-rotate(-50deg) saturate(2) brightness(0.65);
   }
 }
 

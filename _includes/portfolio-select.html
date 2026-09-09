@@ -53,7 +53,7 @@
       <div class="char-select-track" data-char-track role="list">
         <span class="char-select-spacer" aria-hidden="true"></span>
         {% if entries.size > 1 %}
-        <span class="char-card char-card-clone" aria-hidden="true" data-char-clone="prev">
+        <a class="char-card char-card-clone" data-char-clone="prev" tabindex="-1" href="{{ last_href }}" {% if last_is_external %}target="_blank" rel="noopener"{% endif %} aria-label="{{ last_entry.title }}">
           <span class="char-card-frame" aria-hidden="true">
             <span class="char-border-ring"></span>
             <span class="char-corner tl"></span>
@@ -68,7 +68,7 @@
             {% if last_entry.category %}<span class="char-card-category">{{ last_entry.category }}</span>{% endif %}
             <span class="char-card-title">{{ last_entry.title }}</span>
           </span>
-        </span>
+        </a>
         {% endif %}
         {% for entry in entries %}
           {% assign is_external = false %}
@@ -139,7 +139,7 @@
           </a>
         {% endfor %}
         {% if entries.size > 1 %}
-        <span class="char-card char-card-clone" aria-hidden="true" data-char-clone="next">
+        <a class="char-card char-card-clone" data-char-clone="next" tabindex="-1" href="{{ first_href }}" {% if first_is_external %}target="_blank" rel="noopener"{% endif %} aria-label="{{ first_entry.title }}">
           <span class="char-card-frame" aria-hidden="true">
             <span class="char-border-ring"></span>
             <span class="char-corner tl"></span>
@@ -154,7 +154,7 @@
             {% if first_entry.category %}<span class="char-card-category">{{ first_entry.category }}</span>{% endif %}
             <span class="char-card-title">{{ first_entry.title }}</span>
           </span>
-        </span>
+        </a>
         {% endif %}
         <span class="char-select-spacer" aria-hidden="true"></span>
       </div>
