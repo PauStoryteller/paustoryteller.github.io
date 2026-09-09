@@ -29,98 +29,58 @@
   margin-bottom: 0;
 }
 
-.char-select-heading {
-  position: relative;
+// ---- Live title: names whoever's currently highlighted in the roster,
+// the way a fighting-game character-select screen shows the name of
+// whichever fighter you're hovering/have picked. Updated by the JS
+// (setPreview) on both hover and selection — this is the "title" now,
+// instead of a static line of text. A slot counter (e.g. "02/06") sits
+// to the left like the little number badge already on each card. ----
+.char-select-live-title {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  column-gap: 14px;
+  row-gap: 4px;
+  margin-top: 6px;
+  padding-left: 14px;
+  border-left: 3px solid $primary;
+}
+
+.char-select-live-num {
+  font-family: $font-family-heading;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  color: $secondary;
+  white-space: nowrap;
+}
+
+.char-select-live-sep {
+  margin: 0 2px;
+  opacity: 0.5;
+}
+
+.char-select-live-name {
   font-family: $font-family-heading;
   font-weight: 800;
-  font-size: 28px;
-  letter-spacing: 0.02em;
-  line-height: 1.1;
-  margin-bottom: 0;
+  font-size: 26px;
+  line-height: 1.15;
   color: $black;
-  display: inline-flex;
-  padding: 8px 20px;
 
   @include media-breakpoint-up(md) {
-    font-size: 34px;
-    padding: 10px 26px;
+    font-size: 32px;
   }
 }
 
-// Corner brackets, same motif as the selection cursor on the active card
-// in the carousel below — this title reads as "targeted" by the same HUD.
-.char-select-heading-corner {
-  position: absolute;
-  width: 14px;
-  height: 14px;
-  border: 2px solid $primary;
-  opacity: 0.85;
-}
-.char-select-heading-corner.tl {
-  top: 0;
-  left: 0;
-  border-right: none;
-  border-bottom: none;
-}
-.char-select-heading-corner.br {
-  bottom: 0;
-  right: 0;
-  border-left: none;
-  border-top: none;
-  border-color: $secondary;
-}
-
-// A single soft "scan" of light crosses the title the moment the section
-// reveals on scroll — like the HUD locking onto it — then fades away
-// completely. The text itself always stays plain and fully legible; this
-// is a separate glint layered on top, so there's no risk of it looking
-// broken before the animation runs (or with JS/animations off).
-.char-select-heading-text {
-  position: relative;
-  display: inline-block;
-
-  &::after {
-    content: "";
-    position: absolute;
-    inset: -6px -14px;
-    background-image: linear-gradient(
-      100deg,
-      transparent 35%,
-      rgba($secondary, 0.55) 48%,
-      rgba($primary, 0.65) 55%,
-      transparent 68%
-    );
-    mix-blend-mode: overlay;
-    opacity: 0;
-    transform: translateX(-60%);
-    pointer-events: none;
-  }
-}
-
-.char-select-head.is-visible .char-select-heading-text::after {
-  animation: char-heading-scan 1s 0.15s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-@keyframes char-heading-scan {
-  0% {
-    opacity: 0;
-    transform: translateX(-60%);
-  }
-  18% {
-    opacity: 1;
-  }
-  82% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(60%);
-  }
+// Same quick "refresh" flash as the preview panel uses, so a name swap
+// reads as a live update rather than a silent text change.
+.char-select-live-title.is-updating .char-select-live-name {
+  animation: char-preview-flash 0.35s ease;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .char-select-heading-text::after {
-    display: none;
+  .char-select-live-title.is-updating .char-select-live-name {
+    animation: none;
   }
 }
 
@@ -209,52 +169,60 @@
 }
 
 // ---- Prev / next arrow buttons ----
-// No button chrome at all (no circle, no border) — they're a soft fade
-// from the page background at each edge (matching the mask-fade the cards
-// already vanish into) with a quiet chevron sitting inside it. At rest the
-// icon is faint, more a hint than a control; it only brightens on
-// hover/focus. This makes the arrows read as part of the roster's own
-// edge instead of a separate floating widget.
+// A clear, solid circular button — visible at rest (not just on hover),
+// with a shadow so it reads against any photo behind it. Simple shape,
+// no HUD clipping, no edge-fade tricks — just an obviously clickable
+// control sitting over the roster's edges.
 .char-select-arrow {
   position: absolute;
-  top: 0;
-  bottom: 0;
+  top: 50%;
   z-index: 3;
-  width: clamp(40px, 7vw, 72px);
+  transform: translateY(calc(-50% - 22px));
+  width: 42px;
+  height: 42px;
   display: flex;
   align-items: center;
+  justify-content: center;
   padding: 0;
-  border: none;
-  background-color: transparent;
-  color: $steel;
+  border-radius: 50%;
+  border: 1px solid rgba($black, 0.18);
+  background-color: rgba(11, 10, 13, 0.88);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  color: $black;
   cursor: pointer;
-  transition: color 0.2s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease,
+    box-shadow 0.2s ease, transform 0.2s ease;
 
   svg {
-    position: relative;
-    width: 18px;
-    height: 18px;
-    opacity: 0.5;
+    width: 17px;
+    height: 17px;
+    opacity: 0.9;
     transition: opacity 0.2s ease, transform 0.2s ease;
-  }
-
-  &:hover:not(:disabled) svg,
-  &:focus-visible:not(:disabled) svg {
-    opacity: 1;
   }
 
   &:hover:not(:disabled),
   &:focus-visible:not(:disabled) {
-    color: $primary;
+    background-color: $primary;
+    border-color: $primary;
+    color: #fff;
+    box-shadow: 0 6px 18px rgba(229, 72, 77, 0.45);
+
+    svg {
+      opacity: 1;
+    }
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(calc(-50% - 22px)) scale(0.9);
   }
 
   &:focus-visible {
     outline: 2px solid $secondary;
-    outline-offset: -3px;
+    outline-offset: 2px;
   }
 
   &:disabled {
-    opacity: 0.2;
+    opacity: 0.25;
     cursor: default;
   }
 }
@@ -267,17 +235,17 @@
 }
 
 .char-select-arrow-prev {
-  left: 0;
-  justify-content: flex-start;
-  padding-left: clamp(4px, 1.5vw, 14px);
-  background-image: linear-gradient(to right, $body-bg, rgba($body-bg, 0));
+  left: 8px;
+  @include media-breakpoint-up(md) {
+    left: 14px;
+  }
 }
 
 .char-select-arrow-next {
-  right: 0;
-  justify-content: flex-end;
-  padding-right: clamp(4px, 1.5vw, 14px);
-  background-image: linear-gradient(to left, $body-bg, rgba($body-bg, 0));
+  right: 8px;
+  @include media-breakpoint-up(md) {
+    right: 14px;
+  }
 }
 
 // ---- Preview panel ----
@@ -571,26 +539,6 @@
   }
 }
 
-// A little "pinned" tab peeking above the note, so it visibly overlaps the
-// preview window rather than reading as part of the same box.
-.char-select-preview-journal-pin {
-  display: none;
-
-  @include media-breakpoint-up(lg) {
-    display: block;
-    position: absolute;
-    top: -7px;
-    left: 20px;
-    width: 26px;
-    height: 14px;
-    background-color: rgba(157, 127, 234, 0.55);
-    border: 1px solid rgba(157, 127, 234, 0.75);
-    border-radius: 2px;
-    transform: rotate(4deg);
-    z-index: 1;
-  }
-}
-
 .char-select-preview-journal-thumb {
   width: 100%;
   aspect-ratio: 16 / 9;
@@ -685,6 +633,7 @@
     transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 0.35s ease,
     border-color 0.35s ease,
+    background-color 0.35s ease,
     opacity 0.35s ease,
     filter 0.35s ease;
 
@@ -866,7 +815,12 @@
   pointer-events: none;
   transform: scale(0.84) translateY(10px);
   opacity: 0.55;
-  filter: sepia(0.55) hue-rotate(-50deg) saturate(2.4) brightness(0.82);
+  border-color: rgba($primary, 0.4);
+  background-color: mix($primary, $white, 15%);
+
+  .char-card-media img {
+    filter: sepia(0.55) hue-rotate(-50deg) saturate(2.4) brightness(0.82);
+  }
 }
 
 .char-card.is-active {
@@ -947,26 +901,46 @@
 // sit from the selected one, so the roster reads like a character-select
 // carousel curving away on either side of the pick. Distance is written
 // onto each card by the JS (data-dist) whenever the selection changes.
-// The desaturation is tinted red rather than plain grey (sepia + hue-rotate
-// pushes the monochrome result toward the site's red instead of neutral
-// grey) so unselected cards read as "not the pick" at a glance. ----
+//
+// The red tint is applied twice, deliberately: once as an explicit
+// border/background colour on the card itself (so the info bar and edges
+// read as tinted too, not just the photo — a filter alone barely shows up
+// on the card's already-dark chrome), and once as a sepia+hue-rotate
+// filter on just the photo (which is what actually colours a photo red,
+// rather than only darkening it like a plain desaturation would). ----
+.char-card[data-dist="1"],
+.char-card[data-dist="2"],
+.char-card[data-dist="far"] {
+  border-color: rgba($primary, 0.4);
+  background-color: mix($primary, $white, 15%);
+}
+
 .char-card[data-dist="1"] {
   transform: scale(0.84) translateY(10px);
   opacity: 0.55;
-  filter: sepia(0.55) hue-rotate(-50deg) saturate(2.4) brightness(0.82);
+
+  .char-card-media img {
+    filter: sepia(0.55) hue-rotate(-50deg) saturate(2.4) brightness(0.82);
+  }
 }
 
 .char-card[data-dist="2"] {
   transform: scale(0.7) translateY(16px);
   opacity: 0.3;
-  filter: sepia(0.65) hue-rotate(-50deg) saturate(2) brightness(0.7);
+
+  .char-card-media img {
+    filter: sepia(0.65) hue-rotate(-50deg) saturate(2) brightness(0.7);
+  }
 }
 
 .char-card[data-dist="far"] {
   transform: scale(0.62) translateY(20px);
   opacity: 0;
-  filter: sepia(0.65) hue-rotate(-50deg) saturate(1.6) brightness(0.65);
   pointer-events: none;
+
+  .char-card-media img {
+    filter: sepia(0.65) hue-rotate(-50deg) saturate(1.6) brightness(0.65);
+  }
 }
 
 // ---- Fake "loading…" screen before entering a project ----

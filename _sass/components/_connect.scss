@@ -123,11 +123,14 @@
   }
 }
 
-// Reserve room at the bottom of the home page so the fixed bar above never
-// overlaps the last bit of content (the portfolio selector's hint text).
-// Kept a little taller than the bar itself as a safety margin, since the
-// bar's exact height can vary slightly (icon wrapping, font rendering).
-body.page-home {
+// Reserve room at the bottom of any page using the fixed footer bar above
+// (home, journal/gallery, friends) so it never overlaps the page's last
+// bit of content. Kept a little taller than the bar itself as a safety
+// margin, since the bar's exact height can vary slightly (icon wrapping,
+// font rendering).
+body.page-home,
+body.page-gallery,
+body.page-friends {
   padding-bottom: 130px;
   @include media-breakpoint-up(sm) {
     padding-bottom: 112px;

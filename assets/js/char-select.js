@@ -41,8 +41,32 @@
     });
   }
 
+  // ---- Live "who's highlighted" readout at the top of the section —
+  // mirrors setPreview() below (same trigger points: hover and selection)
+  // so the number/name up top always matches whichever card the preview
+  // panel is currently showing, the way a character-select screen's
+  // header names whoever you're currently looking at. ----
+  var liveTitle = document.querySelector("[data-char-live-title]");
+  var titleNum = document.querySelector("[data-char-title-num]");
+  var titleName = document.querySelector("[data-char-title-name]");
+
+  function setLiveTitle(card) {
+    if (!card) return;
+    var num = card.getAttribute("data-preview-num") || "";
+    var title = card.getAttribute("data-preview-title") || "";
+    if (titleNum) titleNum.textContent = num;
+    if (titleName) titleName.textContent = title;
+    if (liveTitle) {
+      liveTitle.classList.remove("is-updating");
+      void liveTitle.offsetWidth; // restart the animation
+      liveTitle.classList.add("is-updating");
+    }
+  }
+
   function setPreview(card) {
-    if (!preview || !card) return;
+    if (!card) return;
+    setLiveTitle(card);
+    if (!preview) return;
 
     var title = card.getAttribute("data-preview-title") || "";
     var category = card.getAttribute("data-preview-category") || "";
@@ -142,6 +166,15 @@
   // ---- Move the track so the active card sits centred in the viewport.
   // The viewport never scrolls natively — the track just slides via a CSS
   // transform. ----
+  //
+  // BUG FIX: clicking (or focusing) a card makes the browser focus that
+  // <a> element, and browsers automatically scroll the nearest scrollable
+  // ancestor to bring a newly-focused element into view — even one with
+  // `overflow: hidden`, like .char-select-viewport. That native scroll
+  // stacks on top of our own transform, so the wheel visibly overshoots
+  // past the card it was supposed to land on. Since this viewport is never
+  // meant to have any scroll offset of its own (position is 100% driven by
+  // the transform), we just stamp scrollLeft back to 0 every time.
   function centerCard(card, animate) {
     if (!card) return;
     var maxOffset = Math.max(0, track.scrollWidth - viewport.clientWidth);
@@ -150,11 +183,13 @@
 
     if (!animate) track.classList.add("no-anim");
     track.style.transform = "translate3d(-" + target + "px, 0, 0)";
+    viewport.scrollLeft = 0;
     if (!animate) {
       // Force layout so the transform above applies before we remove the
       // "no transition" class, otherwise the browser would animate it.
       void track.offsetWidth;
       track.classList.remove("no-anim");
+      viewport.scrollLeft = 0;
     }
   }
 
@@ -250,7 +285,7 @@
     if (wrappingBack || wrappingForward) {
       var clone = wrappingBack ? cloneStart : cloneEnd;
       var realCard = wrappingBack ? cards[cards.length - 1] : cards[0];
-      playCloneSwap(clone, realCard, focusAfter ? function () { realCard.focus(); } : null);
+      playCloneSwap(clone, realCard, focusAfter ? function () { realCard.focus({ preventScroll: true }); } : null);
       return realCard;
     }
 
@@ -258,7 +293,7 @@
     var nextCard = cards[nextIndex];
     setActive(nextCard);
     centerCard(nextCard, true);
-    if (focusAfter) nextCard.focus();
+    if (focusAfter) nextCard.focus({ preventScroll: true });
     return nextCard;
   }
 

@@ -24,10 +24,10 @@ bodyClass: "page-friends"
   </div>
 </div>
 
-<div class="strip strip-grey">
-  <div class="container pt-6 pb-6 pt-md-8 pb-md-8">
+<div class="strip strip-grey connect-footer">
+  <div class="container connect-footer-inner">
     <div class="row justify-content-start">
-      <div class="col-12 col-md-8 reveal">
+      <div class="col-12">
         {% assign connect_title = page.connect_title | default: t.connect_default_title %}
         {% assign connect_text = page.connect_text | default: t.connect_default_text %}
         {% include connect.html title=connect_title text=connect_text show_contact=true %}

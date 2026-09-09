@@ -28,10 +28,19 @@
   {% endfor %}
 {% endif %}
 {% unless first_journal %}{% assign first_journal = default_journal %}{% endunless %}
+{% assign total_label = entries.size %}
+{% if entries.size < 10 %}{% assign total_label = entries.size | prepend: "0" %}{% endif %}
+{% assign first_num_label = "01" %}
 <section class="char-select" id="portfolio-select" aria-label="{{ t.char_select_heading }}">
   <div class="container">
     <div class="char-select-head reveal">
       <p class="char-select-eyebrow">{{ t.char_select_eyebrow }}</p>
+      <div class="char-select-live-title" data-char-live-title>
+        <span class="char-select-live-num">
+          <span data-char-title-num>{{ first_num_label }}</span><span class="char-select-live-sep" aria-hidden="true">/</span>{{ total_label }}
+        </span>
+        <span class="char-select-live-name" data-char-title-name>{{ first_entry.title }}</span>
+      </div>
     </div>
   </div>
 
@@ -180,7 +189,6 @@
 
       <div class="char-select-preview-journal" data-preview-target="journal"{% unless first_journal %} hidden{% endunless %}>
         <a class="char-select-preview-journal-card" data-preview-target="journal-link" href="{{ first_journal.url | relative_url }}">
-          <span class="char-select-preview-journal-pin" aria-hidden="true"></span>
           <span class="char-select-preview-journal-label">{{ t.char_select_journal_label }}</span>
           <span class="char-select-preview-journal-thumb">
             <img data-preview-target="journal-image" src="{{ first_journal.image | relative_url }}" alt="" />

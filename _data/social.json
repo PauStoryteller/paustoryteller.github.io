@@ -1,8 +1,8 @@
 [
   {
-    "name": "Email",
-    "link": "mailto:tu-email@example.com",
-    "image": "images/social/email.svg"
+    "name": "Telegram",
+    "link": "https://t.me/tu-usuario",
+    "image": "images/social/telegram.svg"
   },
   {
     "name": "Discord",
